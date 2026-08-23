@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>TRCrypto.BtcTurk</PackageId>
+    <RootNamespace>TRCrypto.BtcTurk</RootNamespace>
+    <Description>BtcTurk REST ve WebSocket API'leri icin .NET client kutuphanesi; CryptoExchange.Net uzerine kuruludur. Bu paket resmi degildir ve BtcTurk ile bir baglantisi yoktur.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CryptoExchange.Net" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

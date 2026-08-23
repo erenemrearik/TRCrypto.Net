@@ -1,0 +1,17 @@
+# Satir sonlarini normalize et; depoda her zaman LF tutulur.
+* text=auto eol=lf
+
+# Windows'a ozgu dosyalar
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+*.ps1  text eol=crlf
+
+# Kabuk betikleri her zaman LF olmali (git hook'lari dahil)
+*.sh   text eol=lf
+
+# Ikili dosyalar
+*.docx binary
+*.png  binary
+*.jpg  binary
+*.snk  binary
+*.nupkg binary

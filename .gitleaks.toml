@@ -1,0 +1,20 @@
+# gitleaks yapilandirmasi
+# Varsayilan kural setini genisletir.
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "trcrypto-test-fixtures"
+description = "Birim testlerindeki sahte kimlik bilgileri"
+regex = '''bu-kural-hicbir-seye-eslesmez-yer-tutucudur'''
+
+# Testlerde gercek bir secret'in loglanmadigini dogrulamak icin gercekci gorunumlu
+# SAHTE degerler kullanilir. Bunlar hicbir hesaba ait degildir.
+[allowlist]
+description = "Test fixture'lari ve ornek sablonlar"
+paths = [
+    '''tests/.*/CredentialsSecurityTests\.cs''',
+    '''\.env\.example''',
+    '''docs/credentials/.*\.md''',
+]

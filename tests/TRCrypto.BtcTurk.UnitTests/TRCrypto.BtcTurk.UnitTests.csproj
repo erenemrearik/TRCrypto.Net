@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TRCrypto.BtcTurk\TRCrypto.BtcTurk.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Deserialization fixture'lari gomulu kaynak olarak tasinir -->
+    <EmbeddedResource Include="Fixtures\**\*.json" />
+    <!-- Request contract fixture'lari RestRequestValidator tarafindan diskten okunur -->
+    <None Include="Endpoints\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

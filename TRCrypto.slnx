@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/TRCrypto.Examples.Console/TRCrypto.Examples.Console.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/TRCrypto.BtcTurk/TRCrypto.BtcTurk.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TRCrypto.BtcTurk.UnitTests/TRCrypto.BtcTurk.UnitTests.csproj" />
+  </Folder>
+</Solution>

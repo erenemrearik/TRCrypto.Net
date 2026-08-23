@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Derle ve test et
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # SourceLink commit bilgisine ihtiyac duyar
+
+      - name: .NET kurulumu
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Bagimliliklari yukle
+        run: dotnet restore
+
+      - name: Derle
+        run: dotnet build -c Release --no-restore
+
+      - name: Testleri calistir
+        run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Paketle
+        run: dotnet pack -c Release --no-build -o ./artifacts
+
+      - name: Paketleri yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-paketleri
+          path: ./artifacts/*.*nupkg
+
+  secret-scan:
+    name: Secret taramasi
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

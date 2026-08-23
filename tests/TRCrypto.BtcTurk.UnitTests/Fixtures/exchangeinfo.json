@@ -1,0 +1,209 @@
+{
+  "data": {
+    "timeZone": "UTC",
+    "serverTime": 1787523577790,
+    "symbols": [
+      {
+        "id": 1,
+        "name": "BTCTRY",
+        "nameNormalized": "BTC_TRY",
+        "status": "TRADING",
+        "numerator": "BTC",
+        "denominator": "TRY",
+        "numeratorScale": 8,
+        "denominatorScale": 0,
+        "hasFraction": false,
+        "filters": [
+          {
+            "filterType": "PRICE_FILTER",
+            "minPrice": "0.0000000000001",
+            "maxPrice": "10000000",
+            "tickSize": "10",
+            "minExchangeValue": "99.91",
+            "minAmount": null,
+            "maxAmount": null
+          }
+        ],
+        "orderMethods": [
+          "MARKET",
+          "LIMIT",
+          "STOP_MARKET",
+          "STOP_LIMIT"
+        ],
+        "displayFormat": "#,###",
+        "commissionFromNumerator": false,
+        "order": 1000,
+        "priceRounding": false,
+        "isNew": false,
+        "marketPriceWarningThresholdPercentage": 0.25,
+        "maximumOrderAmount": null,
+        "maximumLimitOrderPrice": 37170800,
+        "minimumLimitOrderPrice": 371708
+      },
+      {
+        "id": 18,
+        "name": "USDTTRY",
+        "nameNormalized": "USDT_TRY",
+        "status": "TRADING",
+        "numerator": "USDT",
+        "denominator": "TRY",
+        "numeratorScale": 2,
+        "denominatorScale": 3,
+        "hasFraction": true,
+        "filters": [
+          {
+            "filterType": "PRICE_FILTER",
+            "minPrice": "0.0000000000001",
+            "maxPrice": "10000000",
+            "tickSize": "0.001",
+            "minExchangeValue": "99.91",
+            "minAmount": null,
+            "maxAmount": null
+          }
+        ],
+        "orderMethods": [
+          "MARKET",
+          "LIMIT",
+          "STOP_MARKET",
+          "STOP_LIMIT"
+        ],
+        "displayFormat": "#,##0.000",
+        "commissionFromNumerator": false,
+        "order": 1378,
+        "priceRounding": false,
+        "isNew": false,
+        "marketPriceWarningThresholdPercentage": 0.25,
+        "maximumOrderAmount": null,
+        "maximumLimitOrderPrice": 478.32,
+        "minimumLimitOrderPrice": 4.7832
+      },
+      {
+        "id": 20,
+        "name": "ETHUSDT",
+        "nameNormalized": "ETH_USDT",
+        "status": "TRADING",
+        "numerator": "ETH",
+        "denominator": "USDT",
+        "numeratorScale": 8,
+        "denominatorScale": 1,
+        "hasFraction": true,
+        "filters": [
+          {
+            "filterType": "PRICE_FILTER",
+            "minPrice": "0.0000000000001",
+            "maxPrice": "10000000",
+            "tickSize": "0.1",
+            "minExchangeValue": "9.91",
+            "minAmount": null,
+            "maxAmount": null
+          }
+        ],
+        "orderMethods": [
+          "MARKET",
+          "LIMIT",
+          "STOP_MARKET",
+          "STOP_LIMIT"
+        ],
+        "displayFormat": "#,##0.0",
+        "commissionFromNumerator": false,
+        "order": 2128,
+        "priceRounding": false,
+        "isNew": false,
+        "marketPriceWarningThresholdPercentage": 0.25,
+        "maximumOrderAmount": null,
+        "maximumLimitOrderPrice": 24607,
+        "minimumLimitOrderPrice": 246.07
+      }
+    ],
+    "currencies": [
+      {
+        "id": 1,
+        "symbol": "TRY",
+        "minWithdrawal": 10,
+        "minDeposit": 0,
+        "precision": 2,
+        "address": {
+          "minLen": null,
+          "maxLen": null
+        },
+        "currencyType": "FIAT",
+        "tag": {
+          "enable": false,
+          "name": null,
+          "minLen": null,
+          "maxLen": null
+        },
+        "color": "#04964e",
+        "name": "Türk Lirası",
+        "isAddressRenewable": false,
+        "getAutoAddressDisabled": true,
+        "isPartialWithdrawalEnabled": true,
+        "isNew": false
+      },
+      {
+        "id": 2,
+        "symbol": "BTC",
+        "minWithdrawal": 0.0001,
+        "minDeposit": 0.000005,
+        "precision": 8,
+        "address": {
+          "minLen": 25,
+          "maxLen": 96
+        },
+        "currencyType": "CRYPTO",
+        "tag": {
+          "enable": false,
+          "name": null,
+          "minLen": null,
+          "maxLen": null
+        },
+        "color": "#E7973D",
+        "name": "Bitcoin",
+        "isAddressRenewable": true,
+        "getAutoAddressDisabled": true,
+        "isPartialWithdrawalEnabled": true,
+        "isNew": false
+      },
+      {
+        "id": 7,
+        "symbol": "USDT",
+        "minWithdrawal": 2.5,
+        "minDeposit": 0.5,
+        "precision": 2,
+        "address": {
+          "minLen": 40,
+          "maxLen": 42
+        },
+        "currencyType": "CRYPTO",
+        "tag": {
+          "enable": false,
+          "name": null,
+          "minLen": null,
+          "maxLen": null
+        },
+        "color": "#449192",
+        "name": "Tether",
+        "isAddressRenewable": false,
+        "getAutoAddressDisabled": true,
+        "isPartialWithdrawalEnabled": true,
+        "isNew": false
+      }
+    ],
+    "currencyOperationBlocks": [
+      {
+        "currencySymbol": "Btc",
+        "withdrawalDisabled": false,
+        "depositDisabled": false
+      },
+      {
+        "currencySymbol": "Eth",
+        "withdrawalDisabled": false,
+        "depositDisabled": false
+      }
+    ]
+  },
+  "success": true,
+  "message": "",
+  "code": 0,
+  "extensions": null
+}
