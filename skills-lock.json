@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "cryptoexchange-net": {
+      "source": "JKorf/cryptoexchange-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/cryptoexchange-net/SKILL.md",
+      "computedHash": "4438abc513f29265d538d6991ee66c773de5c738ddaf44eca3ce9945c9f98395"
+    }
+  }
+}

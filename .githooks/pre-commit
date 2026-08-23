@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Hazirlanan degisikliklerde secret arar.
+# Etkinlestirmek icin:  git config core.hooksPath .githooks
+#
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+    echo "uyari: gitleaks kurulu degil, secret taramasi atlandi."
+    echo "       kurulum: https://github.com/gitleaks/gitleaks#installing"
+    exit 0
+fi
+
+echo "gitleaks: hazirlanan degisiklikler taraniyor..."
+if ! gitleaks protect --staged --redact --verbose; then
+    echo ""
+    echo "COMMIT ENGELLENDI: hazirlanan degisikliklerde secret bulundu."
+    echo "Yanlis pozitif ise .gitleaksignore dosyasina ekleyin."
+    exit 1
+fi
+
+exit 0

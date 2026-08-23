@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "pair": "BTCTRY",
+      "pairNormalized": "BTC_TRY",
+      "numerator": "BTC",
+      "denominator": "TRY",
+      "date": 1533650242300,
+      "tid": "636692470417865271",
+      "price": "33490",
+      "amount": "0.00032747"
+    }
+  ],
+  "success": true,
+  "message": null,
+  "code": 0
+}

@@ -1,0 +1,36 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.{json,yml,yaml,md}]
+indent_size = 2
+
+[*.{csproj,props,targets}]
+indent_size = 2
+
+[*.cs]
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:warning
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+
+# Kutuphane kodunda ConfigureAwait(false) zorunlu (dokuman Bolum 6)
+dotnet_diagnostic.CA2007.severity = error
+
+# XML dokumantasyonu eksik public uye
+dotnet_diagnostic.CS1591.severity = warning
+
+[tests/**/*.cs]
+# Test kodunda ConfigureAwait gerekmez
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CS1591.severity = none
+
+[examples/**/*.cs]
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CS1591.severity = none
