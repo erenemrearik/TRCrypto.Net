@@ -26,6 +26,18 @@ public class RestRequestTests
         await validator.ValidateAsync(
             c => c.SpotApi.ExchangeData.GetExchangeInfoAsync(),
             "GetExchangeInfo");
+
+        await validator.ValidateAsync(
+            c => c.SpotApi.ExchangeData.GetTickersAsync(),
+            "GetTicker");
+
+        await validator.ValidateAsync(
+            c => c.SpotApi.ExchangeData.GetOrderBookAsync("BTCTRY", 3),
+            "GetOrderBook");
+
+        await validator.ValidateAsync(
+            c => c.SpotApi.ExchangeData.GetTradesAsync("BTCTRY", 2),
+            "GetTrades");
     }
 
     // BtcTurk imzali istekleri X-Signature basligi ile isaretler.

@@ -18,7 +18,7 @@ public class EnvelopeErrorTests
             FixtureLoader.Load("exchangeinfo-error.json"), BtcTurkJsonOptions.Default)!;
 
         Assert.False(response.Success);
-        Assert.Equal(1000, response.Code);
+        Assert.Equal("1000", response.Code);
         Assert.Equal("SYSTEM_ERROR", response.Message);
         Assert.Null(response.Data);
     }
@@ -35,7 +35,24 @@ public class EnvelopeErrorTests
 
         // Bilinmeyen kod yutulmaz; consumer'a oldugu gibi tasinir.
         Assert.False(response.Success);
-        Assert.Equal(99999, response.Code);
+        Assert.Equal("99999", response.Code);
         Assert.Equal("BRAND_NEW_ERROR", response.Message);
+    }
+    [Fact]
+    public void Durum_kodu_hem_sayi_hem_metin_olarak_gelebilir()
+    {
+        // BtcTurk bu alani uclar arasinda tutarsiz tiplerde dondurur:
+        // cogu uc sayi verirken emir defteri ucu "SUCCESS" gibi bir metin verir.
+        // Tek bir tipe baglanmak emir defteri cagrilarini kirar.
+        const string sayiKodu = """{"success":true,"message":null,"code":0,"data":null}""";
+        const string metinKodu = """{"success":true,"message":null,"code":"SUCCESS","data":null}""";
+
+        var sayi = JsonSerializer.Deserialize<BtcTurkResponse<BtcTurkExchangeInfo>>(
+            sayiKodu, BtcTurkJsonOptions.Default)!;
+        var metin = JsonSerializer.Deserialize<BtcTurkResponse<BtcTurkExchangeInfo>>(
+            metinKodu, BtcTurkJsonOptions.Default)!;
+
+        Assert.Equal("0", sayi.Code);
+        Assert.Equal("SUCCESS", metin.Code);
     }
 }

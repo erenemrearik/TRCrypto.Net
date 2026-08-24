@@ -22,7 +22,7 @@ public class ExchangeInfoDeserializationTests
         var response = Parse("exchangeinfo.json");
 
         Assert.True(response.Success);
-        Assert.Equal(0, response.Code);
+        Assert.Equal("0", response.Code);
         Assert.NotNull(response.Data);
 
         // Not: BtcTurk basarili yanitlarda "message" alanini bos string olarak dondurur,

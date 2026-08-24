@@ -7,6 +7,9 @@ namespace TRCrypto.BtcTurk.Clients.SpotApi;
 /// <inheritdoc />
 internal class BtcTurkRestClientSpotApiExchangeData : IBtcTurkRestClientSpotApiExchangeData
 {
+    /// <summary>Borsanin islem ucunda kabul ettigi en yuksek kayit sayisi.</summary>
+    private const int MaxTradeLimit = 50;
+
     private static readonly RequestDefinitionCache _definitions = new();
     private readonly BtcTurkRestClientSpotApi _baseClient;
 
@@ -19,7 +22,8 @@ internal class BtcTurkRestClientSpotApiExchangeData : IBtcTurkRestClientSpotApiE
     public async Task<HttpResult<BtcTurkExchangeInfo>> GetExchangeInfoAsync(CancellationToken ct = default)
     {
         var request = _definitions.GetOrCreate(
-            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/server/exchangeinfo", BtcTurkExchange.RateLimiter.PublicRest, 1, false);
+            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/server/exchangeinfo",
+            BtcTurkExchange.RateLimiter.PublicRest, 1, false);
 
         return await _baseClient.SendAsync<BtcTurkExchangeInfo>(request, null, ct).ConfigureAwait(false);
     }
@@ -32,5 +36,117 @@ internal class BtcTurkRestClientSpotApiExchangeData : IBtcTurkRestClientSpotApiE
             return HttpResult.Fail<DateTime>(result);
 
         return HttpResult.Ok(result, result.Data.ServerTime);
+    }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<IReadOnlyList<BtcTurkTicker>>> GetTickersAsync(CancellationToken ct = default)
+    {
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/ticker",
+            BtcTurkExchange.RateLimiter.PublicRest, 1, false);
+
+        return await _baseClient.SendAsync<IReadOnlyList<BtcTurkTicker>>(request, null, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<BtcTurkTicker>> GetTickerAsync(string symbol, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            throw new ArgumentException("Sembol bos olamaz.", nameof(symbol));
+
+        var parameters = new Parameters(BtcTurkExchange.ParameterSettings) { { "pairSymbol", symbol } };
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/ticker",
+            BtcTurkExchange.RateLimiter.PublicRest, 1, false);
+
+        var result = await _baseClient
+            .SendAsync<IReadOnlyList<BtcTurkTicker>>(request, parameters, ct)
+            .ConfigureAwait(false);
+
+        if (!result.Success)
+            return HttpResult.Fail<BtcTurkTicker>(result);
+
+        // Uc, tek parite icin bile dizi dondurur; bos dizi bilinmeyen sembol demektir.
+        if (result.Data.Count == 0)
+        {
+            return HttpResult.Fail<BtcTurkTicker>(
+                result,
+                new ServerError(new ErrorInfo(
+                    ErrorType.UnknownSymbol,
+                    false,
+                    $"{symbol} paritesi icin ozet fiyat bilgisi dondurulmedi.")));
+        }
+
+        return HttpResult.Ok(result, result.Data[0]);
+    }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<IReadOnlyList<BtcTurkTicker>>> GetTickersByQuoteAssetAsync(
+        string quoteAsset,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(quoteAsset))
+            throw new ArgumentException("Quote varlik bos olamaz.", nameof(quoteAsset));
+
+        var parameters = new Parameters(BtcTurkExchange.ParameterSettings) { { "symbol", BtcTurkExchange.NormalizeAsset(quoteAsset) } };
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/ticker/currency",
+            BtcTurkExchange.RateLimiter.PublicRest, 1, false);
+
+        return await _baseClient
+            .SendAsync<IReadOnlyList<BtcTurkTicker>>(request, parameters, ct)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<BtcTurkOrderBook>> GetOrderBookAsync(
+        string symbol,
+        int? limit = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            throw new ArgumentException("Sembol bos olamaz.", nameof(symbol));
+
+        if (limit is <= 0)
+            throw new ArgumentOutOfRangeException(nameof(limit), limit, "Kademe sayisi pozitif olmalidir.");
+
+        var parameters = new Parameters(BtcTurkExchange.ParameterSettings) { { "pairSymbol", symbol } };
+        parameters.Add("limit", limit);
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/orderbook",
+            BtcTurkExchange.RateLimiter.PublicRest, 1, false);
+
+        return await _baseClient.SendAsync<BtcTurkOrderBook>(request, parameters, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<IReadOnlyList<BtcTurkTrade>>> GetTradesAsync(
+        string symbol,
+        int? limit = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            throw new ArgumentException("Sembol bos olamaz.", nameof(symbol));
+
+        // Borsa sinirini asan istek reddedilir; aga cikmadan burada yakalanir.
+        if (limit is <= 0 or > MaxTradeLimit)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(limit), limit, $"Islem sayisi 1 ile {MaxTradeLimit} arasinda olmalidir.");
+        }
+
+        var parameters = new Parameters(BtcTurkExchange.ParameterSettings) { { "pairSymbol", symbol } };
+        parameters.Add("last", limit);
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Get, _baseClient.BaseAddress, "/api/v2/trades",
+            BtcTurkExchange.RateLimiter.PublicRest, 1, false);
+
+        return await _baseClient
+            .SendAsync<IReadOnlyList<BtcTurkTrade>>(request, parameters, ct)
+            .ConfigureAwait(false);
     }
 }

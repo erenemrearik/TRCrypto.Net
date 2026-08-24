@@ -1,3 +1,6 @@
+GET
+/api/v2/trades
+false
 {
   "data": [
     {

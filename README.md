@@ -24,14 +24,16 @@ Proje geliştirmenin erken aşamasındadır.
 
 | Paket | Kapsam | Durum |
 |---|---|---|
-| `TRCrypto.BtcTurk` | Public piyasa verisi (REST) | 🚧 Geliştiriliyor |
+| `TRCrypto.BtcTurk` | Public piyasa verisi (REST + SharedApis) | 🚧 Geliştiriliyor |
 | `TRCrypto.BinanceTR` | — | ⏳ Planlandı |
 | `TRCrypto.Paribu` | — | ⏳ Planlandı |
 | `TRCrypto.Bitexen` | — | ⏳ Planlandı |
 | `TRCrypto.Clients` | Toplu paket | ⏳ Planlandı |
 
-**Şu an çalışan:** BtcTurk borsa bilgisi (pariteler, varlıklar, sunucu saati).
-**Henüz yok:** kimlik doğrulama, emir işlemleri, WebSocket, SharedApis.
+**Şu an çalışan:** BtcTurk public piyasa verisi — pariteler, varlıklar, sunucu saati, ticker,
+emir defteri, son işlemler; hem native hem SharedApis üzerinden.
+
+**Henüz yok:** kimlik doğrulama, bakiye, emir işlemleri, WebSocket, OHLC/kline.
 
 ## Hızlı başlangıç
 
@@ -41,14 +43,25 @@ using TRCrypto.BtcTurk.Clients;
 // Piyasa verisi icin kimlik bilgisi gerekmez
 var client = new BtcTurkRestClient();
 
-var result = await client.SpotApi.ExchangeData.GetExchangeInfoAsync();
+var result = await client.SpotApi.ExchangeData.GetTickerAsync("BTCTRY");
 if (!result.Success)
 {
     Console.WriteLine(result.Error);
     return;
 }
 
-Console.WriteLine($"{result.Data.Symbols.Count} parite");
+Console.WriteLine($"BTC/TRY: {result.Data.LastPrice:N0}");
+```
+
+Borsadan bağımsız (shared) kullanım — native sembol formatı hiç görünmez:
+
+```csharp
+using CryptoExchange.Net.SharedApis;
+
+ISpotTickerRestClient tickers = client.SpotApi.SharedClient;
+var symbol = new SharedSymbol(TradingMode.Spot, "BTC", "TRY");
+
+var ticker = await tickers.GetSpotTickerAsync(new GetTickerRequest(symbol));
 ```
 
 İstemci yeniden kullanılabilir ve iş parçacığı güvenlidir — her istek için yenisini oluşturmayın.

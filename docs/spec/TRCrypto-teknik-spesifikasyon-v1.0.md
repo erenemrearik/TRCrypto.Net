@@ -861,3 +861,56 @@ Binance TR (`/open/v1`), Paribu ve Bitexen'in endpoint envanterleri **henüz
 doğrulanmamıştır**. Her biri kendi adapter'ı açılırken ADR-010 uyarınca resmi
 dokümantasyondan doğrulanacak ve `docs/vendor/<borsa>-capabilities.md` altında
 dondurulacaktır.
+
+---
+
+## E.4 İkinci Tur Bulguları (PR-002)
+
+Piyasa verisi uçları eklenirken ortaya çıkan, **yalnızca canlı API ile tespit edilebilen**
+ve resmi dokümantasyonda yer almayan davranışlar:
+
+### D-7 — `code` alanının tipi uçlar arasında tutarsız
+
+| Uç | `code` |
+|---|---|
+| exchangeinfo / ticker / trades | `0` (sayı) |
+| **orderbook** | `"SUCCESS"` (metin) |
+
+Zarf modelinde bu alanı `int` olarak tanımlamak, emir defteri çağrılarını deserialization
+hatasıyla **tamamen kırar**. Alan metin olarak taşınır; sayısal değerler dönüştürülür.
+
+Bu, doküman Bölüm 15.3'ün ("sanitized real response fixture olarak saklanır") neden
+gerekli olduğunun somut kanıtıdır — resmi örnek yanıtlarla çalışılsaydı hata üretime kadar
+fark edilmezdi.
+
+### D-8 — Başarılı yanıtlarda `message` boş string
+
+Dokümantasyon `null` gösterir; canlı API `""` döndürür. Null kontrolü yerine
+`string.IsNullOrEmpty` kullanılmalıdır.
+
+### D-9 — Alan adları uçlar arasında tutarsız
+
+Aynı kavram farklı uçlarda farklı adlandırılır:
+
+| Kavram | ticker | trades |
+|---|---|---|
+| Base varlık | `numeratorSymbol` | `numerator` |
+| Quote varlık | `denominatorSymbol` | `denominator` |
+
+Ayrıca sayısal alanlar ticker'da **sayı**, trades'te **metin** olarak gelir.
+
+### D-10 — Ticker ucu tek parite için de dizi döner
+
+`?pairSymbol=` verildiğinde bile yanıt bir dizidir. Boş dizi, bilinmeyen sembol anlamına
+gelir ve `ErrorType.UnknownSymbol` olarak yüzeye çıkarılır.
+
+### D-11 — Trades yanıtında dokümante edilmemiş `side` alanı
+
+Canlı yanıt `"side": "buy"` / `"sell"` içerir; resmi örnekte yoktur. Shared katmanında
+`SharedOrderSide` eşlemesi için kullanılır.
+
+### D-12 — Emir defteri kademeleri `ISymbolOrderBookEntry` gerektirir
+
+`SharedOrderBook` yapıcısı `ISymbolOrderBookEntry[]` ister. Bu arayüz **değiştirilebilir**
+(`set`) özellikler tanımlar; modelimiz değiştirilemez olduğundan arayüz açıkça uygulanır ve
+`set` erişimcileri `NotSupportedException` fırlatır.
