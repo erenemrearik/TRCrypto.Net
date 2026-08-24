@@ -17,8 +17,26 @@ public static class BtcTurkExchange
     /// <summary>Resmi API dokumantasyonu.</summary>
     public static string[] ApiDocsUrl { get; } = ["https://docs.btcturk.com/"];
 
+    /// <summary>Platform ustverisi.</summary>
+    public static PlatformInfo Metadata { get; } = new(
+        ExchangeName,
+        DisplayName,
+        string.Empty,
+        "https://www.btcturk.com",
+        ["https://docs.btcturk.com/"],
+        PlatformType.CryptoCurrencyExchange,
+        CentralizationType.Centralized,
+        BtcTurkEnvironment.All);
+
     /// <summary>Istek limiti yapilandirmasi.</summary>
     public static BtcTurkRateLimiters RateLimiter { get; set; } = new();
+
+    /// <summary>Istek parametrelerinin nasil serilestirilecegini belirler.</summary>
+    /// <remarks>Ondalik degerler metin olarak gonderilir; boylece hassasiyet kaybi olmaz.</remarks>
+    internal static ParameterSerializationSettings ParameterSettings { get; } = new()
+    {
+        Decimal = DecimalSerialization.String
+    };
 
     /// <summary>
     /// Varlik adi takma adlari.

@@ -34,7 +34,7 @@ internal class BtcTurkRestMessageHandler : JsonRestMessageHandler
             return null;
 
         // Bilinmeyen kodlar da dahil olmak uzere ham kod/mesaj korunur.
-        var code = response.Code.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var code = response.Code ?? "UNKNOWN";
         return new ServerError(code, _errorMapping.GetErrorInfo(code, response.Message));
     }
 

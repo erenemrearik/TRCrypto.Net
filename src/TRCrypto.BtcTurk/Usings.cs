@@ -13,6 +13,7 @@ global using CryptoExchange.Net.Converters.SystemTextJson;
 global using CryptoExchange.Net.Interfaces;
 global using CryptoExchange.Net.Interfaces.Clients;
 global using CryptoExchange.Net.Objects;
+global using CryptoExchange.Net.Objects.Errors;
 global using Microsoft.Extensions.Logging;
 
 global using TRCrypto.BtcTurk.Enums;

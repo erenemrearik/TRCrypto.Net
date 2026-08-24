@@ -29,9 +29,22 @@ Tüm endpoint'ler şu yapıyı döndürür:
 { "success": true, "message": null, "code": 0, "data": { } }
 ```
 
-> ⚠️ **Kritik:** `success` HTTP 200 içinde `false` olabilir. İş mantığı hatası HTTP durum koduna
-> yansımaz. Bu nedenle `success == false` durumu `HttpResult.Success == false` olarak
+> ⚠️ **Kritik 1:** `success` HTTP 200 içinde `false` olabilir. İş mantığı hatası HTTP durum
+> koduna yansımaz. Bu nedenle `success == false` durumu `HttpResult.Success == false` olarak
 > yüzeye çıkarılmalıdır (spesifikasyon Bölüm 10.5).
+>
+> ⚠️ **Kritik 2 — `code` alanının tipi uçlar arasında tutarsızdır:**
+>
+> | Uç | `code` değeri |
+> |---|---|
+> | exchangeinfo / ticker / trades | `0` — **sayı** |
+> | **orderbook** | `"SUCCESS"` — **metin** |
+>
+> Alanı `int` olarak modellemek emir defteri çağrılarını deserialization hatasıyla kırar.
+> Bu davranış resmi dokümantasyonda **geçmez**; canlı API ile tespit edilmiştir.
+> Değer metin olarak taşınır.
+>
+> ⚠️ **Kritik 3:** Başarılı yanıtlarda `message` alanı `null` değil **boş string** döner.
 
 ## Public Endpoint'ler
 
@@ -143,11 +156,49 @@ Panel: **Hesap > API Erişimi**. Key oluştururken IP adresi girişi form'un par
 
 Detaylı rehber: [`docs/credentials/btcturk.md`](../credentials/btcturk.md)
 
+### 2 — Ticker
+
+`GET /api/v2/ticker` (tüm pariteler) · `?pairSymbol=BTCTRY` (tek parite — **yine dizi döner**)
+
+Alanlar: `pair`, `pairNormalized`, `numeratorSymbol`, `denominatorSymbol`, `timestamp` (ms),
+`last`, `high`, `low`, `bid`, `ask`, `open`, `volume`, `average`, `daily`, `dailyPercent`, `order`.
+
+> ⚠️ Sayısal alanlar bu uçta **sayı** olarak gelir (trades ucunda **metin** olarak gelir).
+>
+> ⚠️ Base/quote alan adları bu uçta `numeratorSymbol`/`denominatorSymbol` iken trades ucunda
+> `numerator`/`denominator`'dur. İsimlendirme uçlar arasında tutarlı değildir.
+>
+> ⚠️ Tek parite istendiğinde de **dizi** döner; boş dizi bilinmeyen sembol anlamına gelir.
+
+### 5 — Trades (ek alan)
+
+Canlı yanıt, resmi örnekte bulunmayan bir **`side`** alanı içerir (`"buy"` / `"sell"`).
+
+## İstek Limitleri
+
+Kaynak: `docs.btcturk.com/docs/private-endpoints/rate-limits/` — IP bazlı, 24 Ağu 2026.
+
+| Uç | Limit |
+|---|---|
+| Ticker | 600 / 60 sn |
+| Order book | 180 / 60 sn |
+| OHLC | 120 / 60 sn |
+| Graph API | 600 / 10 dk |
+| Bakiye (private) | 120 / 60 sn |
+| Emir POST/DELETE (private) | 300 / 60 sn + 10 / 1 sn |
+| Emir GET tekil (private) | 900 / 60 sn + 30 / 1 sn |
+| WebSocket bağlantı | 15 / dk (aşımda 60 sn engel) |
+
+Kütüphane şu an en kısıtlayıcı public limiti (180/60 sn) genel tavan olarak uygular;
+uç bazlı ince ayar ilgili uçlar eklendikçe yapılacaktır.
+
 ## Henüz Dondurulmamış Alanlar
 
 Aşağıdakiler ilgili story açılırken resmi dokümandan doğrulanacaktır:
 
 - OHLC / kline endpoint'i (path, parametreler, **saniye** cinsinden timestamp)
+- `GET /api/v2/ticker/currency` yanıt şeması (uygulandı, canlı doğrulaması yapılmadı)
+- Emir defteri `limit` parametresinin üst sınırı (dokümante edilmemiş)
 - Private endpoint'ler: `account-balance`, `open-orders`, `all-orders`, `get-single-order`,
   `submit-order`, `cancel-order`, `user-transactions`
 - Rate limit değerleri (`private-endpoints/rate-limits`)

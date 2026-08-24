@@ -23,4 +23,60 @@ public interface IBtcTurkRestClientSpotApiExchangeData
     /// <param name="ct">Iptal belirteci.</param>
     /// <returns>Sunucu saati (UTC).</returns>
     Task<HttpResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Tum pariteler icin ozet fiyat bilgisini dondurur.
+    /// </summary>
+    /// <remarks><see href="https://docs.btcturk.com/docs/public-endpoints/ticker/" /></remarks>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Ozet fiyat bilgileri.</returns>
+    Task<HttpResult<IReadOnlyList<BtcTurkTicker>>> GetTickersAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Tek bir parite icin ozet fiyat bilgisini dondurur.
+    /// </summary>
+    /// <remarks><see href="https://docs.btcturk.com/docs/public-endpoints/ticker/" /></remarks>
+    /// <param name="symbol">Native sembol adi, ornegin <c>BTCTRY</c>.</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Ozet fiyat bilgisi.</returns>
+    Task<HttpResult<BtcTurkTicker>> GetTickerAsync(string symbol, CancellationToken ct = default);
+
+    /// <summary>
+    /// Belirtilen quote varliga sahip paritelerin ozet fiyat bilgisini dondurur.
+    /// </summary>
+    /// <param name="quoteAsset">Quote varlik, ornegin <c>TRY</c>.</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Ozet fiyat bilgileri.</returns>
+    Task<HttpResult<IReadOnlyList<BtcTurkTicker>>> GetTickersByQuoteAssetAsync(
+        string quoteAsset,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Bir parite icin emir defteri goruntusunu dondurur.
+    /// </summary>
+    /// <remarks><see href="https://docs.btcturk.com/docs/public-endpoints/orderbook/" /></remarks>
+    /// <param name="symbol">Native sembol adi, ornegin <c>BTCTRY</c>.</param>
+    /// <param name="limit">Dondurulecek kademe sayisi; belirtilmezse borsa varsayilani (25) kullanilir.</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Emir defteri.</returns>
+    Task<HttpResult<BtcTurkOrderBook>> GetOrderBookAsync(
+        string symbol,
+        int? limit = null,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Bir parite icin son islemleri dondurur.
+    /// </summary>
+    /// <remarks><see href="https://docs.btcturk.com/docs/public-endpoints/trades/" /></remarks>
+    /// <param name="symbol">Native sembol adi, ornegin <c>BTCTRY</c>.</param>
+    /// <param name="limit">Dondurulecek islem sayisi; en fazla 50 olabilir.</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Son islemler.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="limit"/> 1 ile 50 araliginin disindaysa firlatilir.
+    /// </exception>
+    Task<HttpResult<IReadOnlyList<BtcTurkTrade>>> GetTradesAsync(
+        string symbol,
+        int? limit = null,
+        CancellationToken ct = default);
 }

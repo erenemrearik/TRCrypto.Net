@@ -1,0 +1,28 @@
+GET
+/api/v2/ticker
+false
+{
+  "data": [
+    {
+      "pair": "BTCTRY",
+      "pairNormalized": "BTC_TRY",
+      "timestamp": 1787525058187,
+      "last": 3713440,
+      "high": 3733751,
+      "low": 3617080,
+      "bid": 3712281,
+      "ask": 3715990,
+      "open": 3686279,
+      "volume": 27.81911204,
+      "average": 3688109,
+      "daily": 29711,
+      "dailyPercent": 0.74,
+      "denominatorSymbol": "TRY",
+      "numeratorSymbol": "BTC",
+      "order": 1000
+    }
+  ],
+  "success": true,
+  "message": null,
+  "code": 0
+}
