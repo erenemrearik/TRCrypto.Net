@@ -134,7 +134,7 @@ Kütüphane limitleri kendisi uygular; gerekirse bekler.
 
 **Bu sürümde henüz yoktur.** Yalnızca kimlik doğrulama gerektirmeyen piyasa verisi uçları
 desteklenir. Anahtar alma ve bağlama rehberi:
-[docs/credentials/btcturk.md](https://github.com/TRCryptoNet/TRCrypto.Net/blob/main/docs/credentials/btcturk.md)
+[docs/credentials/btcturk.md](https://github.com/erenemrearik/TRCrypto.Net/blob/main/docs/credentials/btcturk.md)
 
 ## Desteklenen uçlar
 

@@ -1,0 +1,41 @@
+name: Özellik / endpoint isteği
+description: Yeni bir uç, borsa ya da yetenek önerin
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Ne tür bir istek?
+      options:
+        - Mevcut bir borsaya yeni uç
+        - Yeni borsa adaptörü
+        - SharedApis yeteneği
+        - WebSocket desteği
+        - Diğer
+    validations:
+      required: true
+
+  - type: textarea
+    id: need
+    attributes:
+      label: Neye ihtiyacınız var?
+      description: Hangi problemi çözmeye çalışıyorsunuz?
+    validations:
+      required: true
+
+  - type: input
+    id: docs
+    attributes:
+      label: Resmi dokümantasyon bağlantısı
+      description: |
+        Bir uç isteniyorsa bu **zorunludur**. Bu projede endpoint'ler yalnızca resmi
+        dokümantasyondan doğrulanarak yazılır; üçüncü taraf kütüphaneler kontrat kaynağı
+        olarak kullanılmaz.
+      placeholder: "https://docs.btcturk.com/docs/..."
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Katkı
+      options:
+        - label: Bunu kendim uygulamak isterim

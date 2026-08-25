@@ -1,0 +1,124 @@
+name: Release
+
+# Surum etiketi push edildiginde calisir:  git tag v0.1.0 && git push origin v0.1.0
+#
+# NuGet yayini bir GitHub Environment onayina baglidir. Etkinlestirmek icin:
+#   Settings > Environments > "nuget" olustur > Required reviewers ekle
+#   Settings > Secrets > NUGET_API_KEY ekle
+# Onay verilmedigi surece paketler yalnizca is ciktisi olarak uretilir, yayinlanmaz.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Derle, test et ve paketle
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # SourceLink commit bilgisine ihtiyac duyar
+
+      - name: .NET kurulumu
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Surumu etiketten oku
+        id: version
+        run: echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Bagimliliklari yukle
+        run: dotnet restore
+
+      - name: Derle
+        run: dotnet build -c Release --no-restore -p:Version=${{ steps.version.outputs.value }}
+
+      - name: Testleri calistir
+        run: dotnet test -c Release --no-build
+
+      - name: Paketle
+        run: dotnet pack -c Release --no-build -o ./artifacts -p:Version=${{ steps.version.outputs.value }}
+
+      - name: Paket icerigini dogrula
+        run: |
+          echo "Uretilen paketler:"
+          ls -la ./artifacts
+          for pkg in ./artifacts/*.nupkg; do
+            echo "--- $pkg ---"
+            unzip -l "$pkg" | grep -E "lib/|README" || true
+          done
+
+      - name: Paketleri yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-paketleri
+          path: ./artifacts/*.*nupkg
+
+  publish:
+    name: NuGet'e yayinla
+    needs: build
+    runs-on: ubuntu-latest
+    # Onay gerektirir; yapilandirilmadiysa is burada bekler.
+    environment: nuget
+
+    steps:
+      - name: Paketleri indir
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-paketleri
+          path: ./artifacts
+
+      - name: .NET kurulumu
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Yayinla
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "NUGET_API_KEY tanimli degil; yayin atlandi."
+            exit 1
+          fi
+          dotnet nuget push "./artifacts/*.nupkg" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+  github-release:
+    name: GitHub surumu olustur
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Paketleri indir
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-paketleri
+          path: ./artifacts
+
+      - name: Surum notu olustur
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./artifacts/*.*nupkg
+          generate_release_notes: true
+          body: |
+            Degisiklikler icin [CHANGELOG.md](CHANGELOG.md) dosyasina bakin.
+
+            > Bu paket resmi degildir ve borsalarla bir baglantisi yoktur.
