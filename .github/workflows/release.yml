@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0   # SourceLink commit bilgisine ihtiyac duyar
 
       - name: .NET kurulumu
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             8.0.x
@@ -80,7 +80,7 @@ jobs:
           path: ./artifacts
 
       - name: .NET kurulumu
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.0.x"
 
