@@ -8,8 +8,9 @@
 
 ## Tek cümleyle
 
-BtcTurk'ün **public piyasa verisi** uçları çalışıyor (native + borsadan bağımsız yüzey);
-**kimlik doğrulama, emir işlemleri ve WebSocket henüz yok**; diğer üç borsaya başlanmadı.
+BtcTurk'ün **public piyasa verisi, bakiye ve emir uçları** çalışıyor; kimlik doğrulama
+uygulandı. **WebSocket ve emirlerin borsadan bağımsız yüzeyi henüz yok**; diğer üç
+borsaya başlanmadı.
 
 ---
 
@@ -37,8 +38,31 @@ BtcTurk'ün **public piyasa verisi** uçları çalışıyor (native + borsadan b
 | `/api/v2/orderbook` | `GetOrderBookAsync` |
 | `/api/v2/trades` | `GetTradesAsync` |
 
+### M2 — Kimlik doğrulama + private REST ✅
+
+İmzalama zinciri: `Base64(HMAC-SHA256(Base64Decode(secret), apiKey + stamp))`,
+başlıklar `X-PCK` / `X-Stamp` / `X-Signature`. Resmi test vektörü olmadığı için
+deterministik vektörler üretilip testlere sabitlendi.
+
+**Hesap** (`client.SpotApi.Account`):
+
+| Uç | Metod |
+|---|---|
+| `/api/v1/users/balances` | `GetBalancesAsync` |
+
+**Emirler** (`client.SpotApi.Trading`):
+
+| Uç | Metod |
+|---|---|
+| `GET /api/v1/openOrders` | `GetOpenOrdersAsync` |
+| `GET /api/v1/allOrders` | `GetOrdersAsync` |
+| `GET /api/v1/order/{id}` | `GetOrderAsync` |
+| `POST /api/v1/order` | `PlaceOrderAsync` |
+| `DELETE /api/v1/order` | `CancelOrderAsync` |
+
 **Shared yüzey** (`client.SpotApi.SharedClient`):
-`ISpotSymbolRestClient` · `ISpotTickerRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient`
+`ISpotSymbolRestClient` · `ISpotTickerRestClient` · `IOrderBookRestClient` ·
+`IRecentTradeRestClient` · `IBalanceRestClient`
 
 ### Belgeler ✅
 
@@ -47,7 +71,7 @@ BtcTurk'ün **public piyasa verisi** uçları çalışıyor (native + borsadan b
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/vendor/btcturk-capabilities.md` | Resmi kaynaklı endpoint envanteri + istek limitleri |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-12) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-18) |
 
 ---
 
@@ -55,10 +79,11 @@ BtcTurk'ün **public piyasa verisi** uçları çalışıyor (native + borsadan b
 
 | Konu | Neden |
 |---|---|
-| **Kimlik doğrulama (imzalama)** | Planlı olarak M2'ye bırakıldı. `BtcTurkAuthenticationProvider` iskeleti var, `ProcessRequest` bilinçli olarak `NotSupportedException` fırlatıyor |
-| **Bakiye / emir işlemleri** | Kimlik doğrulamaya bağlı |
+| **`ISpotOrderRestClient`** (emirlerin shared yüzeyi) | Arayüz kullanıcı işlem geçmişi uçlarını da zorunlu kılıyor (`GetSpotOrderTradesAsync`, `GetSpotUserTradesAsync`). Kısmen uygulanamaz; önce `users/transactions/trade` ucu gerekiyor |
+| **Kullanıcı işlem geçmişi** | Henüz envanterlenmedi — yukarıdakinin ön koşulu |
 | **WebSocket** | M3 |
 | **OHLC / kline** | Endpoint path'i resmi dokümandan doğrulanamadı; **uydurmaktansa yazılmadı** |
+| **Canlı private doğrulama** | API anahtarı yok. İmzalama sabit test vektörleriyle, uçlar contract testleriyle doğrulandı; gerçek hesaba karşı hiç çalıştırılmadı |
 | **Binance TR · Paribu · Bitexen** | M4–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
@@ -70,7 +95,7 @@ Son çalıştırma (25 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  37/37 geçti
+dotnet test  -c Release   →  74/74 geçti
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
@@ -101,7 +126,7 @@ dotnet run --project examples/TRCrypto.Examples.Console
 
 ## Dokümantasyonda olmayan, canlı API'de bulunan davranışlar
 
-Ayrıntısı `docs/spec/` ekinde D-7…D-12. En önemlisi:
+Ayrıntısı `docs/spec/` ekinde D-7…D-18. En önemlisi:
 
 > **`code` alanının tipi uçlar arasında tutarsız:** çoğu uç `0` (sayı) döndürürken
 > emir defteri `"SUCCESS"` (metin) döndürüyor. `int` olarak modellemek emir defteri
@@ -113,27 +138,34 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 ---
 
-## Sonraki adım: M2 (kimlik doğrulama + private REST)
+## Sonraki adım
 
-**API anahtarı olmadan başlanabilir.** İmzalama zinciri resmi dokümandan doğrulanmıştır:
+**1. Kullanıcı işlem geçmişi + emirlerin shared yüzeyi**
 
-```
-1. mesaj    = apiKey + stamp          (stamp: UTC milisaniye)
-2. anahtar  = Base64Decode(secret)     ← atlanırsa imza sessizce yanlış olur
-3. digest   = HMAC-SHA256(anahtar, mesaj)
-4. X-Signature = Base64Encode(digest)
-```
+`ISpotOrderRestClient` uygulanabilmesi için önce `users/transactions/trade` ucunun
+envanterlenmesi gerekiyor. Arayüz kısmen uygulanamaz — ya tamamı ya hiçbiri.
 
-Başlıklar: `X-PCK` · `X-Stamp` · `X-Signature`
+**2. WebSocket (M3)**
 
-**Sıra:**
-1. `BtcTurkAuthenticationProvider` — sabit test vektörüyle doğrulanır, canlı hesap gerekmez
-2. Vendor freeze: `private-endpoints/*` ve `error-handling/*` sayfaları
-3. Bakiye → açık emirler → emir sorgulama → emir verme/iptal
-4. Shared: `IBalanceRestClient`, `ISpotOrderRestClient`
+Vendor freeze: `websocket-feed/*` sayfaları. Kanal/olay/model yapısı, kimlik doğrulama
+akışı, ve emir iptalinin kesinleştiği **kanal 452**.
 
-**Anahtar geldiğinde gereken minimum:** *Toplam Varlık* + *Hesap* izinleri, *Al-Sat* kapalı,
-**Çekim kapalı**, IP allow-list dolu. Ayrıntı: `docs/credentials/btcturk.md`.
+**3. Sonraki borsa (M4)**
+
+Binance TR. Convention'lar BtcTurk üzerinde oturdu; aynı sıra izlenir:
+vendor freeze → public REST → auth → private REST → shared.
+
+---
+
+## ⚠️ Canlı private doğrulama yapılmadı
+
+Bakiye ve emir uçları **gerçek bir hesaba karşı hiç çalıştırılmadı** — API anahtarı yok.
+Doğrulanan: imzalama zinciri (sabit test vektörü), istek üretimi (contract testleri),
+yanıt ayrıştırma (resmi örneklerden fixture).
+
+Anahtar geldiğinde ilk yapılacak: `GetBalancesAsync` ile okuma testi. Gereken minimum
+izinler: *Toplam Varlık* + *Hesap*, *Al-Sat* kapalı, **Çekim kapalı**, IP allow-list dolu.
+Ayrıntı: `docs/credentials/btcturk.md`.
 
 ---
 
@@ -141,7 +173,7 @@ Başlıklar: `X-PCK` · `X-Stamp` · `X-Signature`
 
 Geliştirme makinesi ile BtcTurk sunucusu arasında tutarlı olarak **~19 saniye** fark ölçüldü.
 `X-Stamp` UTC milisaniye gerektirdiğinden bu, M2'de imzalı isteklerin reddedilmesine yol
-açabilir. M2'ye başlamadan önce NTP ile senkronizasyon önerilir.
+açar. İmzalı uçları gerçek bir hesaba karşı denemeden önce NTP ile senkronize edin.
 
 Kontrol:
 

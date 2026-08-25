@@ -960,3 +960,33 @@ karşılaştırır. Virgül ayırıcılı bakiye alanları bu karşılaştırmad
 **Çözüm:** Bakiye ucunun contract testi `skipResponseValidation: true` ile çalıştırılır —
 istek üretimi ve imzalama doğrulanır. Yanıt eşlemesi ayrı ve daha ayrıntılı bir test
 sınıfında (`BalanceTests`) kapsanır.
+
+### D-16 — Emir iptali eşzamansızdır
+
+`DELETE /api/v1/order` HTTP 200 döndürdüğünde istek yalnızca **alınmıştır**. Resmi
+dokümantasyon iptalin kesinleşmesinin WebSocket kanalı 452 üzerinden duyurulduğunu belirtir.
+
+Başarılı yanıtı "emir iptal edildi" olarak yorumlamak, bir işlem botunda aynı pozisyona
+ikinci kez emir girilmesine yol açabilir. `CancelOrderAsync` dokümantasyonu bu davranışı
+açıkça uyarı olarak taşır; kesinleşme için durum ayrıca sorgulanmalıdır.
+
+Ayrıca bu uçta `code` alanı boş string döner — D-7'deki tip tutarsızlığının ikinci örneği.
+
+### D-17 — Emir alan adları uçlar arasında farklı
+
+| Kavram | open orders | all orders | single order | submit order |
+|---|---|---|---|---|
+| Sembol | `pairsymbol` | `pairsymbol` | `pairSymbol` | `pairSymbol` |
+| Oluşturulma | `time` | `time` | `time` | **`datetime`** |
+| İstemci kimliği | `orderClientId` | `orderClientId` | `orderClientId` | **`newOrderClientId`** |
+
+Büyük/küçük harf farkları ayrıştırmayı etkilemez (eşleme duyarsızdır), ancak
+`time`/`datetime` ve `orderClientId`/`newOrderClientId` gerçek isim farklarıdır ve emir
+oluşturma yanıtı için ayrı bir model gerektirir (`BtcTurkOrderPlacement`).
+
+### D-18 — Emir yöntemi yazımı uçlar arasında farklı
+
+`exchangeinfo` ucu `STOP_MARKET` / `STOP_LIMIT` (alt çizgili, büyük harf) döndürürken emir
+uçları `stopmarket` / `stoplimit` (alt çizgisiz, küçük harf) döndürür. Enum eşlemesi
+büyük/küçük harfe duyarsızdır ama alt çizgi farkını çözemez; bu nedenle her iki biçim de
+`[Map]` içinde tanımlanmıştır. Tek biçim eşleştirilseydi stop emirleri tanınmazdı.

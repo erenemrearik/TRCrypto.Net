@@ -1,0 +1,21 @@
+{
+  "data": {
+    "id": 61912740,
+    "price": "20000.00",
+    "amount": "0.12345678",
+    "quantity": "0.12345678",
+    "stopPrice": "20000",
+    "pairSymbol": "BTCTRY",
+    "pairSymbolNormalized": "BTC_TRY",
+    "type": "sell",
+    "method": "stopmarket",
+    "orderClientId": "BtcTurk API",
+    "time": 1647883449587,
+    "updateTime": 1647883449587,
+    "status": "Untouched",
+    "leftAmount": "0.1234567800000000"
+  },
+  "success": true,
+  "message": null,
+  "code": 0
+}

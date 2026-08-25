@@ -1,4 +1,9 @@
-# BtcTurk — Vendor Capability Freeze
+| 2 | GET | `/api/v1/openOrders?pairSymbol=` | ✅ Uygulandı |
+| 3 | GET | `/api/v1/allOrders` | ✅ Uygulandı |
+| 4 | GET | `/api/v1/order/{orderId}` | ✅ Uygulandı |
+| 5 | POST | `/api/v1/order` | ✅ Uygulandı |
+| 6 | DELETE | `/api/v1/order?id=` | ✅ Uygulandı |
+| 7 | GET | `/api/v1/users/transactions/trade` | ⏳ Henüz envanterlenmedi |# BtcTurk — Vendor Capability Freeze
 
 > **Story:** BTC-001 · **Erişim tarihi:** 24 Ağustos 2026
 > **Kaynak:** https://docs.btcturk.com/ (resmi dokümantasyon)
@@ -251,6 +256,45 @@ Piyasa emirlerinde `price` yok sayılır (%5 tolerans).
 
 > ⚠️ Emir uçları gerçek para hareketi yaratır. ADR-009 uyarınca bu uçlarda otomatik
 > yeniden deneme **yapılmaz**.
+
+### 4 — Cancel Order
+
+`DELETE /api/v1/order?id=123456789` · izin: **Al-Sat**
+
+```json
+{ "success": true, "message": "SUCCESS", "code": "", "data": {} }
+```
+
+> ### ⚠️ Kritik 5 — başarılı yanıt iptalin tamamlandığı anlamına GELMEZ
+>
+> Resmi dokümantasyon: istek alındığında HTTP 200 döner, ancak *"finalization of the
+> cancellation request is sent through WebSocket channel 452"*. Yani kesinleşme WebSocket
+> üzerinden duyurulur.
+>
+> Emrin gerçekten iptal edildiğini varsaymak yerine durumu ayrıca sorgulayın.
+> Bu davranış `CancelOrderAsync` XML dokümantasyonunda da uyarı olarak yer alır.
+>
+> Ayrıca bu uçta `code` alanı **boş string** döner — `int` beklemek burada da kırılır.
+
+### 5 — Get Single Order
+
+`GET /api/v1/order/{orderId}` — emir kimliği **yolda**, sorgu dizisinde değil.
+Emir bulunamazsa HTTP 400 döner.
+
+> ⚠️ Alan adları uçlar arasında tutarsızdır:
+>
+> | Kavram | open orders | all orders | single order | submit order |
+> |---|---|---|---|---|
+> | Sembol | `pairsymbol` | `pairsymbol` | `pairSymbol` | `pairSymbol` |
+> | Normalize ad | — | `pairsymbolnormalized` | `pairSymbolNormalized` | `pairSymbolNormalized` |
+> | Oluşturulma | `time` | `time` | `time` | **`datetime`** |
+> | İstemci kimliği | `orderClientId` | `orderClientId` | `orderClientId` | **`newOrderClientId`** |
+>
+> Büyük/küçük harf farkları ayrıştırmada sorun çıkarmaz; `time`/`datetime` ve
+> `orderClientId`/`newOrderClientId` farkları ise ayrı model gerektirir.
+>
+> ⚠️ Emir yöntemi yazımı da farklıdır: `exchangeinfo` **`STOP_MARKET`** verirken emir
+> uçları **`stopmarket`** veriyor. Enum eşlemesi her iki biçimi de tanımalıdır.
 
 ## Kimlik Doğrulama Test Vektörü
 

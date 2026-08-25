@@ -1,4 +1,12 @@
-# TRCrypto.BtcTurk
+| `/api/v1/users/balances` | `Account.GetBalancesAsync` | `IBalanceRestClient` |
+| `/api/v1/openOrders` | `Trading.GetOpenOrdersAsync` | ⏳ |
+| `/api/v1/allOrders` | `Trading.GetOrdersAsync` | ⏳ |
+| `/api/v1/order/{id}` | `Trading.GetOrderAsync` | ⏳ |
+| `POST /api/v1/order` | `Trading.PlaceOrderAsync` | ⏳ |
+| `DELETE /api/v1/order` | `Trading.CancelOrderAsync` | ⏳ |
+| OHLC / kline | ⏳ | ⏳ |
+| Kullanıcı işlem geçmişi | ⏳ | ⏳ |
+| WebSocket | ⏳ | ⏳ |# TRCrypto.BtcTurk
 
 BtcTurk REST API'si için .NET client kütüphanesi.
 [CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) üzerine kuruludur.
@@ -114,6 +122,36 @@ bunu başarısız sonuca çevirir ve borsanın kodu/mesajını `Error` içinde t
 Geçersiz girdiler ağa çıkılmadan reddedilir (`ArgumentException` /
 `ArgumentOutOfRangeException`) — örneğin 50'den fazla işlem istemek.
 
+## Emir işlemleri
+
+```csharp
+var client = new BtcTurkRestClient(options =>
+    options.ApiCredentials = new BtcTurkCredentials(apiKey, apiSecret));
+
+// Limit emri
+var placed = await client.SpotApi.Trading.PlaceOrderAsync(
+    "BTCTRY", OrderSide.Buy, OrderMethod.Limit, quantity: 0.001m, price: 3_000_000m);
+
+if (placed.Success)
+    Console.WriteLine(placed.Data.Id);
+
+// Acik emirler
+var open = await client.SpotApi.Trading.GetOpenOrdersAsync("BTCTRY");
+
+// Iptal
+await client.SpotApi.Trading.CancelOrderAsync(placed.Data.Id);
+```
+
+> ⚠️ **Emir iptali eşzamansızdır.** Başarılı bir iptal yanıtı isteğin *alındığını* bildirir;
+> kesinleşme WebSocket üzerinden duyurulur. Emrin gerçekten iptal edildiğini varsaymak
+> yerine durumunu ayrıca sorgulayın.
+>
+> ⚠️ Emir oluşturma istekleri zaman aşımında **otomatik olarak yeniden denenmez** — emir
+> borsada oluşmuş olabilir. Önce durumu doğrulayın.
+
+Geçersiz emirler ağa çıkılmadan reddedilir: eksik fiyat, negatif miktar, stop emrinde
+eksik tetikleme fiyatı.
+
 ## Bağımlılık enjeksiyonu
 
 ```csharp
@@ -132,8 +170,7 @@ Kütüphane limitleri kendisi uygular; gerekirse bekler.
 
 ## Kimlik doğrulama
 
-**Bu sürümde henüz yoktur.** Yalnızca kimlik doğrulama gerektirmeyen piyasa verisi uçları
-desteklenir. Anahtar alma ve bağlama rehberi:
+Bakiye ve emir uçları API anahtarı gerektirir. Anahtar alma ve bağlama rehberi:
 [docs/credentials/btcturk.md](https://github.com/erenemrearik/TRCrypto.Net/blob/main/docs/credentials/btcturk.md)
 
 ## Desteklenen uçlar

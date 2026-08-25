@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "message": null,
+  "code": 0,
+  "data": {
+    "asks": [
+      {
+        "id": 9932533,
+        "price": "21000.00",
+        "amount": "0.001",
+        "quantity": "0.001",
+        "pairsymbol": "BTCTRY",
+        "type": "Sell",
+        "method": "Limit",
+        "orderClientId": "test",
+        "time": 1543994632920,
+        "updateTime": 1543994632920,
+        "status": "Untouched"
+      }
+    ],
+    "bids": [
+      {
+        "id": 9932534,
+        "price": "20000.00",
+        "amount": "0.001",
+        "quantity": "0.001",
+        "pairsymbol": "BTCTRY",
+        "type": "Buy",
+        "method": "Limit",
+        "orderClientId": "test",
+        "time": 1543996112263,
+        "updateTime": 1543996112263,
+        "status": "Untouched"
+      }
+    ]
+  }
+}

@@ -30,6 +30,9 @@ internal partial class BtcTurkRestClientSpotApi
     /// <inheritdoc />
     public IBtcTurkRestClientSpotApiAccount Account { get; }
 
+    /// <inheritdoc />
+    public IBtcTurkRestClientSpotApiTrading Trading { get; }
+
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     public IBtcTurkRestClientSpotApiShared SharedClient => this;
 
@@ -38,6 +41,7 @@ internal partial class BtcTurkRestClientSpotApi
     {
         ExchangeData = new BtcTurkRestClientSpotApiExchangeData(this);
         Account = new BtcTurkRestClientSpotApiAccount(this);
+        Trading = new BtcTurkRestClientSpotApiTrading(this);
     }
 
     /// <inheritdoc />
@@ -58,6 +62,19 @@ internal partial class BtcTurkRestClientSpotApi
     /// Zarftaki <c>success</c> kontrolu <see cref="BtcTurkRestMessageHandler"/> icinde yapilir;
     /// buraya yalnizca basarili yanitlar ulasir.
     /// </remarks>
+    /// <summary>Govde tasimayan yanitlar icin zarfi acar.</summary>
+    internal async Task<HttpResult> SendAsync(
+        RequestDefinition definition,
+        Parameters? parameters,
+        CancellationToken cancellationToken,
+        int? weight = null)
+    {
+        var result = await base.SendAsync<BtcTurkResponse<object>>(definition, parameters, cancellationToken, null, weight)
+            .ConfigureAwait(false);
+
+        return result.Success ? HttpResult.Ok(result) : HttpResult.Fail(result);
+    }
+
     internal async Task<HttpResult<T>> SendAsync<T>(
         RequestDefinition definition,
         Parameters? parameters,

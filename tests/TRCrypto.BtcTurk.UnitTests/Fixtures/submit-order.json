@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "message": "OK",
+  "code": 0,
+  "data": {
+    "id": 9932534,
+    "datetime": 1543996112263,
+    "type": "Buy",
+    "method": "Limit",
+    "price": "20000.00",
+    "stopPrice": "20000.00",
+    "quantity": "0.001",
+    "pairSymbol": "BTCTRY",
+    "pairSymbolNormalized": "BTC_TRY",
+    "newOrderClientId": "test"
+  }
+}
