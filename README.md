@@ -82,6 +82,15 @@ bunu başarısız bir sonuca çevirir.
 | BtcTurk endpoint envanteri | [docs/vendor/btcturk-capabilities.md](docs/vendor/btcturk-capabilities.md) |
 | Teknik spesifikasyon | [docs/spec/](docs/spec/) |
 
+### Projeye katkı
+
+| Konu | Dosya |
+|---|---|
+| **Nerede kaldık, sonraki adım** | [docs/DURUM.md](docs/DURUM.md) |
+| Katkı rehberi | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Güvenlik açığı bildirimi | [SECURITY.md](SECURITY.md) |
+| Değişiklik günlüğü | [CHANGELOG.md](CHANGELOG.md) |
+
 ## Geliştirme
 
 ```bash

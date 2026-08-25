@@ -12,7 +12,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>crypto;cryptocurrency;exchange;trading;turkey;turkiye;api;client</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/TRCryptoNet/TRCrypto.Net</RepositoryUrl>
+    <RepositoryUrl>https://github.com/erenemrearik/TRCrypto.Net</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>

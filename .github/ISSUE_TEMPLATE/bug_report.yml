@@ -1,0 +1,70 @@
+name: Hata bildirimi
+description: Bir uç yanlış çalışıyor, yanıt ayrıştırılamıyor ya da beklenmedik bir sonuç dönüyor
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Güvenlik açığı bildirmeyin.** Bunun için
+        [özel güvenlik kanalını](https://github.com/erenemrearik/TRCrypto.Net/security/advisories/new)
+        kullanın.
+
+        🔑 **API anahtarı, secret veya imza yapıştırmayın.** Log paylaşırken maskeleyin.
+
+  - type: dropdown
+    id: exchange
+    attributes:
+      label: Borsa
+      options:
+        - BtcTurk
+        - Binance TR
+        - Paribu
+        - Bitexen
+        - Genel / borsadan bağımsız
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Paket sürümü
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: endpoint
+    attributes:
+      label: Hangi uç / metod?
+      placeholder: "GetOrderBookAsync  ·  /api/v2/orderbook"
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Ne oldu?
+      description: Beklediğiniz ile karşılaştığınız davranış
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Yeniden üretme kodu
+      description: Mümkünse çalıştırılabilir, kısa bir örnek
+      render: csharp
+
+  - type: textarea
+    id: response
+    attributes:
+      label: Borsanın ham yanıtı
+      description: |
+        Varsa API'den dönen ham JSON. Bu, hatanın nedenini bulmakta en çok yardımcı olan
+        bilgidir — özellikle bir alanın tipi dokümantasyondan farklıysa.
+        **Kimlik bilgisi içeren alanları silin.**
+      render: json
+
+  - type: input
+    id: tfm
+    attributes:
+      label: Hedef platform
+      placeholder: "net10.0"

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Güvenlik açığı bildirimi
+    url: https://github.com/erenemrearik/TRCrypto.Net/security/advisories/new
+    about: Güvenlik açıklarını herkese açık issue olarak DEĞİL, buradan bildirin.
+  - name: API anahtarı nasıl alınır?
+    url: https://github.com/erenemrearik/TRCrypto.Net/blob/main/docs/credentials/README.md
+    about: Borsa hesabınızı bağlama ve anahtar güvenliği rehberi.
