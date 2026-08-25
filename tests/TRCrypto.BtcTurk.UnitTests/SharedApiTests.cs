@@ -28,13 +28,21 @@ public class SharedApiTests
     }
 
     [Fact]
-    public void Kimlik_dogrulama_gerektiren_arayuzler_bu_surumde_uygulanmaz()
+    public void Bakiye_shared_arayuzu_uygulanir()
     {
         var shared = CreateClient().SpotApi.SharedClient;
 
-        // Imzalama eklenmeden bakiye/emir arayuzlerini bildirmek yaniltici olurdu.
-        Assert.False(shared is IBalanceRestClient);
+        Assert.IsAssignableFrom<IBalanceRestClient>(shared);
+    }
+
+    [Fact]
+    public void Henuz_uygulanmayan_arayuzler_bildirilmez()
+    {
+        var shared = CreateClient().SpotApi.SharedClient;
+
+        // Uygulanmamis bir arayuzu bildirmek, Discover() ciktisini yaniltici hale getirir.
         Assert.False(shared is ISpotOrderRestClient);
+        Assert.False(shared is IKlineRestClient);
     }
 
     [Fact]

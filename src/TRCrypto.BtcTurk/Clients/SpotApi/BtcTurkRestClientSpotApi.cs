@@ -27,6 +27,9 @@ internal partial class BtcTurkRestClientSpotApi
     /// <inheritdoc />
     public IBtcTurkRestClientSpotApiExchangeData ExchangeData { get; }
 
+    /// <inheritdoc />
+    public IBtcTurkRestClientSpotApiAccount Account { get; }
+
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     public IBtcTurkRestClientSpotApiShared SharedClient => this;
 
@@ -34,6 +37,7 @@ internal partial class BtcTurkRestClientSpotApi
         : base(loggerFactory, BtcTurkExchange.ExchangeName, httpClient, options.Environment.RestBaseAddress, options, options.SpotOptions)
     {
         ExchangeData = new BtcTurkRestClientSpotApiExchangeData(this);
+        Account = new BtcTurkRestClientSpotApiAccount(this);
     }
 
     /// <inheritdoc />

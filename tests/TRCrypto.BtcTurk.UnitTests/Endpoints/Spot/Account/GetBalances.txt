@@ -1,0 +1,32 @@
+GET
+/api/v1/users/balances
+true
+{
+  "data": [
+    {
+      "asset": "TRY",
+      "assetname": "Türk Lirası",
+      "balance": "27223,7283250757643288",
+      "locked": "4874,3628685722294523",
+      "free": "22349,3654565035348765",
+      "orderFund": "4874,3628685722294523",
+      "requestFund": "0",
+      "precision": 2,
+      "timestamp": 1735866257711
+    },
+    {
+      "asset": "BTC",
+      "assetname": "Bitcoin",
+      "balance": "0,00312450",
+      "locked": "0",
+      "free": "0,00312450",
+      "orderFund": "0",
+      "requestFund": "0",
+      "precision": 8,
+      "timestamp": 1735866257711
+    }
+  ],
+  "success": true,
+  "message": null,
+  "code": 0
+}

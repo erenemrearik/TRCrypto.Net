@@ -19,6 +19,8 @@ public class BtcTurkRateLimiters
 {
     internal IRateLimitGate PublicRest { get; private set; }
 
+    internal IRateLimitGate PrivateRest { get; private set; }
+
     /// <summary>Bir istek limitine takildiginda tetiklenir.</summary>
     public event Action<RateLimitEvent>? RateLimitTriggered;
 
@@ -43,7 +45,18 @@ public class BtcTurkRateLimiters
                 TimeSpan.FromSeconds(60),
                 RateLimitWindowType.Sliding));
 
+        // Bakiye ucu icin dokumante edilen en kisitlayici private limit: 120 istek / 60 saniye.
+        PrivateRest = new RateLimitGate("Private Rest")
+            .AddGuard(new RateLimitGuard(
+                RateLimitGuard.PerApiKey,
+                new IGuardFilter[] { new AuthenticatedEndpointFilter(true) },
+                120,
+                TimeSpan.FromSeconds(60),
+                RateLimitWindowType.Sliding));
+
         PublicRest.RateLimitTriggered += x => RateLimitTriggered?.Invoke(x);
+        PrivateRest.RateLimitTriggered += x => RateLimitTriggered?.Invoke(x);
+        PrivateRest.RateLimitUpdated += x => RateLimitUpdated?.Invoke(x);
         PublicRest.RateLimitUpdated += x => RateLimitUpdated?.Invoke(x);
     }
 }

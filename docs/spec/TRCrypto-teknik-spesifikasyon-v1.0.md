@@ -914,3 +914,49 @@ Canlı yanıt `"side": "buy"` / `"sell"` içerir; resmi örnekte yoktur. Shared 
 `SharedOrderBook` yapıcısı `ISymbolOrderBookEntry[]` ister. Bu arayüz **değiştirilebilir**
 (`set`) özellikler tanımlar; modelimiz değiştirilemez olduğundan arayüz açıkça uygulanır ve
 `set` erişimcileri `NotSupportedException` fırlatır.
+
+---
+
+## E.5 Üçüncü Tur Bulguları (M2 — kimlik doğrulama)
+
+### D-13 — Bakiye ucu ondalık ayırıcı olarak virgül kullanır
+
+Resmi dokümantasyondaki bakiye örneği:
+
+```json
+"balance": "27223,7283250757643288",
+"free":    "22349,3654565035348765"
+```
+
+Oysa piyasa verisi ve emir uçları nokta kullanır (`"0.00269390"`, `"20000.00"`) ve
+emir dokümantasyonu ondalık ayırıcı olarak noktayı açıkça şart koşar.
+
+**Etki:** Bakiyeyi `InvariantCulture` ile ayrıştırmak virgülü binlik ayırıcı sayar ve
+tutarı kat kat büyük gösterir. Bir bakiye görüntüleme kütüphanesinde bu sessiz ve
+tehlikeli bir hatadır — istisna fırlatmaz, sadece yanlış sayı üretir.
+
+**Çözüm:** `BtcTurkDecimalConverter` her iki ayırıcıyı da kabul eder. Belirsizlik yoktur:
+BtcTurk binlik ayırıcı kullanmadığından (büyük sayılar `"3708000"` biçimindedir) bir
+virgül her zaman ondalık ayırıcıdır. Doküman Bölüm 7.4'ün "decimal precision kaybı testi"
+gereksinimi bu senaryoyu da kapsayacak biçimde uygulanmıştır.
+
+### D-14 — Kimlik doğrulama için resmi test vektörü yok
+
+Doküman Bölüm 15.2, imzalamanın "resmi sample/test vector ile birebir" doğrulanmasını
+şart koşar. BtcTurk böyle bir vektör yayınlamaz; `authentication/usage` sayfası da kod
+örneği içermez.
+
+**Çözüm:** Dokümante edilen algoritmanın bağımsız bir uygulamasıyla deterministik vektörler
+üretilip birim testlerine sabitlendi. Testlerden biri, Base64 decode adımı atlandığında
+oluşacak *yanlış* imzayı da içerir; böylece zincirin bu adımının gerçekten uygulandığı
+kanıtlanır. Vektörler `docs/vendor/btcturk-capabilities.md` dosyasına da kaydedildi.
+
+### D-15 — `RestRequestValidator` özel converter'lı alanları doğrulayamıyor
+
+CryptoExchange.Net'in contract test yardımcısı, ham JSON metnini model değeriyle birebir
+karşılaştırır. Virgül ayırıcılı bakiye alanları bu karşılaştırmada başarısız olur
+(`"27223,72..."` vs `27223.72...`).
+
+**Çözüm:** Bakiye ucunun contract testi `skipResponseValidation: true` ile çalıştırılır —
+istek üretimi ve imzalama doğrulanır. Yanıt eşlemesi ayrı ve daha ayrıntılı bir test
+sınıfında (`BalanceTests`) kapsanır.

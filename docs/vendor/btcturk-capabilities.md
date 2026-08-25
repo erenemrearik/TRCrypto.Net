@@ -192,6 +192,81 @@ Kaynak: `docs.btcturk.com/docs/private-endpoints/rate-limits/` — IP bazlı, 24
 Kütüphane şu an en kısıtlayıcı public limiti (180/60 sn) genel tavan olarak uygular;
 uç bazlı ince ayar ilgili uçlar eklendikçe yapılacaktır.
 
+## Private Endpointler
+
+Hepsi `X-PCK` + `X-Stamp` + `X-Signature` başlıklarını gerektirir.
+
+| # | Method | Path | Durum |
+|---|---|---|---|
+| 1 | GET | `/api/v1/users/balances` | ✅ Uygulandı |
+| 2 | GET | `/api/v1/openOrders?pairSymbol=` | ⏳ Envanteri çıkarıldı |
+| 3 | POST | `/api/v1/order` | ⏳ Envanteri çıkarıldı |
+
+### 1 — Account Balance
+
+`GET /api/v1/users/balances` · parametresiz · izin: **Toplam Varlık**
+
+Alanlar: `asset`, `assetname`, `balance`, `locked`, `free`, `orderFund`, `requestFund`,
+`precision`, `timestamp` (ms).
+
+> ### ⚠️ Kritik 4 — bu uç ondalık ayırıcı olarak VİRGÜL kullanır
+>
+> ```json
+> "balance": "27223,7283250757643288"
+> "free":    "22349,3654565035348765"
+> ```
+>
+> Piyasa verisi ve emir uçları **nokta** kullanır (`"0.00269390"`). Bakiyeyi
+> `InvariantCulture` ile ayrıştırmak virgülü binlik ayırıcı sayar ve tutarı
+> **kat kat büyük** gösterir — bir bakiye kütüphanesinde kabul edilemez bir hata.
+>
+> Belirsizlik yoktur: BtcTurk binlik ayırıcı kullanmaz (büyük sayılar `"3708000"`
+> biçimindedir), dolayısıyla virgül her zaman ondalık ayırıcıdır.
+> Çözüm: `BtcTurkDecimalConverter` her iki ayırıcıyı da kabul eder.
+
+### 2 — Open Orders
+
+`GET /api/v1/openOrders?pairSymbol=BTCTRY` · izin: **Toplam Varlık**
+
+Yanıt `asks` ve `bids` olarak iki listeye ayrılır. Emir alanları: `id`, `price`, `amount`,
+`quantity`, `stopPrice`, `pairSymbol`, `type`, `method`, `orderClientId`, `updateTime`,
+`status`, `leftAmount`. Ondalıklar **nokta** ayırıcılıdır (`"0.09733687"`).
+
+### 3 — Submit Order
+
+`POST /api/v1/order` · izin: **Al-Sat**
+
+| Parametre | Tip | Zorunlu |
+|---|---|---|
+| `quantity` | number | Evet |
+| `price` | number | Limit emirlerde |
+| `orderMethod` | `limit` · `market` · `stoplimit` · `stopmarket` | Evet |
+| `orderType` | `buy` · `sell` | Evet |
+| `pairSymbol` | string | Evet |
+| `stopPrice` | number | Stop emirlerde |
+| `newOrderClientId` | string | Hayır |
+
+Dokümantasyon ondalık ayırıcı olarak **nokta** kullanılmasını açıkça belirtir.
+Piyasa emirlerinde `price` yok sayılır (%5 tolerans).
+
+> ⚠️ Emir uçları gerçek para hareketi yaratır. ADR-009 uyarınca bu uçlarda otomatik
+> yeniden deneme **yapılmaz**.
+
+## Kimlik Doğrulama Test Vektörü
+
+Resmi dokümantasyon test vektörü yayınlamaz. Algoritmanın bağımsız bir uygulamasıyla
+üretilen ve birim testlerinde kullanılan vektör (kimlik bilgileri **sahtedir**):
+
+| Alan | Değer |
+|---|---|
+| apiKey | `test-public-key` |
+| secret | `dGVzdC1zZWNyZXQta2V5LWZvci11bml0LXRlc3Rz` |
+| stamp | `1735689600000` |
+| **imza** | `7gyFGcOS+qnq46h/rl83VtpaEAsh8Th3Z3lQrF7g2I0=` |
+
+Base64 decode adımı atlanırsa imza `38qSfoys8cvFpd0FBe50RUaqT6Dl3iMO7iyblkzlqnw=` olur —
+sessizce yanlış, ama borsa yalnızca genel bir kimlik doğrulama hatası döndürür.
+
 ## Henüz Dondurulmamış Alanlar
 
 Aşağıdakiler ilgili story açılırken resmi dokümandan doğrulanacaktır:
@@ -199,8 +274,6 @@ Aşağıdakiler ilgili story açılırken resmi dokümandan doğrulanacaktır:
 - OHLC / kline endpoint'i (path, parametreler, **saniye** cinsinden timestamp)
 - `GET /api/v2/ticker/currency` yanıt şeması (uygulandı, canlı doğrulaması yapılmadı)
 - Emir defteri `limit` parametresinin üst sınırı (dokümante edilmemiş)
-- Private endpoint'ler: `account-balance`, `open-orders`, `all-orders`, `get-single-order`,
-  `submit-order`, `cancel-order`, `user-transactions`
 - Rate limit değerleri (`private-endpoints/rate-limits`)
 - Hata kodları (`error-handling/*`)
 - WebSocket protokolü (`websocket-feed/*`) — kanal/olay/model yapısı

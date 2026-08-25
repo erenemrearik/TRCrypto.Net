@@ -145,6 +145,30 @@ internal partial class BtcTurkRestClientSpotApi : IBtcTurkRestClientSpotApiShare
 
     #endregion
 
+    #region Balance client
+
+    GetBalancesOptions IBalanceRestClient.GetBalancesOptions { get; }
+        = new(BtcTurkExchange.ExchangeName, AccountTypeFilter.Spot);
+
+    async Task<HttpResult<SharedBalance[]>> IBalanceRestClient.GetBalancesAsync(
+        GetBalancesRequest request,
+        CancellationToken ct)
+    {
+        var validationError = SharedClient.GetBalancesOptions.ValidateRequest(request, this);
+        if (validationError != null)
+            return HttpResult.Fail<SharedBalance[]>(Exchange, validationError);
+
+        var result = await Account.GetBalancesAsync(ct).ConfigureAwait(false);
+        if (!result.Success)
+            return HttpResult.Fail<SharedBalance[]>(result);
+
+        return HttpResult.Ok(result, result.Data
+            .Select(x => new SharedBalance(TradingMode.Spot, x.Asset, x.Available, x.Total))
+            .ToArray());
+    }
+
+    #endregion
+
     #region Spot Ticker client
 
     GetSpotTickerOptions ISpotTickerRestClient.GetSpotTickerOptions { get; }

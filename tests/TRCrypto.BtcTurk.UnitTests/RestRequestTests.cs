@@ -40,6 +40,36 @@ public class RestRequestTests
             "GetTrades");
     }
 
+    [Fact]
+    public async Task Account_istekleri_imzalanarak_uretilir()
+    {
+        // Gercekci gorunumlu SAHTE kimlik bilgileri; hicbir hesaba ait degildir.
+        var client = new BtcTurkRestClient(options =>
+        {
+            options.RateLimiterEnabled = false;
+            options.ApiCredentials = new BtcTurkCredentials(
+                "FAKE-public-key", "RkFLRS1zZWNyZXQtZm9yLXVuaXQtdGVzdHMtb25seQ==");
+        });
+
+        var validator = new RestRequestValidator<BtcTurkRestClient>(
+            client,
+            "Endpoints/Spot/Account",
+            "https://api.btcturk.com",
+            IsAuthenticated,
+            "data");
+
+        // Ucun kimlik dogrulamali oldugu fixture'da isaretlidir; validator uc imzalanmadiysa
+        // basarisiz olur. Boylece imzalama zincirinin gercekten devreye girdigi dogrulanir.
+        //
+        // Yanit dogrulamasi atlanir: validator ham JSON metnini model degeriyle birebir
+        // karsilastirir ve bu ucun virgul ayiricili ondalik bicimini ("27223,72...") tanimaz.
+        // Yanit eslemesi BalanceTests icinde ayrica ve daha ayrintili dogrulanmaktadir.
+        await validator.ValidateAsync(
+            c => c.SpotApi.Account.GetBalancesAsync(),
+            "GetBalances",
+            skipResponseValidation: true);
+    }
+
     // BtcTurk imzali istekleri X-Signature basligi ile isaretler.
     private static bool IsAuthenticated(IHttpResult result)
         => result.RequestHeaders?.Any(h => h.Key == "X-Signature") == true;

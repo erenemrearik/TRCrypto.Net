@@ -8,6 +8,9 @@ public interface IBtcTurkRestClientSpotApi : IRestApiClient<BtcTurkCredentials>,
     /// <summary>Piyasa verisi uclari.</summary>
     IBtcTurkRestClientSpotApiExchangeData ExchangeData { get; }
 
+    /// <summary>Hesap uclari. Kimlik dogrulama gerektirir.</summary>
+    IBtcTurkRestClientSpotApiAccount Account { get; }
+
     /// <summary>
     /// Borsadan bagimsiz (shared) yuzey. Ayni kodun farkli borsalarla calismasini saglar.
     /// </summary>
