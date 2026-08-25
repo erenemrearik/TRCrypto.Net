@@ -24,16 +24,16 @@ Proje geliştirmenin erken aşamasındadır.
 
 | Paket | Kapsam | Durum |
 |---|---|---|
-| `TRCrypto.BtcTurk` | Public piyasa verisi (REST + SharedApis) | 🚧 Geliştiriliyor |
+| `TRCrypto.BtcTurk` | REST + SharedApis (WebSocket hariç) | 🚧 Geliştiriliyor |
 | `TRCrypto.BinanceTR` | — | ⏳ Planlandı |
 | `TRCrypto.Paribu` | — | ⏳ Planlandı |
 | `TRCrypto.Bitexen` | — | ⏳ Planlandı |
 | `TRCrypto.Clients` | Toplu paket | ⏳ Planlandı |
 
-**Şu an çalışan:** BtcTurk public piyasa verisi — pariteler, varlıklar, sunucu saati, ticker,
-emir defteri, son işlemler; hem native hem SharedApis üzerinden.
+**Şu an çalışan:** BtcTurk REST yüzeyinin tamamı — piyasa verisi, mum verisi, bakiye,
+emir işlemleri ve işlem geçmişi; hem native hem SharedApis üzerinden.
 
-**Henüz yok:** kimlik doğrulama, bakiye, emir işlemleri, WebSocket, OHLC/kline.
+**Henüz yok:** WebSocket ve diğer borsalar.
 
 ## Hızlı başlangıç
 

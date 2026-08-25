@@ -1,4 +1,5 @@
 using CryptoExchange.Net.Objects;
+using TRCrypto.BtcTurk.Enums;
 using TRCrypto.BtcTurk.Objects.Models;
 
 namespace TRCrypto.BtcTurk.Interfaces.Clients.SpotApi;
@@ -78,5 +79,29 @@ public interface IBtcTurkRestClientSpotApiExchangeData
     Task<HttpResult<IReadOnlyList<BtcTurkTrade>>> GetTradesAsync(
         string symbol,
         int? limit = null,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Bir parite icin mum (OHLC) verisi dondurur.
+    /// </summary>
+    /// <remarks>
+    /// <para><see href="https://docs.btcturk.com/docs/public-endpoints/get-kline-data/" /></para>
+    /// <para>
+    /// Bu uc ayri bir host uzerinde calisir ve diger uclarin standart yanit zarfini
+    /// kullanmaz; ayrica zaman damgalarini saniye cinsinden dondurur.
+    /// </para>
+    /// </remarks>
+    /// <param name="symbol">Native sembol adi, ornegin <c>BTCTRY</c>.</param>
+    /// <param name="interval">Mum araligi.</param>
+    /// <param name="startTime">Baslangic zamani.</param>
+    /// <param name="endTime">Bitis zamani.</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Zaman sirasini koruyan mum listesi.</returns>
+    /// <exception cref="ArgumentException">Sembol bos ise firlatilir.</exception>
+    Task<HttpResult<IReadOnlyList<BtcTurkKline>>> GetKlinesAsync(
+        string symbol,
+        KlineInterval interval,
+        DateTime? startTime = null,
+        DateTime? endTime = null,
         CancellationToken ct = default);
 }

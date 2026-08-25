@@ -12,11 +12,19 @@ public class BtcTurkEnvironment : TradeEnvironment
     /// <summary>WebSocket taban adresi.</summary>
     public string SocketBaseAddress { get; }
 
-    internal BtcTurkEnvironment(string name, string restBaseAddress, string socketBaseAddress)
+    /// <summary>Grafik (kline) API taban adresi.</summary>
+    public string GraphBaseAddress { get; }
+
+    internal BtcTurkEnvironment(
+        string name,
+        string restBaseAddress,
+        string socketBaseAddress,
+        string graphBaseAddress)
         : base(name)
     {
         RestBaseAddress = restBaseAddress;
         SocketBaseAddress = socketBaseAddress;
+        GraphBaseAddress = graphBaseAddress;
     }
 
     /// <summary>Bagimlilik enjeksiyonu icin kurucu; ozel ortam icin <see cref="CreateCustom"/> kullanin.</summary>
@@ -30,7 +38,8 @@ public class BtcTurkEnvironment : TradeEnvironment
     public static BtcTurkEnvironment Live { get; } = new(
         TradeEnvironmentNames.Live,
         BtcTurkApiAddresses.Default.RestClientAddress,
-        BtcTurkApiAddresses.Default.SocketClientAddress);
+        BtcTurkApiAddresses.Default.SocketClientAddress,
+        BtcTurkApiAddresses.Default.GraphClientAddress);
 
     /// <summary>Tanimli ortam adlari.</summary>
     public static string[] All => [Live.Name];
@@ -51,7 +60,18 @@ public class BtcTurkEnvironment : TradeEnvironment
     /// <param name="name">Ortam adi.</param>
     /// <param name="restAddress">REST taban adresi.</param>
     /// <param name="socketAddress">WebSocket taban adresi.</param>
+    /// <param name="graphAddress">
+    /// Grafik (kline) API taban adresi. Belirtilmezse canli ortamin adresi kullanilir.
+    /// </param>
     /// <returns>Olusturulan ortam.</returns>
-    public static BtcTurkEnvironment CreateCustom(string name, string restAddress, string socketAddress)
-        => new(name, restAddress, socketAddress);
+    public static BtcTurkEnvironment CreateCustom(
+        string name,
+        string restAddress,
+        string socketAddress,
+        string? graphAddress = null)
+        => new(
+            name,
+            restAddress,
+            socketAddress,
+            graphAddress ?? BtcTurkApiAddresses.Default.GraphClientAddress);
 }

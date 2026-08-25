@@ -93,4 +93,18 @@ internal partial class BtcTurkRestClientSpotApi
     /// <inheritdoc />
     protected override Task<HttpResult<DateTime>> GetServerTimestampAsync()
         => ExchangeData.GetServerTimeAsync();
+
+    /// <summary>Grafik (kline) API taban adresi.</summary>
+    internal string GraphBaseAddress => ClientOptions.Environment.GraphBaseAddress;
+
+    /// <summary>
+    /// Standart zarfi tasimayan uclar icin yaniti dogrudan okur.
+    /// </summary>
+    /// <remarks>Kline ucu ayri bir host uzerinde calisir ve zarf kullanmaz.</remarks>
+    internal Task<HttpResult<T>> SendRawAsync<T>(
+        RequestDefinition definition,
+        Parameters? parameters,
+        CancellationToken cancellationToken,
+        int? weight = null)
+        => base.SendAsync<T>(definition, parameters, cancellationToken, null, weight);
 }

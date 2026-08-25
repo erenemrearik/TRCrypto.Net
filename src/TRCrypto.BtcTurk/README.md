@@ -1,11 +1,11 @@
 | `/api/v1/users/balances` | `Account.GetBalancesAsync` | `IBalanceRestClient` |
-| `/api/v1/openOrders` | `Trading.GetOpenOrdersAsync` | ⏳ |
-| `/api/v1/allOrders` | `Trading.GetOrdersAsync` | ⏳ |
-| `/api/v1/order/{id}` | `Trading.GetOrderAsync` | ⏳ |
-| `POST /api/v1/order` | `Trading.PlaceOrderAsync` | ⏳ |
-| `DELETE /api/v1/order` | `Trading.CancelOrderAsync` | ⏳ |
-| OHLC / kline | ⏳ | ⏳ |
-| Kullanıcı işlem geçmişi | ⏳ | ⏳ |
+| `/api/v1/openOrders` | `Trading.GetOpenOrdersAsync` | `ISpotOrderRestClient` |
+| `/api/v1/allOrders` | `Trading.GetOrdersAsync` | `ISpotOrderRestClient` |
+| `/api/v1/order/{id}` | `Trading.GetOrderAsync` | `ISpotOrderRestClient` |
+| `POST /api/v1/order` | `Trading.PlaceOrderAsync` | `ISpotOrderRestClient` |
+| `DELETE /api/v1/order` | `Trading.CancelOrderAsync` | `ISpotOrderRestClient` |
+| Kline (graph-api) | `ExchangeData.GetKlinesAsync` | `IKlineRestClient` |
+| `users/transactions/trade` | `Account.GetUserTradesAsync` | `ISpotOrderRestClient` |
 | WebSocket | ⏳ | ⏳ |# TRCrypto.BtcTurk
 
 BtcTurk REST API'si için .NET client kütüphanesi.
@@ -73,7 +73,8 @@ if (result.Success)
 ```
 
 Uygulanan arayüzler: `ISpotSymbolRestClient` · `ISpotTickerRestClient` ·
-`IOrderBookRestClient` · `IRecentTradeRestClient`
+`IOrderBookRestClient` · `IRecentTradeRestClient` · `IKlineRestClient` ·
+`IBalanceRestClient` · `ISpotOrderRestClient`
 
 Bir borsanın hangi yetenekleri desteklediğini çalışma anında öğrenmek için:
 

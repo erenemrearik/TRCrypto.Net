@@ -149,4 +149,57 @@ internal class BtcTurkRestClientSpotApiExchangeData : IBtcTurkRestClientSpotApiE
             .SendAsync<IReadOnlyList<BtcTurkTrade>>(request, parameters, ct)
             .ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<IReadOnlyList<BtcTurkKline>>> GetKlinesAsync(
+        string symbol,
+        KlineInterval interval,
+        DateTime? startTime = null,
+        DateTime? endTime = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            throw new ArgumentException("Sembol bos olamaz.", nameof(symbol));
+
+        // Bu uc saniye cinsinden zaman damgasi bekler; diger uclar milisaniye kullanir.
+        var from = startTime ?? DateTime.UtcNow.AddDays(-1);
+        var to = endTime ?? DateTime.UtcNow;
+
+        var parameters = new Parameters(BtcTurkExchange.ParameterSettings)
+        {
+            { "symbol", symbol },
+            { "resolution", ToResolution(interval) }
+        };
+        parameters.Add("from", from, DateTimeSerialization.SecondsNumber);
+        parameters.Add("to", to, DateTimeSerialization.SecondsNumber);
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Get, _baseClient.GraphBaseAddress, "/v1/klines/history",
+            BtcTurkExchange.RateLimiter.GraphRest, 1, false);
+
+        // Standart zarf tasimadigi icin yanit dogrudan okunur.
+        var result = await _baseClient
+            .SendRawAsync<BtcTurkKlineResponse>(request, parameters, ct)
+            .ConfigureAwait(false);
+
+        if (!result.Success)
+            return HttpResult.Fail<IReadOnlyList<BtcTurkKline>>(result);
+
+        return HttpResult.Ok<IReadOnlyList<BtcTurkKline>>(result, result.Data.ToKlines());
+    }
+
+    /// <summary>
+    /// Mum araligini borsanin bekledigi <c>resolution</c> degerine cevirir.
+    /// </summary>
+    /// <remarks>
+    /// Gunluk ve daha uzun araliklar borsa tarafindan harf koduyla ifade edilir;
+    /// daha kisa araliklar dakika sayisidir.
+    /// </remarks>
+    private static string ToResolution(KlineInterval interval)
+        => interval switch
+        {
+            KlineInterval.OneDay => "1D",
+            KlineInterval.OneWeek => "1W",
+            _ => ((int)interval / 60).ToString(System.Globalization.CultureInfo.InvariantCulture)
+        };
 }

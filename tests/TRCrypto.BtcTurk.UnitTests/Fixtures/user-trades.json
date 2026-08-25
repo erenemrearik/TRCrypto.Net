@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "message": "SUCCESS",
+  "code": 0,
+  "data": [
+    {
+      "id": 1181163798924649598,
+      "timestamp": 1663848223334,
+      "amount": "-0.3384",
+      "preciseAmount": -0.3384081100000000,
+      "fee": "-0.06297817",
+      "tax": "-0.01133607",
+      "price": "122.00",
+      "numeratorSymbol": "ETHW",
+      "denominatorSymbol": "TRY",
+      "orderType": "sell",
+      "orderId": 10938696222,
+      "orderClientId": null
+    }
+  ]
+}

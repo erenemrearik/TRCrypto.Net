@@ -1,6 +1,6 @@
 # Proje Durumu — Nerede Kaldık?
 
-> **Son güncelleme:** 25 Ağustos 2026
+> **Son güncelleme:** 26 Ağustos 2026
 > Bu dosya, projeye ara verip döndüğünüzde ya da yeni biri katıldığında okunacak
 > tek sayfalık özettir. Ayrıntı için ilgili belgelere bakın.
 
@@ -8,9 +8,9 @@
 
 ## Tek cümleyle
 
-BtcTurk'ün **public piyasa verisi, bakiye ve emir uçları** çalışıyor; kimlik doğrulama
-uygulandı. **WebSocket ve emirlerin borsadan bağımsız yüzeyi henüz yok**; diğer üç
-borsaya başlanmadı.
+BtcTurk'ün **REST yüzeyi tamamlandı** — piyasa verisi, mum verisi, bakiye, emir
+işlemleri ve işlem geçmişi; hepsi hem native hem borsadan bağımsız yüzeyde.
+**WebSocket henüz yok**; diğer üç borsaya başlanmadı.
 
 ---
 
@@ -49,6 +49,7 @@ deterministik vektörler üretilip testlere sabitlendi.
 | Uç | Metod |
 |---|---|
 | `/api/v1/users/balances` | `GetBalancesAsync` |
+| `/api/v1/users/transactions/trade` | `GetUserTradesAsync` |
 
 **Emirler** (`client.SpotApi.Trading`):
 
@@ -60,9 +61,22 @@ deterministik vektörler üretilip testlere sabitlendi.
 | `POST /api/v1/order` | `PlaceOrderAsync` |
 | `DELETE /api/v1/order` | `CancelOrderAsync` |
 
-**Shared yüzey** (`client.SpotApi.SharedClient`):
+### Kline — ayrı host ✅
+
+`GET graph-api.btcturk.com/v1/klines/history` → `ExchangeData.GetKlinesAsync`
+
+Bu uç **ayrı bir host** kullanır, **standart zarfı taşımaz** ve zaman damgalarını
+**saniye** cinsinden döndürür. Ayrıntı: [vendor/btcturk-kline-and-trades.md](vendor/btcturk-kline-and-trades.md)
+
+### Shared yüzey ✅
+
+`client.SpotApi.SharedClient` şu arayüzleri uygular:
+
 `ISpotSymbolRestClient` · `ISpotTickerRestClient` · `IOrderBookRestClient` ·
-`IRecentTradeRestClient` · `IBalanceRestClient`
+`IRecentTradeRestClient` · `IKlineRestClient` · `IBalanceRestClient` ·
+`ISpotOrderRestClient`
+
+Yani BtcTurk artık borsadan bağımsız kodun tüm ortak REST işlemlerini destekliyor.
 
 ### Belgeler ✅
 
@@ -70,8 +84,8 @@ deterministik vektörler üretilip testlere sabitlendi.
 |---|---|
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
-| `docs/vendor/btcturk-capabilities.md` | Resmi kaynaklı endpoint envanteri + istek limitleri |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-18) |
+| `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-22) |
 
 ---
 
@@ -79,10 +93,8 @@ deterministik vektörler üretilip testlere sabitlendi.
 
 | Konu | Neden |
 |---|---|
-| **`ISpotOrderRestClient`** (emirlerin shared yüzeyi) | Arayüz kullanıcı işlem geçmişi uçlarını da zorunlu kılıyor (`GetSpotOrderTradesAsync`, `GetSpotUserTradesAsync`). Kısmen uygulanamaz; önce `users/transactions/trade` ucu gerekiyor |
-| **Kullanıcı işlem geçmişi** | Henüz envanterlenmedi — yukarıdakinin ön koşulu |
-| **WebSocket** | M3 |
-| **OHLC / kline** | Endpoint path'i resmi dokümandan doğrulanamadı; **uydurmaktansa yazılmadı** |
+| **WebSocket** | M3 — sıradaki iş |
+| **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Canlı private doğrulama** | API anahtarı yok. İmzalama sabit test vektörleriyle, uçlar contract testleriyle doğrulandı; gerçek hesaba karşı hiç çalıştırılmadı |
 | **Binance TR · Paribu · Bitexen** | M4–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
@@ -95,7 +107,7 @@ Son çalıştırma (25 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  74/74 geçti
+dotnet test  -c Release   →  87/87 geçti
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
@@ -126,7 +138,7 @@ dotnet run --project examples/TRCrypto.Examples.Console
 
 ## Dokümantasyonda olmayan, canlı API'de bulunan davranışlar
 
-Ayrıntısı `docs/spec/` ekinde D-7…D-18. En önemlisi:
+Ayrıntısı `docs/spec/` ekinde D-7…D-22. En önemlisi:
 
 > **`code` alanının tipi uçlar arasında tutarsız:** çoğu uç `0` (sayı) döndürürken
 > emir defteri `"SUCCESS"` (metin) döndürüyor. `int` olarak modellemek emir defteri
@@ -140,20 +152,21 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 ## Sonraki adım
 
-**1. Kullanıcı işlem geçmişi + emirlerin shared yüzeyi**
-
-`ISpotOrderRestClient` uygulanabilmesi için önce `users/transactions/trade` ucunun
-envanterlenmesi gerekiyor. Arayüz kısmen uygulanamaz — ya tamamı ya hiçbiri.
-
-**2. WebSocket (M3)**
+**1. WebSocket (M3)**
 
 Vendor freeze: `websocket-feed/*` sayfaları. Kanal/olay/model yapısı, kimlik doğrulama
-akışı, ve emir iptalinin kesinleştiği **kanal 452**.
+akışı, yeniden bağlanma ve abonelik yönetimi. Emir iptalinin kesinleştiği **kanal 452**
+da burada; iptalin eşzamansız olduğu sorunu ancak WebSocket ile tam çözülür.
 
-**3. Sonraki borsa (M4)**
+**2. Sonraki borsa (M4)**
 
 Binance TR. Convention'lar BtcTurk üzerinde oturdu; aynı sıra izlenir:
 vendor freeze → public REST → auth → private REST → shared.
+
+**3. Ön sürüm**
+
+BtcTurk REST tamamlandığına göre NuGet v0.1.0-preview yayınlanabilir. Workflow hazır;
+`NUGET_API_KEY` ve environment onayı eksik.
 
 ---
 

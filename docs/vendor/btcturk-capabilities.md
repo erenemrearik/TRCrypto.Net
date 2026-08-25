@@ -3,7 +3,7 @@
 | 4 | GET | `/api/v1/order/{orderId}` | ✅ Uygulandı |
 | 5 | POST | `/api/v1/order` | ✅ Uygulandı |
 | 6 | DELETE | `/api/v1/order?id=` | ✅ Uygulandı |
-| 7 | GET | `/api/v1/users/transactions/trade` | ⏳ Henüz envanterlenmedi |# BtcTurk — Vendor Capability Freeze
+| 7 | GET | `/api/v1/users/transactions/trade` | ✅ Envanteri çıkarıldı |# BtcTurk — Vendor Capability Freeze
 
 > **Story:** BTC-001 · **Erişim tarihi:** 24 Ağustos 2026
 > **Kaynak:** https://docs.btcturk.com/ (resmi dokümantasyon)
@@ -311,11 +311,11 @@ Resmi dokümantasyon test vektörü yayınlamaz. Algoritmanın bağımsız bir u
 Base64 decode adımı atlanırsa imza `38qSfoys8cvFpd0FBe50RUaqT6Dl3iMO7iyblkzlqnw=` olur —
 sessizce yanlış, ama borsa yalnızca genel bir kimlik doğrulama hatası döndürür.
 
+
 ## Henüz Dondurulmamış Alanlar
 
 Aşağıdakiler ilgili story açılırken resmi dokümandan doğrulanacaktır:
 
-- OHLC / kline endpoint'i (path, parametreler, **saniye** cinsinden timestamp)
 - `GET /api/v2/ticker/currency` yanıt şeması (uygulandı, canlı doğrulaması yapılmadı)
 - Emir defteri `limit` parametresinin üst sınırı (dokümante edilmemiş)
 - Rate limit değerleri (`private-endpoints/rate-limits`)

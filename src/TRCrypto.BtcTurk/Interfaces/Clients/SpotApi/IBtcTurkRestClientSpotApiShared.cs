@@ -10,13 +10,15 @@ namespace TRCrypto.BtcTurk.Interfaces.Clients.SpotApi;
 /// ihtiyac duyuldugunda native API kullanilmalidir.
 /// <para>
 /// Piyasa verisi arayuzleri kimlik dogrulama gerektirmez. Bakiye arayuzu icin API
-/// anahtarinizda <c>Toplam Varlik</c> izni acik olmalidir. Emir arayuzleri henuz uygulanmadi.
+/// anahtarinizda <c>Toplam Varlik</c> izni acik olmalidir. Emir arayuzleri icin <c>Al-Sat</c> izni gerekir.
 /// </para>
 /// </remarks>
 public interface IBtcTurkRestClientSpotApiShared :
     ISharedClient,
     ISpotSymbolRestClient,
     IBalanceRestClient,
+    ISpotOrderRestClient,
+    IKlineRestClient,
     ISpotTickerRestClient,
     IOrderBookRestClient,
     IRecentTradeRestClient

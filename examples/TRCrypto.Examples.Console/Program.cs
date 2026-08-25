@@ -1,6 +1,7 @@
 using CryptoExchange.Net.SharedApis;
 using TRCrypto.BtcTurk;
 using TRCrypto.BtcTurk.Clients;
+using TRCrypto.BtcTurk.Enums;
 
 // TRCrypto.BtcTurk - canli public API dogrulamasi.
 // Bu ornek kimlik bilgisi GEREKTIRMEZ; yalnizca herkese acik piyasa verisi kullanir.
@@ -133,6 +134,47 @@ catch (ArgumentOutOfRangeException)
 {
     Console.WriteLine($"  Sinir asimi        : aga cikmadan reddedildi");
 }
+
+// ─── 8) Kline: ayri host, saniye cinsinden zaman damgasi ─────────────────────
+Console.WriteLine($"\n[8] Kline (graph-api.btcturk.com)");
+
+var klineResult = await client.SpotApi.ExchangeData.GetKlinesAsync(
+    native, KlineInterval.OneHour, DateTime.UtcNow.AddHours(-4), DateTime.UtcNow);
+
+if (klineResult.Success)
+{
+    Console.WriteLine($"  Mum sayisi         : {klineResult.Data.Count}");
+    foreach (var k in klineResult.Data.TakeLast(3))
+        Console.WriteLine($"    {k.OpenTime:HH:mm}  A={k.OpenPrice,10:N0}  K={k.ClosePrice,10:N0}  H={k.Volume:N4}");
+}
+else
+{
+    Console.WriteLine($"  Basarisiz: {klineResult.Error}");
+}
+
+// Ayni veri, borsadan bagimsiz cagriyla
+IKlineRestClient klineClient = client.SpotApi.SharedClient;
+var sharedKlines = await klineClient.GetKlinesAsync(
+    new GetKlinesRequest(sharedSymbol, SharedKlineInterval.OneHour,
+        DateTime.UtcNow.AddHours(-4), DateTime.UtcNow));
+
+if (sharedKlines.Success)
+    Console.WriteLine($"  Shared kline       : {sharedKlines.Data.Length} mum");
+
+// ─── 9) Emirlerin shared yuzeyi ──────────────────────────────────────────────
+Console.WriteLine($"\n[9] Emir yuzeyi");
+
+var orderClient = (ISpotOrderRestClient)client.SpotApi.SharedClient;
+Console.WriteLine($"  Emir turleri       : {string.Join(", ", orderClient.SpotSupportedOrderTypes)}");
+
+var tif = orderClient.SpotSupportedTimeInForce.Length == 0
+    ? "desteklenmiyor"
+    : string.Join(", ", orderClient.SpotSupportedTimeInForce);
+Console.WriteLine($"  Time-in-force      : {tif}");
+
+// Kimlik bilgisi olmadan cagri basarisiz olur; istisna firlatilmaz.
+var openOrders = await orderClient.GetOpenSpotOrdersAsync(new GetOpenOrdersRequest(sharedSymbol));
+Console.WriteLine($"  Kimliksiz sorgu    : Success={openOrders.Success} (istisna yok)");
 
 Console.WriteLine("\nTamamlandi.");
 return 0;

@@ -36,13 +36,35 @@ public class SharedApiTests
     }
 
     [Fact]
-    public void Henuz_uygulanmayan_arayuzler_bildirilmez()
+    public void Emir_ve_mum_shared_arayuzleri_uygulanir()
     {
         var shared = CreateClient().SpotApi.SharedClient;
 
-        // Uygulanmamis bir arayuzu bildirmek, Discover() ciktisini yaniltici hale getirir.
-        Assert.False(shared is ISpotOrderRestClient);
-        Assert.False(shared is IKlineRestClient);
+        Assert.IsAssignableFrom<ISpotOrderRestClient>(shared);
+        Assert.IsAssignableFrom<IKlineRestClient>(shared);
+    }
+
+    [Fact]
+    public void Desteklenmeyen_ozellikler_bildirilmez()
+    {
+        var shared = (ISpotOrderRestClient)CreateClient().SpotApi.SharedClient;
+
+        // BtcTurk time-in-force secenegi sunmaz; desteklenmeyen bir ozelligi bildirmek
+        // Discover() ciktisini yaniltici hale getirirdi.
+        Assert.Empty(shared.SpotSupportedTimeInForce);
+
+        // Emir miktari yalnizca base varlik cinsinden verilebilir.
+        Assert.Equal(SharedQuantityType.BaseAsset, shared.SpotSupportedOrderQuantity.BuyLimit);
+    }
+
+    [Fact]
+    public void Vadeli_islem_arayuzleri_uygulanmaz()
+    {
+        var shared = CreateClient().SpotApi.SharedClient;
+
+        // BtcTurk yalnizca spot islem sunar.
+        Assert.False(shared is IFuturesOrderRestClient);
+        Assert.False(shared is IFuturesSymbolRestClient);
     }
 
     [Fact]

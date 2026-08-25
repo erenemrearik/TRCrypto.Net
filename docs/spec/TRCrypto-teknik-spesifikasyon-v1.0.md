@@ -990,3 +990,48 @@ oluşturma yanıtı için ayrı bir model gerektirir (`BtcTurkOrderPlacement`).
 uçları `stopmarket` / `stoplimit` (alt çizgisiz, küçük harf) döndürür. Enum eşlemesi
 büyük/küçük harfe duyarsızdır ama alt çizgi farkını çözemez; bu nedenle her iki biçim de
 `[Map]` içinde tanımlanmıştır. Tek biçim eşleştirilseydi stop emirleri tanınmazdı.
+
+---
+
+## E.6 Dördüncü Tur Bulguları (kline + kullanıcı işlem geçmişi)
+
+### D-19 — Kline ucu ayrı host ve ayrı format kullanır
+
+`GET https://graph-api.btcturk.com/v1/klines/history` — `api.btcturk.com` değil.
+
+Bu uç, projedeki ortak kalıbın **iki** varsayımını birden kırar:
+
+1. **Tek taban adres yeterli değil.** Ortama ayrı bir `GraphBaseAddress` eklendi.
+2. **Standart zarf yok.** `success`/`message`/`code`/`data` alanları bulunmaz; zarfı açan
+   `SendAsync<T>` bu uçta çalışmaz. Ham yanıt için ayrı bir `SendRawAsync<T>` yolu eklendi.
+
+Ayrıca veriler **paralel diziler** halinde gelir (`t`, `o`, `h`, `l`, `c`, `v`) ve zaman
+damgaları **saniye** cinsindendir — diğer tüm uçlar milisaniye kullanır.
+
+Dizi uzunlukları birbirini tutmadığında hangi değerin hangi muma ait olduğu belirsizdir;
+eksik veriyi tahmin etmek yerine `InvalidOperationException` fırlatılır.
+
+Canlı yanıtta, resmi dokümantasyonda geçmeyen bir `s` (durum) alanı bulunur.
+
+### D-20 — Kullanıcı işlem geçmişinde tutarlar işaretlidir
+
+`amount`, `fee` ve `tax` satış işlemlerinde **negatif** gelir; işaret varlığın hesaptan
+çıktığını belirtir. Mutlak değer bekleyen bir hesaplama (toplam hacim, komisyon toplamı)
+işareti yok sayarsa sonuç sessizce yanlış çıkar.
+
+Native modelde işaret korunur. Borsadan bağımsız modele geçerken mutlaka mutlak değere
+çevrilir, çünkü yön zaten `Side` alanında taşınır.
+
+### D-21 — `tax` alanının shared karşılığı yok
+
+BtcTurk her işlem için ayrı bir vergi/kesinti tutarı bildirir. Bu alan Türkiye'ye özgüdür;
+`SharedUserTrade` modelinde yalnızca `Fee` bulunur ve vergi orada temsil edilemez.
+
+Komisyona eklemek toplamı bozar, atmak bilgi kaybettirir. Seçilen yol: native modelde
+korunur, shared yüzeyde yalnızca komisyon aktarılır ve bu sınır belgelenir. Vergi hesabı
+yapan tüketiciler native API kullanmalıdır.
+
+### D-22 — `orderId` filtresi diğer filtrelerle birleştirilemez
+
+İşlem geçmişi ucunda `orderId`, diğer parametrelerle birlikte kullanılamaz. Sessizce yok
+saymak yanlış sonuç döndürürdü; birlikte verildiklerinde `ArgumentException` fırlatılır.
