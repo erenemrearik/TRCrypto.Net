@@ -1,6 +1,6 @@
 # Proje Durumu — Nerede Kaldık?
 
-> **Son güncelleme:** 26 Ağustos 2026
+> **Son güncelleme:** 27 Ağustos 2026
 > Bu dosya, projeye ara verip döndüğünüzde ya da yeni biri katıldığında okunacak
 > tek sayfalık özettir. Ayrıntı için ilgili belgelere bakın.
 
@@ -8,8 +8,9 @@
 
 ## Tek cümleyle
 
-BtcTurk **tamamlandı** — REST, WebSocket ve borsadan bağımsız yüzey. Yalnızca
-kullanıcıya özel socket akışları eksik. Diğer üç borsaya başlanmadı.
+BtcTurk **tamamlandı** (REST + WebSocket + shared); yalnızca kullanıcıya özel socket
+akışları eksik ve bunlar hesapta emir hareketi gerektiriyor.
+**Binance TR başladı** — public piyasa verisi çalışıyor.
 
 ---
 
@@ -92,6 +93,25 @@ Ayrıntı: [vendor/btcturk-websocket.md](vendor/btcturk-websocket.md)
 Mesajlar `[tip, gövde]` dizisi biçimindedir; yönlendirme dizinin ilk elemanına göre
 yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağlanır.
 
+
+### M4 — Binance TR public piyasa verisi ✅
+
+Envanter canlı denemeyle çıkarıldı; dokümantasyon hangi uçların gerçekten public
+olduğunu söylemiyor. Ayrıntı: [vendor/binance-tr-capabilities.md](vendor/binance-tr-capabilities.md)
+
+| Uç | Metod |
+|---|---|
+| `/open/v1/common/time` | `GetServerTimeAsync` |
+| `/open/v1/common/symbols` | `GetSymbolsAsync` |
+| `/open/v1/market/depth` | `GetOrderBookAsync` |
+| `/open/v1/market/agg-trades` | `GetAggregatedTradesAsync` |
+
+BtcTurk'tan üç önemli fark:
+
+1. **Zarf farklı** — `success` alanı yok, başarı `code == 0`; mesaj `msg`; zarfta `timestamp`
+2. **Sembol alt çizgili** — `BTC_TRY` (BtcTurk: `BTCTRY`)
+3. **Ticker anahtarsız alınamıyor** — `/api/v3/*` burada public değil
+
 ### Belgeler ✅
 
 | Dosya | İçerik |
@@ -109,8 +129,10 @@ yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağ
 |---|---|
 | **Kullanıcıya özel socket akışları** | Giriş çalışıyor, ama mesaj gövdeleri (423/441/451/452/453) hesapta **hareket olmadan gelmiyor** ve hiçbir yerde belgelenmemiş. Modelleri yazmak için gerçek emir hareketi gerekiyor |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
-| **Canlı private doğrulama** | API anahtarı yok. İmzalama sabit test vektörleriyle, uçlar contract testleriyle doğrulandı; gerçek hesaba karşı hiç çalıştırılmadı |
-| **Binance TR adaptörü** | Envanteri çıkarıldı (docs/vendor/binance-tr-capabilities.md), kod yazılmadı |
+| **Emir uçlarının canlı doğrulaması** | Gerçek emir vermeyi gerektirir; bilinçli olarak ertelendi. İmzalama ve okuma uçları canlı doğrulandı |
+| **Binance TR: kimlik doğrulama** | İmzalama yazıldı ama canlı doğrulanmadı; bilinçli olarak devre dışı |
+| **Binance TR: WebSocket ve shared yüzey** | Sırada |
+| **Binance TR: ticker** | Borsa anahtarsız ticker sunmuyor (`/api/v3/*` bile anahtar istiyor) |
 | **Paribu · Bitexen** | M5–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
@@ -118,11 +140,11 @@ yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağ
 
 ## Doğrulama durumu
 
-Son çalıştırma (25 Ağu 2026):
+Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  113/113 (birim) + 7 (canli hesap)
+dotnet test  -c Release   →  144/144 (birim) + 7 (canli hesap)
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
@@ -195,7 +217,22 @@ Gerçek bir hesaba karşı doğrulananlar — yalnızca okuma, emir oluşturulma
 | Socket giriş imzası | ✅ `publicKey + nonce` — REST'ten farklı, dört aday denendi |
 
 **Hâlâ doğrulanmayan:** emir oluşturma/iptal uçları ve özel akış mesajları.
-İkincisi için hesapta gerçek emir hareketi gerekiyor (aşağıya bakın).
+
+### Özel akışlar neden bekliyor
+
+Giriş çalışıyor, ama `423` (UserTrade), `441` (OrderMatch), `451`/`452`/`453` (Order*)
+mesajlarının **gövdeleri hiçbir yerde belgelenmemiş** ve bu mesajlar yalnızca hesapta
+emir hareketi olduğunda üretiliyor. Giriş sonrası 45 saniye dinlendi; hiçbiri gelmedi.
+
+Modelleri yazmak için gerçek bir emir vermek gerekirdi. Bu bilinçli olarak ertelendi:
+alan adlarını tahmin etmek, projenin endpoint uydurmama kuralının ihlali olurdu.
+
+Hazır olduğunda iki yol var:
+
+| Yol | Öğrenilenler | Risk |
+|---|---|---|
+| Piyasadan uzak limit emri + iptal | ,  | Emir asla eşleşmez, para el değiştirmez. *Al-Sat* izni gerekir |
+| Gerçek eşleşen emir | + ,  | Gerçek para hareket eder, komisyon ödenir. Ayrı ve düşük bakiyeli hesap şart |
 
 ---
 

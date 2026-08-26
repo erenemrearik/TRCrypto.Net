@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>TRCrypto.BinanceTR</PackageId>
+    <RootNamespace>TRCrypto.BinanceTR</RootNamespace>
+    <Description>Binance TR REST ve WebSocket API'leri icin .NET client kutuphanesi; CryptoExchange.Net uzerine kuruludur. Bu paket resmi degildir ve Binance TR ile bir baglantisi yoktur.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CryptoExchange.Net" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

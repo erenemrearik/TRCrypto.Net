@@ -3,9 +3,11 @@
     <Project Path="examples/TRCrypto.Examples.Console/TRCrypto.Examples.Console.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/TRCrypto.BinanceTR/TRCrypto.BinanceTR.csproj" />
     <Project Path="src/TRCrypto.BtcTurk/TRCrypto.BtcTurk.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/TRCrypto.BinanceTR.UnitTests/TRCrypto.BinanceTR.UnitTests.csproj" />
     <Project Path="tests/TRCrypto.BtcTurk.IntegrationTests/TRCrypto.BtcTurk.IntegrationTests.csproj" />
     <Project Path="tests/TRCrypto.BtcTurk.UnitTests/TRCrypto.BtcTurk.UnitTests.csproj" />
   </Folder>

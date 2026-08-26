@@ -5,7 +5,7 @@
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=CI&logo=github&style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/testler-110%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
+[![Tests](https://img.shields.io/badge/testler-144%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
 
@@ -49,8 +49,9 @@ TRCrypto her borsa için **iki yüzey** sunar:
   <td><img src="https://img.shields.io/badge/geliştiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.BinanceTR</code></td><td>—</td>
-  <td><img src="https://img.shields.io/badge/planlandı-lightgrey?style=flat-square" alt="planlandı"></td>
+  <td><code>TRCrypto.BinanceTR</code></td>
+  <td>Public piyasa verisi (REST)</td>
+  <td><img src="https://img.shields.io/badge/geliştiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.Paribu</code></td><td>—</td>
@@ -69,7 +70,9 @@ TRCrypto her borsa için **iki yüzey** sunar:
 **BtcTurk'te çalışan:** piyasa verisi · mum verisi · bakiye · emir işlemleri · işlem
 geçmişi · gerçek zamanlı akışlar — hepsi hem native hem SharedApis üzerinden.
 
-**Henüz yok:** özel (kullanıcı) socket akışları ve diğer borsalar.
+**Binance TR:** sunucu saati, pariteler, emir defteri ve toplu işlemler — public REST.
+
+**Henüz yok:** BtcTurk özel socket akışları, Binance TR kimlik doğrulama ve WebSocket, Paribu, Bitexen.
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
 
 ---
