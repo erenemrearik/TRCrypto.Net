@@ -1087,3 +1087,60 @@ Resmi dokümantasyon socket giriş imzasının `publicKey + nonce` üzerinden he
 belirtir; REST ise `apiKey + stamp` kullanır. Bu fark canlı bir hesapla doğrulanmadığı
 için kullanıcıya özel akışlar **uygulanmamıştır** — yanlış imza sessizce başarısız olur ve
 hata mesajı nedeni göstermez.
+
+---
+
+## E.8 Canlı Hesap Doğrulaması (26 Ağustos 2026)
+
+Gerçek bir BtcTurk hesabına karşı yapılan ilk doğrulama turu. Yalnızca okuma işlemleri
+yapıldı; emir oluşturulmadı.
+
+### D-13 DÜZELTİLDİ — bakiye ucu nokta kullanıyor, virgül değil
+
+Doküman E.4'te (D-13) resmi dokümantasyonun bakiye örneğine dayanarak "bu uç virgül
+kullanır" denmişti. **Canlı yanıt bunu yalanladı:** ondalıklı alanların tamamı nokta
+ayırıcılıydı, virgüllü tek alan yoktu.
+
+`BtcTurkDecimalConverter` yine de her iki biçimi kabul etmeye devam ediyor. Kaldırmamanın
+gerekçesi: resmi dokümantasyon virgül vaat ediyor, dolayısıyla bazı hesap ya da ortam
+koşullarında virgül dönme ihtimali var ve yanlış yorumlanan bir bakiye kat kat büyük
+görünür. Savunmacı davranmanın maliyeti yok.
+
+**Asıl ders:** bu, dokümantasyona güvenip canlı doğrulamayı atlamanın ters yönde de
+tehlikeli olduğunu gösteriyor. D-7'de resmi örnek eksikti; burada resmi örnek fazladan
+bir şey vaat ediyordu.
+
+### D-29 — REST imzalama gerçek hesapta doğrulandı
+
+`Base64Decode(secret)` → `HMAC-SHA256(apiKey + stamp)` → `Base64` zinciri kabul edildi.
+Bakiye ucu başarıyla çağrıldı, yanıt ayrıştırıldı ve her varlık için
+`toplam = serbest + kilitli` eşitliği doğrulandı — bu eşitlik aynı zamanda ondalık
+çözümünün canlı kanıtıdır.
+
+### D-30 — Socket giriş imzası REST'ten GERÇEKTEN farklı
+
+E.7'de (D-28) bu fark "doğrulanmadı" olarak işaretlenmişti. Canlı denemeyle kesinleşti:
+
+| | İmzalanan değer |
+|---|---|
+| REST istekleri | `apiKey + stamp` (stamp = UTC milisaniye) |
+| **Socket girişi** | **`publicKey + nonce`** |
+
+Dört aday biçim sırayla denendi; yalnızca `publicKey + nonce` kabul edildi. `nonce`
+zaman damgasından bağımsız bir sayıdır (denemede sabit `3000` kabul edildi).
+
+Yanlış imza yalnızca `Unauthorized - Invalid Signature` döndürür ve hangi varsayımın
+hatalı olduğunu belirtmez; bu yüzden adayları tek tek denemek tek güvenilir yoldu.
+
+### D-31 — Özel akış mesajları hesap hareketi olmadan gelmiyor
+
+Giriş yaptıktan sonra 45 saniye dinlendi. Yalnızca giriş onayı (`114`) ve sürüm mesajı
+(`991`) geldi. `423` (UserTrade), `441` (OrderMatch), `451`/`452`/`453` (Order*)
+kodlarının hiçbiri görülmedi.
+
+Bu beklenen davranıştır: bu mesajlar emir girildiğinde, eşleştiğinde ya da iptal
+edildiğinde üretilir. **Gövdeleri hâlâ bilinmiyor** ve dokümantasyonda da yok.
+
+Sonuç: özel akış modelleri yazılabilmesi için hesapta gerçek bir emir hareketi gerekiyor.
+Emir girme ve iptal (`451`, `452`) piyasadan uzak bir limit emriyle eşleşme olmadan
+gözlenebilir; işlem bildirimleri (`423`, `441`) ise gerçek bir eşleşme gerektirir.

@@ -214,20 +214,19 @@ Hepsi `X-PCK` + `X-Stamp` + `X-Signature` başlıklarını gerektirir.
 Alanlar: `asset`, `assetname`, `balance`, `locked`, `free`, `orderFund`, `requestFund`,
 `precision`, `timestamp` (ms).
 
-> ### ⚠️ Kritik 4 — bu uç ondalık ayırıcı olarak VİRGÜL kullanır
+> ### ⚠️ Kritik 4 — dokümantasyondaki ondalık örneği YANILTICI
 >
-> ```json
-> "balance": "27223,7283250757643288"
-> "free":    "22349,3654565035348765"
-> ```
+> Resmi dokümantasyon bakiye tutarlarını **virgül** ayırıcılı gösterir:
+> `"balance": "27223,7283250757643288"`
 >
-> Piyasa verisi ve emir uçları **nokta** kullanır (`"0.00269390"`). Bakiyeyi
-> `InvariantCulture` ile ayrıştırmak virgülü binlik ayırıcı sayar ve tutarı
-> **kat kat büyük** gösterir — bir bakiye kütüphanesinde kabul edilemez bir hata.
+> **Canlı API nokta kullanıyor.** 26 Ağustos 2026'da gerçek bir hesaba karşı ölçüldü:
+> yanıttaki ondalıklı alanların tamamı nokta ayırıcılıydı, virgüllü tek alan yoktu.
 >
-> Belirsizlik yoktur: BtcTurk binlik ayırıcı kullanmaz (büyük sayılar `"3708000"`
-> biçimindedir), dolayısıyla virgül her zaman ondalık ayırıcıdır.
-> Çözüm: `BtcTurkDecimalConverter` her iki ayırıcıyı da kabul eder.
+> Kütüphane yine de her iki ayırıcıyı kabul eder (`BtcTurkDecimalConverter`). Bunu
+> kaldırmadık: dokümantasyon virgül vaat ettiğine göre bazı hesap/ortam koşullarında
+> virgül dönme ihtimali var ve yanlış yorumlanan bir bakiye kat kat büyük görünür.
+> Belirsizlik yok — BtcTurk binlik ayırıcı kullanmaz, dolayısıyla virgül her zaman
+> ondalık ayırıcıdır.
 
 ### 2 — Open Orders
 

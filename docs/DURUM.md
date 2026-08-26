@@ -99,7 +99,7 @@ yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağ
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-28) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-31) |
 
 ---
 
@@ -107,7 +107,7 @@ yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağ
 
 | Konu | Neden |
 |---|---|
-| **Kullanıcıya özel socket akışları** | **API anahtarı bekleniyor.** Mesaj gövdeleri (423/441/451/452/453) hiçbir yerde belgelenmemiş ve giriş yapmadan akış gelmiyor — modelleri uydurmak gerekirdi |
+| **Kullanıcıya özel socket akışları** | Giriş çalışıyor, ama mesaj gövdeleri (423/441/451/452/453) hesapta **hareket olmadan gelmiyor** ve hiçbir yerde belgelenmemiş. Modelleri yazmak için gerçek emir hareketi gerekiyor |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Canlı private doğrulama** | API anahtarı yok. İmzalama sabit test vektörleriyle, uçlar contract testleriyle doğrulandı; gerçek hesaba karşı hiç çalıştırılmadı |
 | **Binance TR adaptörü** | Envanteri çıkarıldı (docs/vendor/binance-tr-capabilities.md), kod yazılmadı |
@@ -122,7 +122,7 @@ Son çalıştırma (25 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  110/110 geçti
+dotnet test  -c Release   →  113/113 (birim) + 7 (canli hesap)
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
@@ -153,7 +153,7 @@ dotnet run --project examples/TRCrypto.Examples.Console
 
 ## Dokümantasyonda olmayan, canlı API'de bulunan davranışlar
 
-Ayrıntısı `docs/spec/` ekinde D-7…D-28. En önemlisi:
+Ayrıntısı `docs/spec/` ekinde D-7…D-31. En önemlisi:
 
 > **`code` alanının tipi uçlar arasında tutarsız:** çoğu uç `0` (sayı) döndürürken
 > emir defteri `"SUCCESS"` (metin) döndürüyor. `int` olarak modellemek emir defteri
@@ -183,15 +183,19 @@ BtcTurk tamamlandığına göre NuGet v0.1.0-preview yayınlanabilir. Workflow h
 
 ---
 
-## ⚠️ Canlı private doğrulama yapılmadı
+## ✅ Canlı hesap doğrulaması yapıldı (26 Ağu 2026)
 
-Bakiye ve emir uçları **gerçek bir hesaba karşı hiç çalıştırılmadı** — API anahtarı yok.
-Doğrulanan: imzalama zinciri (sabit test vektörü), istek üretimi (contract testleri),
-yanıt ayrıştırma (resmi örneklerden fixture).
+Gerçek bir hesaba karşı doğrulananlar — yalnızca okuma, emir oluşturulmadı:
 
-Anahtar geldiğinde ilk yapılacak: `GetBalancesAsync` ile okuma testi. Gereken minimum
-izinler: *Toplam Varlık* + *Hesap*, *Al-Sat* kapalı, **Çekim kapalı**, IP allow-list dolu.
-Ayrıntı: `docs/credentials/btcturk.md`.
+| Doğrulama | Sonuç |
+|---|---|
+| REST imzalama | ✅ Kabul edildi |
+| Bakiye ucu | ✅ Ayrıştırıldı; toplam = serbest + kilitli |
+| Ondalık ayırıcı | ✅ **Nokta** — dokümantasyondaki virgüllü örnek yanıltıcıymış |
+| Socket giriş imzası | ✅ `publicKey + nonce` — REST'ten farklı, dört aday denendi |
+
+**Hâlâ doğrulanmayan:** emir oluşturma/iptal uçları ve özel akış mesajları.
+İkincisi için hesapta gerçek emir hareketi gerekiyor (aşağıya bakın).
 
 ---
 

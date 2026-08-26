@@ -78,6 +78,39 @@ public class AuthenticationTests
         Assert.NotEqual(first, second);
     }
 
+    [Theory]
+    [InlineData(3000, "uLpuzhycwQqE+aC+WnmBoPSIyBrCPo4I0pyJyq6uF98=")]
+    [InlineData(1, "OLaox4csMFn70v6swYwAmKzVYrVAMbvvqackBIeczTI=")]
+    public void Socket_giris_imzasi_nonce_uzerinden_uretilir(long nonce, string expected)
+    {
+        var provider = new BtcTurkAuthenticationProvider(
+            new BtcTurkCredentials("test-public-key", "dGVzdC1zZWNyZXQta2V5LWZvci11bml0LXRlc3Rz"));
+
+        var signature = provider.CreateSocketLoginSignature(nonce);
+
+        Assert.Equal(expected, signature);
+    }
+
+    [Fact]
+    public void Socket_giris_imzasi_REST_imzasindan_farklidir()
+    {
+        // REST istekleri apiKey + stamp imzalar, socket girisi apiKey + nonce imzalar.
+        // Ayni degeri kullanmak socket girisini sessizce basarisiz yapardi; borsa yalnizca
+        // genel bir "Invalid Signature" doner ve nedeni belirtmez.
+        // Bu ayrim canli bir hesapla dogrulanmistir.
+        var provider = new BtcTurkAuthenticationProvider(
+            new BtcTurkCredentials("test-public-key", "dGVzdC1zZWNyZXQta2V5LWZvci11bml0LXRlc3Rz"));
+
+        var socketSignature = provider.CreateSocketLoginSignature(3000);
+        var restSignature = provider.CreateSignature("3000");
+
+        // Ayni girdi metniyle uretildikleri icin bu ikisi esittir; fark, cagiran tarafin
+        // hangi degeri gecirdigindedir. Gercek kullanimda REST bir zaman damgasi gecer.
+        var restWithTimestamp = provider.CreateSignature("1735689600000");
+        Assert.NotEqual(socketSignature, restWithTimestamp);
+        Assert.Equal(socketSignature, restSignature);
+    }
+
     [Fact]
     public void Gecersiz_Base64_secret_anlasilir_hata_verir()
     {

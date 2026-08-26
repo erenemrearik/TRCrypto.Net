@@ -48,16 +48,36 @@ public class BtcTurkAuthenticationProvider : AuthenticationProvider<BtcTurkCrede
     }
 
     /// <summary>
-    /// Verilen nonce icin istek imzasini uretir.
+    /// Verilen nonce icin REST istek imzasini uretir.
     /// </summary>
     /// <param name="stamp">UTC milisaniye cinsinden nonce.</param>
     /// <returns>Base64 kodlu HMAC-SHA256 imzasi.</returns>
-    internal string CreateSignature(string stamp)
-    {
-        var message = Encoding.UTF8.GetBytes(Credential.Key + stamp);
+    internal string CreateSignature(string stamp) => Sign(Credential.Key + stamp);
 
+    /// <summary>
+    /// WebSocket giris imzasini uretir.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Imzalanan deger REST'ten farklidir.</b> REST istekleri <c>apiKey + stamp</c>
+    /// imzalarken socket girisi <c>publicKey + nonce</c> imzalar; nonce, zaman damgasindan
+    /// bagimsiz bir sayidir.
+    /// </para>
+    /// <para>
+    /// Bu ayrim canli bir hesapla dogrulanmistir: REST bicimi socket girisinde reddedilir
+    /// ve borsa yalnizca genel bir "Invalid Signature" hatasi dondurur, hangi varsayimin
+    /// yanlis oldugunu belirtmez.
+    /// </para>
+    /// </remarks>
+    /// <param name="nonce">Giris mesajinda gonderilen nonce degeri.</param>
+    /// <returns>Base64 kodlu HMAC-SHA256 imzasi.</returns>
+    internal string CreateSocketLoginSignature(long nonce)
+        => Sign(Credential.Key + nonce.ToString(CultureInfo.InvariantCulture));
+
+    private string Sign(string message)
+    {
         using var hmac = new HMACSHA256(_secretBytes);
-        return Convert.ToBase64String(hmac.ComputeHash(message));
+        return Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(message)));
     }
 
     /// <inheritdoc />
