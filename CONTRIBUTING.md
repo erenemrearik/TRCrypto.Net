@@ -18,6 +18,25 @@ dotnet test  -c Release
 
 Gerekli: **.NET 10 SDK** (paket `net8.0`'a kadar geriye dönük hedefler).
 
+### İki tür test var
+
+| Tür | Ne yapar | Nerede çalışır |
+|---|---|---|
+| **Birim** | Ağa çıkmaz; sabit yanıtlarla çözümleme, istek kurulumu ve doğrulama | Her PR'da |
+| **Canlı** (`*.IntegrationTests`) | Borsanın gerçek API'sine çıkar | Haftalık zamanlanmış iş |
+
+Canlı testler PR akışında çalıştırılmaz: her PR için borsanın istek limitini yakmamak ve
+derlemeyi borsanın erişilebilirliğine bağımlı kılmamak için. Amaçları regresyon yakalamak
+değil, **borsanın değiştiğini** fark etmektir.
+
+Kimlik bilgisi isteyen canlı testler, anahtar tanımlı değilse **atlanır** — anahtarı
+olmayan bir katkıcı da her şeyi çalıştırabilir.
+
+```bash
+dotnet test -c Release --filter "FullyQualifiedName!~IntegrationTests"   # yalnizca birim
+dotnet test -c Release --filter "FullyQualifiedName~IntegrationTests"    # yalnizca canli
+```
+
 Projenin şu anki durumu ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 
 ---

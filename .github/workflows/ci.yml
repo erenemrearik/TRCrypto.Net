@@ -33,8 +33,13 @@ jobs:
       - name: Derle
         run: dotnet build -c Release --no-restore
 
-      - name: Testleri calistir
-        run: dotnet test -c Release --no-build --verbosity normal
+      # Canli borsa API'sine cikan testler burada calistirilmaz: her PR icin borsanin
+      # istek limitini yakmak ve CI'yi borsanin erisilebilirligine bagimli kilmak
+      # istemiyoruz. Onlari zamanlanmis is (live-api.yml) calistirir.
+      - name: Birim testleri
+        run: >
+          dotnet test -c Release --no-build --verbosity normal
+          --filter FullyQualifiedName!~IntegrationTests
 
       - name: Paketle
         run: dotnet pack -c Release --no-build -o ./artifacts

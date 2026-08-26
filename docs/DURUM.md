@@ -159,7 +159,8 @@ Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  185/185 (birim) + 13 (canli API) + 2 atlandi
+dotnet test  -c Release   →  185/185 birim · 13 canli API · 2 atlandi (anahtar yok)
+                             birim testler her PR'da, canli testler haftalik iste
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```

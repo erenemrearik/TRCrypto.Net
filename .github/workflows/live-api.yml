@@ -1,0 +1,45 @@
+name: Canli API
+
+# Borsalarin gercek API'lerine karsi calisan testler. PR akisindan ayri tutulur:
+# her PR icin borsanin istek limitini yakmamak ve derlemeyi borsanin
+# erisilebilirligine bagimli kilmamak icin.
+#
+# Amaci regresyon yakalamak degil, BORSANIN degistigini fark etmek: bir ucun
+# davranisi degistiginde ya da bir kisitlama kalktiginda bu is basarisiz olur.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # her pazartesi 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: Canli uclara karsi test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: .NET kurulumu
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Derle
+        run: dotnet build -c Release
+
+      # Kimlik bilgisi gerektiren testler, secret tanimli degilse kendiliginden
+      # atlanir; anahtari olmayan bir catallamada (fork) da bu is calisir.
+      - name: Canli testler
+        env:
+          BTCTURK_API_KEY: ${{ secrets.BTCTURK_API_KEY }}
+          BTCTURK_API_SECRET: ${{ secrets.BTCTURK_API_SECRET }}
+          BINANCETR_API_KEY: ${{ secrets.BINANCETR_API_KEY }}
+          BINANCETR_API_SECRET: ${{ secrets.BINANCETR_API_SECRET }}
+        run: >
+          dotnet test -c Release --no-build --verbosity normal
+          --filter "FullyQualifiedName~IntegrationTests"
+          --logger "console;verbosity=detailed"
