@@ -107,6 +107,7 @@ Azure Key Vault, AWS Secrets Manager, HashiCorp Vault veya platformunuzun secret
 ## Uygulamaya bağlama (DI)
 
 ```csharp
+// Tek çağrı hem REST hem WebSocket istemcisini kaydeder; kimlik bilgisi ikisine de uygulanır.
 builder.Services.AddTRCryptoBtcTurk(options =>
 {
     options.ApiCredentials = new BtcTurkCredentials(

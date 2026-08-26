@@ -110,6 +110,9 @@ olduğunu söylemiyor. Ayrıntı: [vendor/binance-tr-capabilities.md](vendor/bin
 
 Ayrıntı: [vendor/binance-tr-websocket.md](vendor/binance-tr-websocket.md)
 
+**Bağımlılık enjeksiyonu:** `services.AddTRCryptoBinanceTR(...)` — REST ve WebSocket
+istemcilerini birlikte kaydeder.
+
 **Shared yüzey:** REST tarafında `ISpotSymbolRestClient` · `IOrderBookRestClient` ·
 `IRecentTradeRestClient`; socket tarafında `ITickerSocketClient` · `ITradeSocketClient` ·
 `IOrderBookSocketClient`.
@@ -155,7 +158,7 @@ Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  172/172 (birim) + 7 (canli hesap)
+dotnet test  -c Release   →  185/185 (birim) + 8 (canli hesap)
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```

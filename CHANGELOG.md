@@ -31,6 +31,14 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
   ve emir defteri arayüzleri; `Discover()` ile yetenek keşfi
 - **İstek limitleri** — resmi dokümantasyondan alınan değerlerle uygulanıyor
 - **Bağımlılık enjeksiyonu** — `services.AddTRCryptoBtcTurk(...)`
+- **`TRCrypto.BinanceTR`** — Binance TR public piyasa verisi:
+  - `GetServerTimeAsync` · `GetSymbolsAsync`
+  - `GetOrderBookAsync` · `GetAggregatedTradesAsync`
+  - **WebSocket** — ticker, işlem, toplu işlem, emir defteri (tam ve kademeli) ve
+    mum akışları
+  - **Borsadan bağımsız yüzey** — REST tarafında sembol, emir defteri ve işlem
+    arayüzleri; WebSocket tarafında ticker, işlem ve emir defteri arayüzleri
+  - `services.AddTRCryptoBinanceTR(...)`
 - **Belgeler** — borsa başına API anahtarı rehberi (`docs/credentials/`), resmi kaynaklı
   endpoint envanteri (`docs/vendor/`), teknik spesifikasyon ve doğrulama ekleri (`docs/spec/`)
 - **Secret koruması** — `.gitignore` blokları, `gitleaks` yapılandırması, pre-commit
@@ -38,13 +46,27 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 
 ### Bilinen sınırlamalar
 
-- Kullanıcıya özel socket akışları (emir/bakiye bildirimleri) henüz yok
-- Kimlik doğrulama gerektiren uçlar gerçek bir hesaba karşı çalıştırılmadı; imzalama
-  sabit test vektörleriyle, uçlar contract testleriyle doğrulandı
-- Binance TR, Paribu ve Bitexen adaptörleri planlandı, başlanmadı
+- **BtcTurk:** kullanıcıya özel socket akışları (emir/bakiye bildirimleri) henüz yok.
+  Socket girişi canlı doğrulandı, ancak mesaj gövdeleri hesapta hareket olmadan
+  gelmiyor ve hiçbir yerde belgelenmemiş
+- **BtcTurk:** okuma uçları ve imzalama gerçek bir hesaba karşı doğrulandı; emir
+  oluşturma ve iptal, gerçek emir vermeyi gerektirdiği için bilinçli olarak ertelendi
+- **Binance TR:** kimlik doğrulama devre dışı. İmzalama yazıldı ama canlı
+  doğrulanmadığı için etkinleştirilmedi; doğrulanmamış bir imzalama, isteklerin
+  nedeni belirsiz şekilde reddedilmesine yol açardı
+- **Binance TR:** REST ticker yok — borsa bu veriyi anahtarsız sunmuyor. Ticker
+  yalnızca WebSocket üzerinden alınabilir
+- Paribu ve Bitexen adaptörleri planlandı, başlanmadı
 
 ### Notlar
 
-Geliştirme sırasında BtcTurk API'sinde, resmi dokümantasyonda yer almayan bazı
-davranışlar tespit edildi ve `docs/spec/` ekinde belgelendi. Bunların en önemlisi,
-`code` alanının uçlar arasında farklı tiplerde (sayı / metin) dönmesidir.
+Geliştirme sırasında her iki borsanın API'sinde de, resmi dokümantasyonda yer almayan
+davranışlar tespit edildi; tümü `docs/spec/` ekinde (D-1…D-39) belgelendi. Öne çıkanlar:
+
+- **BtcTurk:** `code` alanı uçlar arasında farklı tiplerde (sayı / metin) dönüyor
+- **Binance TR:** `market/trades` ve `market/klines` uçları başarı koduyla **boş liste**
+  döndürüyor — hata dönmedikleri için sessizce "işlem yok" olarak okunabilirler
+- **Binance TR:** tek borsa içinde üç ayrı sembol biçimi kullanılıyor (`BTC_TRY`
+  REST'te, `btctry` abonelikte, `BTCTRY` akış gövdesinde)
+- İki borsa zıt serileştirme ayarı gerektiriyor: BtcTurk'te alan eşleşmesi harf
+  büyüklüğüne duyarsız, Binance TR'de duyarlı olmalı

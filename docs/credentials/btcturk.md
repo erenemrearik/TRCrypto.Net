@@ -110,6 +110,7 @@ var client = new BtcTurkRestClient(options =>
 ### Bağımlılık enjeksiyonu ile
 
 ```csharp
+// Tek çağrı hem REST hem WebSocket istemcisini kaydeder; kimlik bilgisi ikisine de uygulanır.
 builder.Services.AddTRCryptoBtcTurk(options =>
 {
     options.ApiCredentials = new BtcTurkCredentials(

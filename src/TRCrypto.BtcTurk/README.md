@@ -175,12 +175,19 @@ bunu başarısız sonuca çevirir ve borsanın kodu/mesajını `Error` içinde t
 
 ## Bağımlılık enjeksiyonu
 
-```csharp
-builder.Services.AddTRCryptoBtcTurk();
+Tek çağrı hem REST hem WebSocket istemcisini kaydeder.
 
-public sealed class PriceService(IBtcTurkRestClient client)
+```csharp
+builder.Services.AddTRCryptoBtcTurk(options =>
 {
-    // enjekte edilen istemciyi yeniden kullanin
+    // Kimlik bilgisi her iki istemciye de uygulanır; public uçlar için gerekmez.
+    options.ApiCredentials = new BtcTurkCredentials(key, secret);
+});
+
+public sealed class PriceService(IBtcTurkRestClient rest, IBtcTurkSocketClient socket)
+{
+    // Enjekte edilen istemcileri yeniden kullanın. Socket istemcisi tekildir:
+    // açık bağlantıları taşır ve abonelikleri kendi içinde birleştirir.
 }
 ```
 

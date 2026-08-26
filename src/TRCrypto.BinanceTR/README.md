@@ -96,6 +96,19 @@ nedeni belirsiz şekilde reddedilmesine yol açardı.
 | SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |
 | SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` | ✅ |
 
+## Bağımlılık enjeksiyonu
+
+Tek çağrı hem REST hem WebSocket istemcisini kaydeder.
+
+```csharp
+builder.Services.AddTRCryptoBinanceTR();
+
+public sealed class PriceService(IBinanceTRRestClient rest, IBinanceTRSocketClient socket)
+{
+    // Enjekte edilen istemcileri yeniden kullanın; socket istemcisi tekildir.
+}
+```
+
 Resmi API belgeleri: [binance.tr/apidocs](https://www.binance.tr/apidocs)
 
 ## Lisans

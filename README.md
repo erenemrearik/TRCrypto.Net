@@ -5,7 +5,7 @@
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=CI&logo=github&style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/testler-172%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
+[![Tests](https://img.shields.io/badge/testler-185%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
 
