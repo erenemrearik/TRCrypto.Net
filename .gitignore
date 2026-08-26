@@ -505,3 +505,6 @@ BenchmarkDotNet.Artifacts/
 # Ucuncu taraf agent skill'leri; skills-lock.json ile yeniden kurulur:
 #   npx skills add JKorf/cryptoexchange-skills-hub --skill cryptoexchange-net
 .claude/skills/
+
+# Artifact olarak yayinlanmak uzere uretilen site kopyasi (docs/index.html commit edilir)
+docs/.site-artifact.html

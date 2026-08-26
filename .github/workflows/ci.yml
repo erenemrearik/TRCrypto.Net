@@ -50,6 +50,35 @@ jobs:
           name: nuget-paketleri
           path: ./artifacts/*.*nupkg
 
+  site:
+    name: Dokumantasyon sitesi
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Site .md dosyalarindan uretilir. Uretilen dosya depoda tutuldugu icin bir
+      # dokuman degisip site yeniden uretilmezse ikisi sessizce ayrisir; bu adim
+      # bunu yakalar.
+      - name: Siteyi yeniden uret
+        run: node tools/site/build.mjs
+
+      - name: Isleyiciyi dogrula
+        run: node tools/site/check.mjs
+
+      - name: Site guncel mi
+        run: |
+          if ! git diff --quiet -- docs/index.html; then
+            echo "::error::docs/index.html guncel degil. 'node tools/site/build.mjs' calistirip sonucu commit edin."
+            git diff --stat -- docs/index.html
+            exit 1
+          fi
+          echo "Site kaynak dokumanlarla ayni."
+
   secret-scan:
     name: Secret taramasi
     runs-on: ubuntu-latest

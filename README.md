@@ -12,6 +12,7 @@
 [![CryptoExchange.Net](https://img.shields.io/badge/CryptoExchange.Net-12.5.0-orange?style=flat-square)](https://github.com/JKorf/CryptoExchange.Net)
 [![Durum](https://img.shields.io/badge/durum-geliştirme%20aşamasında-yellow?style=flat-square)](docs/DURUM.md)
 [![NuGet](https://img.shields.io/badge/NuGet-henüz%20yayınlanmadı-lightgrey?style=flat-square&logo=nuget)](#durum)
+[![Dokümantasyon](https://img.shields.io/badge/dok%C3%BCmantasyon-site-1F3E8C?style=flat-square&logo=readthedocs&logoColor=white)](https://erenemrearik.github.io/TRCrypto.Net/)
 
 [JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) üzerine kuruludur.
 
@@ -145,6 +146,7 @@ Geçersiz girdiler ağa çıkılmadan reddedilir — eksik fiyat, negatif miktar
 
 | Konu | Dosya |
 |---|---|
+| **Dokümantasyon sitesi** — hepsi tek yerde, aranabilir | [https://erenemrearik.github.io/TRCrypto.Net/](https://erenemrearik.github.io/TRCrypto.Net/) |
 | **Nerede kaldık, sonraki adım** | [docs/DURUM.md](docs/DURUM.md) |
 | API anahtarı alma ve bağlama | [docs/credentials/](docs/credentials/) |
 | Borsa endpoint envanterleri | [docs/vendor/](docs/vendor/) |

@@ -1,9 +1,4 @@
-| 2 | GET | `/api/v1/openOrders?pairSymbol=` | ✅ Uygulandı |
-| 3 | GET | `/api/v1/allOrders` | ✅ Uygulandı |
-| 4 | GET | `/api/v1/order/{orderId}` | ✅ Uygulandı |
-| 5 | POST | `/api/v1/order` | ✅ Uygulandı |
-| 6 | DELETE | `/api/v1/order?id=` | ✅ Uygulandı |
-| 7 | GET | `/api/v1/users/transactions/trade` | ✅ Envanteri çıkarıldı |# BtcTurk — Vendor Capability Freeze
+# BtcTurk — Vendor Capability Freeze
 
 > **Story:** BTC-001 · **Erişim tarihi:** 24 Ağustos 2026
 > **Kaynak:** https://docs.btcturk.com/ (resmi dokümantasyon)
@@ -204,8 +199,12 @@ Hepsi `X-PCK` + `X-Stamp` + `X-Signature` başlıklarını gerektirir.
 | # | Method | Path | Durum |
 |---|---|---|---|
 | 1 | GET | `/api/v1/users/balances` | ✅ Uygulandı |
-| 2 | GET | `/api/v1/openOrders?pairSymbol=` | ⏳ Envanteri çıkarıldı |
-| 3 | POST | `/api/v1/order` | ⏳ Envanteri çıkarıldı |
+| 2 | GET | `/api/v1/openOrders?pairSymbol=` | ✅ Uygulandı |
+| 3 | GET | `/api/v1/allOrders` | ✅ Uygulandı |
+| 4 | GET | `/api/v1/order/{orderId}` | ✅ Uygulandı |
+| 5 | POST | `/api/v1/order` | ✅ Uygulandı |
+| 6 | DELETE | `/api/v1/order?id=` | ✅ Uygulandı |
+| 7 | GET | `/api/v1/users/transactions/trade` | ✅ Uygulandı |
 
 ### 1 — Account Balance
 

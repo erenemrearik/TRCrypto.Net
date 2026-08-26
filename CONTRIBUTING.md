@@ -37,6 +37,20 @@ dotnet test -c Release --filter "FullyQualifiedName!~IntegrationTests"   # yalni
 dotnet test -c Release --filter "FullyQualifiedName~IntegrationTests"    # yalnizca canli
 ```
 
+### Doküman değiştirdiyseniz siteyi yeniden üretin
+
+Dokümanlar `.md` dosyalarında yaşar; [dokümantasyon sitesi](https://erenemrearik.github.io/TRCrypto.Net/) onlardan üretilir
+ve `docs/index.html` olarak depoda tutulur. Bir doküman değiştirip siteyi yeniden
+üretmezseniz ikisi ayrışır — CI bunu yakalar ve derlemeyi durdurur.
+
+```bash
+node tools/site/build.mjs   # siteyi yeniden uret
+node tools/site/check.mjs   # markdown isleyicisini dogrula
+```
+
+Bağımlılık yoktur; yalnızca Node 18+ gerekir. Yeni bir doküman eklediyseniz
+`tools/site/build.mjs` içindeki gezinti listesine de ekleyin.
+
 Projenin şu anki durumu ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 
 ---

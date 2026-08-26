@@ -1,0 +1,1579 @@
+<title>TRCrypto.Net Kılavuzu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────────────────────
+   TRCrypto.Net dokumantasyonu
+
+   Renk: Iznik cinisi — kobalt, turkuaz ve bolu kirmizisi, beyaz sir uzerine.
+   Turk seramik gelenegi projenin kimligiyle ortusuyor; kobalt tek vurgu rengi,
+   turkuaz yalnizca "iki borsa tek kod" fikrini isaretlemek icin, kirmizi ise
+   yalnizca uyari anlaminda kullanilir.
+
+   Tipografi: basliklar Archivo, govde metni Source Serif 4, veri ve kod
+   IBM Plex Mono. Govdenin serif olmasi bilincli: bu bir uygulama arayuzu degil,
+   bir basvuru belgesi.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  color-scheme: light;
+
+  --cobalt:      #1F3E8C;
+  --cobalt-ink:  #16306F;
+  --cobalt-soft: #E9EDF9;
+  --cobalt-line: #C3CFEE;
+  --turkuaz:     #10707B;
+  --turkuaz-soft:#E2F1F2;
+  --bole:        #A9361F;
+  --bole-soft:   #FAEAE6;
+  --amber:       #8A5D06;
+  --amber-soft:  #FBF1DC;
+  --ok:          #1B6340;
+  --ok-soft:     #E3F2E9;
+
+  --ground:    #FCFCFA;
+  --surface:   #FFFFFF;
+  --surface-2: #F3F5F9;
+  --ink:       #141A29;
+  --ink-2:     #3F4860;
+  --ink-3:     #6B7590;
+  --line:      #DEE2EC;
+  --line-soft: #EBEEF4;
+
+  --font-display: 'Archivo', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --rail: 268px;
+  --toc: 212px;
+  --head: 58px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --cobalt:      #97AEF4;
+    --cobalt-ink:  #B9C8FA;
+    --cobalt-soft: #19233F;
+    --cobalt-line: #2E3C66;
+    --turkuaz:     #58C2CB;
+    --turkuaz-soft:#123037;
+    --bole:        #EE8871;
+    --bole-soft:   #351A15;
+    --amber:       #DCA745;
+    --amber-soft:  #33270F;
+    --ok:          #64C892;
+    --ok-soft:     #102C1F;
+
+    --ground:    #0B0F18;
+    --surface:   #111725;
+    --surface-2: #171F31;
+    --ink:       #E5EAF5;
+    --ink-2:     #AAB4CB;
+    --ink-3:     #7B86A2;
+    --line:      #222C43;
+    --line-soft: #192133;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --cobalt:      #97AEF4;
+  --cobalt-ink:  #B9C8FA;
+  --cobalt-soft: #19233F;
+  --cobalt-line: #2E3C66;
+  --turkuaz:     #58C2CB;
+  --turkuaz-soft:#123037;
+  --bole:        #EE8871;
+  --bole-soft:   #351A15;
+  --amber:       #DCA745;
+  --amber-soft:  #33270F;
+  --ok:          #64C892;
+  --ok-soft:     #102C1F;
+
+  --ground:    #0B0F18;
+  --surface:   #111725;
+  --surface-2: #171F31;
+  --ink:       #E5EAF5;
+  --ink-2:     #AAB4CB;
+  --ink-3:     #7B86A2;
+  --line:      #222C43;
+  --line-soft: #192133;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16.5px;
+  line-height: 1.68;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--cobalt); text-decoration-color: var(--cobalt-line); text-underline-offset: 3px; }
+a:hover { color: var(--cobalt-ink); text-decoration-color: currentColor; }
+
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Ust cubuk ────────────────────────────────────────────────────────────── */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--head);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand .tr { color: var(--cobalt); }
+.brand .tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.topbar-spacer { flex: 1; }
+
+.search-wrap { position: relative; width: min(340px, 42vw); }
+.search-wrap input {
+  width: 100%;
+  height: 34px;
+  padding: 0 34px 0 11px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.search-wrap input::placeholder { color: var(--ink-3); }
+.search-wrap kbd {
+  position: absolute;
+  right: 8px; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 5px;
+  pointer-events: none;
+  background: var(--surface-2);
+}
+.search-wrap input:focus + kbd { opacity: 0; }
+
+.icon-btn {
+  height: 34px;
+  min-width: 34px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.icon-btn:hover { color: var(--ink); border-color: var(--cobalt-line); }
+.icon-btn svg { width: 15px; height: 15px; }
+
+.menu-btn { display: none; }
+
+/* ── Iskelet ──────────────────────────────────────────────────────────────── */
+
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  align-items: start;
+}
+
+.rail {
+  position: sticky;
+  top: var(--head);
+  height: calc(100vh - var(--head));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 14px 48px 20px;
+  border-right: 1px solid var(--line);
+}
+
+.rail-group + .rail-group { margin-top: 22px; }
+.rail-group > h2 {
+  margin: 0 0 7px 9px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.rail-group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.rail-group a {
+  display: block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.42;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.rail-group a:hover { background: var(--surface-2); color: var(--ink); }
+.rail-group a[aria-current="page"] {
+  background: var(--cobalt-soft);
+  color: var(--cobalt-ink);
+  font-weight: 600;
+}
+
+.rail-foot {
+  margin-top: 26px;
+  padding: 14px 10px 0;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.75;
+  color: var(--ink-3);
+}
+.rail-foot a { text-decoration: none; }
+.rail-foot a:hover { text-decoration: underline; }
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--toc);
+  gap: 44px;
+  max-width: 1180px;
+  padding: 40px 40px 96px;
+}
+
+.doc { min-width: 0; max-width: 74ch; }
+
+/* ── Sayfa ici icindekiler ────────────────────────────────────────────────── */
+
+.toc {
+  position: sticky;
+  top: calc(var(--head) + 40px);
+  max-height: calc(100vh - var(--head) - 80px);
+  overflow-y: auto;
+  font-family: var(--font-display);
+}
+.toc h2 {
+  margin: 0 0 9px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.toc a {
+  display: block;
+  padding: 2px 0 2px 11px;
+  border-left: 2px solid var(--line);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
+  text-decoration: none;
+}
+.toc a:hover { color: var(--ink); border-left-color: var(--cobalt-line); }
+.toc a.active { color: var(--cobalt); border-left-color: var(--cobalt); font-weight: 600; }
+.toc a.lvl3 { padding-left: 22px; font-size: 12px; }
+
+/* ── Belge tipografisi ────────────────────────────────────────────────────── */
+
+.doc-head { margin-bottom: 30px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.doc-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--turkuaz);
+}
+.doc h1 {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.4vw, 38px);
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -0.021em;
+  text-wrap: balance;
+}
+.doc-source {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+.doc-source a { color: var(--ink-3); }
+
+.doc h2, .doc h3, .doc h4, .doc h5 {
+  font-family: var(--font-display);
+  line-height: 1.24;
+  letter-spacing: -0.014em;
+  text-wrap: balance;
+  scroll-margin-top: calc(var(--head) + 18px);
+}
+.doc h2 {
+  margin: 46px 0 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 23px;
+  font-weight: 700;
+}
+.doc h3 { margin: 32px 0 10px; font-size: 17.5px; font-weight: 600; }
+.doc h4 { margin: 24px 0 8px; font-size: 15px; font-weight: 600; color: var(--ink-2); }
+.doc h5 {
+  margin: 20px 0 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.doc > :first-child { margin-top: 0; }
+
+.doc p { margin: 0 0 15px; }
+.doc strong { font-weight: 600; color: var(--ink); }
+.doc em { font-style: italic; }
+.doc del { color: var(--ink-3); }
+
+.doc ul, .doc ol { margin: 0 0 15px; padding-left: 1.35em; }
+.doc li { margin-bottom: 5px; }
+.doc li > ul, .doc li > ol { margin: 5px 0 4px; }
+.doc ul { list-style: none; padding-left: 1.15em; }
+.doc ul > li { position: relative; }
+.doc ul > li::before {
+  content: "";
+  position: absolute;
+  left: -0.95em;
+  top: 0.72em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cobalt-line);
+}
+.doc ol { list-style: decimal; }
+.doc ol > li::marker {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  color: var(--ink-3);
+}
+
+.doc hr {
+  height: 0;
+  margin: 34px 0;
+  border: 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.doc code {
+  font-family: var(--font-mono);
+  font-size: 0.855em;
+  padding: 0.1em 0.34em;
+  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  color: var(--ink);
+  word-break: break-word;
+}
+
+/* ── Kod bloklari ─────────────────────────────────────────────────────────── */
+
+.code {
+  position: relative;
+  margin: 0 0 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.code-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+  padding: 0 8px 0 12px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.code-lang {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.code-bar .grow { flex: 1; }
+.copy {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+.copy:hover { color: var(--ink); background: var(--ground); border-color: var(--line); }
+.copy[data-done="1"] { color: var(--ok); }
+
+.code pre {
+  margin: 0;
+  padding: 13px 15px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12.9px;
+  line-height: 1.66;
+  tab-size: 4;
+}
+.code pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+/* Sozdizimi vurgusu — kod okunurlugu icin, sus olarak degil. */
+.tok-c { color: var(--ink-3); font-style: italic; }
+.tok-s { color: var(--turkuaz); }
+.tok-k { color: var(--cobalt); font-weight: 600; }
+.tok-n { color: var(--bole); }
+.tok-t { color: var(--amber); }
+
+/* ── Tablolar ─────────────────────────────────────────────────────────────── */
+
+.table-wrap {
+  margin: 0 0 20px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-display);
+  font-size: 13.6px;
+  line-height: 1.52;
+  font-variant-numeric: tabular-nums;
+}
+.doc th {
+  padding: 9px 13px;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.doc td {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+  color: var(--ink-2);
+}
+.doc tbody tr:last-child td { border-bottom: 0; }
+.doc tbody tr:hover td { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
+.doc td code { font-size: 0.9em; }
+.doc td strong { color: var(--ink); }
+
+/* Durum isaretleri hucre icinde rozete cevrilir: durum bir bakista okunmali. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pill.ok    { color: var(--ok);     background: var(--ok-soft); }
+.pill.wait  { color: var(--ink-3);  background: var(--surface-2); }
+.pill.warn  { color: var(--amber);  background: var(--amber-soft); }
+.pill.no    { color: var(--bole);   background: var(--bole-soft); }
+
+/* ── Alintilar ve uyari kutulari ──────────────────────────────────────────── */
+
+.doc blockquote {
+  margin: 0 0 20px;
+  padding: 2px 0 2px 17px;
+  border-left: 2px solid var(--cobalt-line);
+  color: var(--ink-2);
+}
+.doc blockquote p:last-child { margin-bottom: 0; }
+
+.callout {
+  margin: 0 0 20px;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ink-3);
+  border-radius: 7px;
+  background: var(--surface);
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout-label {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.callout.note      { border-left-color: var(--cobalt);  background: var(--cobalt-soft); }
+.callout.note      .callout-label { color: var(--cobalt-ink); }
+.callout.tip       { border-left-color: var(--turkuaz); background: var(--turkuaz-soft); }
+.callout.tip       .callout-label { color: var(--turkuaz); }
+.callout.important { border-left-color: var(--turkuaz); background: var(--turkuaz-soft); }
+.callout.important .callout-label { color: var(--turkuaz); }
+.callout.warning   { border-left-color: var(--amber);   background: var(--amber-soft); }
+.callout.warning   .callout-label { color: var(--amber); }
+.callout.caution   { border-left-color: var(--bole);    background: var(--bole-soft); }
+.callout.caution   .callout-label { color: var(--bole); }
+
+/* ── Giris sayfasi ────────────────────────────────────────────────────────── */
+
+.hero { padding-bottom: 4px; }
+.hero .doc-eyebrow { color: var(--turkuaz); }
+.hero h1 {
+  margin: 10px 0 0;
+  font-size: clamp(34px, 5vw, 52px);
+  letter-spacing: -0.028em;
+}
+.hero .lede {
+  margin: 16px 0 0;
+  font-size: 18.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 60ch;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+  gap: 1px;
+  margin: 30px 0 34px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.metric { padding: 13px 15px; background: var(--surface); }
+.metric dt {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.metric dd {
+  margin: 3px 0 0;
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.metric dd span { font-size: 13px; font-weight: 500; color: var(--ink-3); margin-left: 3px; }
+
+/* Tez: ayni kod, iki borsa. Iki sutun bilerek esit — hicbiri ayricalikli degil. */
+.thesis {
+  margin: 0 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.thesis-out {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px solid var(--line);
+}
+.venue { padding: 13px 16px; background: var(--surface-2); }
+.venue-name {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.venue:nth-child(1) .venue-name { color: var(--cobalt); }
+.venue:nth-child(2) .venue-name { color: var(--turkuaz); }
+.venue-native {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+.venue-price {
+  margin-top: 7px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.venue-price small { font-size: 11px; font-weight: 400; color: var(--ink-3); margin-left: 4px; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 12px;
+  margin: 0 0 20px;
+}
+.card {
+  display: block;
+  padding: 15px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+.card:hover { border-color: var(--cobalt-line); background: var(--cobalt-soft); }
+.card-title {
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.card-desc { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--ink-3); }
+
+/* ── Arama ────────────────────────────────────────────────────────────────── */
+
+.results { margin-top: 4px; }
+.result {
+  display: block;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 9px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface);
+}
+.result:hover { border-color: var(--cobalt-line); background: var(--cobalt-soft); }
+.result-where {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--turkuaz);
+}
+.result-title { font-family: var(--font-display); font-size: 14.5px; font-weight: 600; margin-top: 2px; }
+.result-snip {
+  margin-top: 5px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.result-snip mark { background: var(--amber-soft); color: var(--ink); padding: 0 2px; border-radius: 2px; }
+.empty { color: var(--ink-3); font-family: var(--font-display); font-size: 14.5px; }
+
+/* ── Sayfa altligi ────────────────────────────────────────────────────────── */
+
+.doc-foot {
+  margin-top: 54px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+}
+.doc-foot a { text-decoration: none; font-weight: 600; }
+.doc-foot .prev::before { content: "← "; color: var(--ink-3); }
+.doc-foot .next::after { content: " →"; color: var(--ink-3); }
+
+/* ── Duyarli davranis ─────────────────────────────────────────────────────── */
+
+.scrim { display: none; }
+
+@media (max-width: 1120px) {
+  .page { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .toc { display: none; }
+}
+
+@media (max-width: 860px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .menu-btn { display: inline-flex; }
+  .rail {
+    position: fixed;
+    top: var(--head);
+    left: 0;
+    width: 282px;
+    background: var(--ground);
+    z-index: 35;
+    transform: translateX(-102%);
+    transition: transform .2s ease;
+  }
+  .rail[data-open="1"] { transform: none; box-shadow: 0 12px 40px rgb(0 0 0 / .22); }
+  .scrim[data-open="1"] {
+    display: block;
+    position: fixed;
+    inset: var(--head) 0 0 0;
+    background: rgb(6 9 16 / .42);
+    z-index: 30;
+  }
+  .page { padding: 28px 20px 72px; }
+  .thesis-out { grid-template-columns: 1fr; }
+  .search-wrap { width: auto; flex: 1; }
+  .search-wrap kbd { display: none; }
+  body { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+</style>
+<!--BODY-->
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menüyü aç" aria-expanded="false">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+      <path d="M2 4h12M2 8h12M2 12h12"/>
+    </svg>
+  </button>
+  <a class="brand" href="#/giris">
+    <span><span class="tr">TR</span>Crypto.Net</span>
+    <span class="tag">kılavuz</span>
+  </a>
+  <span class="topbar-spacer"></span>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Dokümanlarda ara" aria-label="Dokümanlarda ara" autocomplete="off" spellcheck="false">
+    <kbd>/</kbd>
+  </div>
+  <button class="icon-btn" id="themeBtn" aria-label="Temayı değiştir" title="Temayı değiştir">
+    <svg id="themeIcon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <circle cx="8" cy="8" r="3.1"/>
+      <path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/>
+    </svg>
+  </button>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="Doküman bölümleri"></nav>
+  <div class="page">
+    <main class="doc" id="doc"></main>
+    <aside class="toc" id="toc" aria-label="Bu sayfada"></aside>
+  </div>
+</div>
+
+<script>
+const NAV = /*__NAV__*/null;
+const DOCS = /*__DOCS__*/null;
+const GENERATED = /*__GENERATED__*/null;
+const REPO = 'https://github.com/erenemrearik/TRCrypto.Net';
+
+/* ═══ Markdown ═══════════════════════════════════════════════════════════════
+   Harici kutuphane yuklenemedigi icin (sikilastirilmis CSP) isleyici burada.
+   Bu dokumanlarda gecen yapilarin tamamini kapsar: basliklar, tablolar, kod
+   bloklari, ic ice listeler, alintilar ve GitHub uyari kutulari.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+const ALERTS = {
+  NOTE: ['note', 'Not'],
+  TIP: ['tip', 'İpucu'],
+  IMPORTANT: ['important', 'Önemli'],
+  WARNING: ['warning', 'Uyarı'],
+  CAUTION: ['caution', 'Dikkat'],
+};
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function slug(text) {
+  return text
+    .toLowerCase()
+    .replace(/[çÇ]/g, 'c').replace(/[ğĞ]/g, 'g').replace(/[ıİ]/g, 'i')
+    .replace(/[öÖ]/g, 'o').replace(/[şŞ]/g, 's').replace(/[üÜ]/g, 'u')
+    .replace(/[^\w\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-') || 'bolum';
+}
+
+/** Satir ici bicimlendirme. Kod parcalari once ayrilir ki icleri islenmesin. */
+function inline(src) {
+  const stash = [];
+  let s = src.replace(/`([^`]+)`/g, (_, code) => {
+    stash.push('<code>' + esc(code) + '</code>');
+    return ' ' + (stash.length - 1) + ' ';
+  });
+
+  s = esc(s);
+
+  s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '');
+  s = s.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;[^&]*&quot;)?\)/g, (_, text, href) => {
+    const external = /^https?:/.test(href);
+    const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
+    return '<a href="' + href + '"' + attrs + '>' + text + '</a>';
+  });
+
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[^*\w])\*([^*\n]+)\*(?![*\w])/g, '$1<em>$2</em>');
+  s = s.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+
+  return s.replace(/ (\d+) /g, (_, i) => stash[+i]);
+}
+
+/** Kod blogu vurgusu: yorum, metin, anahtar sozcuk, sayi ve tip adi. */
+function highlight(code, lang) {
+  const out = esc(code);
+  if (lang === 'json') {
+    return out
+      .replace(/(&quot;(?:[^&\\]|\\.)*?&quot;)(\s*:)/g, '<span class="tok-t">$1</span>$2')
+      .replace(/:\s*(&quot;(?:[^&\\]|\\.)*?&quot;)/g, ': <span class="tok-s">$1</span>')
+      .replace(/\b(-?\d+\.?\d*(?:[eE][-+]?\d+)?)\b/g, '<span class="tok-n">$1</span>')
+      .replace(/\b(true|false|null)\b/g, '<span class="tok-k">$1</span>');
+  }
+  if (lang === 'bash') {
+    return out.replace(/(^|\n)(\s*#[^\n]*)/g, '$1<span class="tok-c">$2</span>');
+  }
+  if (lang === 'csharp') {
+    const kw = 'var|new|await|async|public|private|internal|protected|sealed|static|class|record|struct|'
+      + 'interface|enum|return|if|else|foreach|for|while|using|namespace|null|true|false|this|base|'
+      + 'string|int|long|decimal|bool|double|void|Task|override|readonly|const|out|ref|in|is|as|switch|case|default';
+    return out
+      .replace(/(\/\/[^\n]*)/g, '<span class="tok-c">$1</span>')
+      .replace(/(&quot;(?:[^&\\]|\\.)*?&quot;)/g, '<span class="tok-s">$1</span>')
+      .replace(new RegExp('\\b(' + kw + ')\\b(?![^<]*<\\/span>)', 'g'), '<span class="tok-k">$1</span>')
+      .replace(/\b(\d+[\d_]*\.?\d*[mMdDfFlL]?)\b(?![^<]*<\/span>)/g, '<span class="tok-n">$1</span>');
+    }
+  return out;
+}
+
+/** Yalnizca durum isareti tasiyan hucreleri rozete cevirir. */
+function statusCell(html) {
+  const bare = html.replace(/<[^>]+>/g, '').trim();
+  const map = [
+    [/^✅\s*(.*)$/u, 'ok'],
+    [/^⏳\s*(.*)$/u, 'wait'],
+    [/^⚠️?\s*(.*)$/u, 'warn'],
+    [/^❌\s*(.*)$/u, 'no'],
+  ];
+  for (const [re, kind] of map) {
+    const m = bare.match(re);
+    if (!m) continue;
+    const label = m[1].trim();
+    return '<span class="pill ' + kind + '">' + (label ? esc(label) : kindLabel(kind)) + '</span>';
+  }
+  return html;
+}
+
+function kindLabel(kind) {
+  return { ok: 'hazır', wait: 'sırada', warn: 'dikkat', no: 'yok' }[kind];
+}
+
+function splitRow(line) {
+  return line.replace(/^\s*\|/, '').replace(/\|\s*$/, '').split('|').map((c) => c.trim());
+}
+
+function render(md) {
+  const lines = md.split('\n');
+  const out = [];
+  const headings = [];
+  const seen = new Map();
+  let i = 0;
+
+  const flushParagraph = (buf) => {
+    if (!buf.length) return;
+    out.push('<p>' + inline(buf.join('\n')) + '</p>');
+    buf.length = 0;
+  };
+
+  const para = [];
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Kod blogu
+    const fence = line.match(/^```\s*(\w*)\s*$/);
+    if (fence) {
+      flushParagraph(para);
+      const lang = fence[1] || '';
+      const body = [];
+      i++;
+      while (i < lines.length && !/^```\s*$/.test(lines[i])) body.push(lines[i++]);
+      i++;
+      const text = body.join('\n');
+      out.push(
+        '<div class="code"><div class="code-bar"><span class="code-lang">' +
+        esc(lang || 'metin') +
+        '</span><span class="grow"></span><button class="copy" type="button" data-code="' +
+        esc(text) +
+        '">kopyala</button></div><pre><code>' +
+        highlight(text, lang) +
+        '</code></pre></div>'
+      );
+      continue;
+    }
+
+    // Baslik
+    const head = line.match(/^(#{2,6})\s+(.*)$/);
+    if (head) {
+      flushParagraph(para);
+      const level = head[1].length;
+      const text = head[2].replace(/\s*#+\s*$/, '').trim();
+      let id = slug(text);
+      const n = (seen.get(id) ?? 0) + 1;
+      seen.set(id, n);
+      if (n > 1) id += '-' + n;
+      if (level <= 3) headings.push({ id, text: text.replace(/[*`]/g, ''), level });
+      out.push('<h' + level + ' id="' + id + '">' + inline(text) + '</h' + level + '>');
+      i++;
+      continue;
+    }
+
+    // Yatay cizgi
+    if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
+      flushParagraph(para);
+      out.push('<hr>');
+      i++;
+      continue;
+    }
+
+    // Tablo.
+    //
+    // Spesifikasyon dosyasi .docx'ten cevrildigi icin ayirici satiri olmayan tablolar
+    // da iceriyor. Bunlar isaretleme olarak eksiktir ama icerik olarak tablodur;
+    // duz metin olarak birakilirlarsa sayfanin en yogun bolumleri okunmaz hale gelir.
+    if (/^\s*\|/.test(line)) {
+      const hasSeparator = i + 1 < lines.length && /^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(lines[i + 1]);
+      flushParagraph(para);
+
+      const header = splitRow(line);
+      i += hasSeparator ? 2 : 1;
+
+      const rows = [];
+      while (i < lines.length && /^\s*\|/.test(lines[i])) {
+        if (/^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(lines[i])) { i++; continue; }
+        rows.push(splitRow(lines[i++]));
+      }
+
+      // Tek hucreli tek satir: .docx'teki kutu notu. Tablo olarak degil, kutu olarak.
+      if (!hasSeparator && !rows.length && header.length === 1) {
+        out.push('<div class="callout"><p>' + inline(header[0]) + '</p></div>');
+        continue;
+      }
+
+      const columns = Math.max(header.length, ...rows.map((r) => r.length));
+
+      let html = '<div class="table-wrap"><table><thead><tr>';
+      for (let c = 0; c < columns; c++) html += '<th>' + inline(header[c] ?? '') + '</th>';
+      html += '</tr></thead><tbody>';
+      for (const row of rows) {
+        html += '<tr>';
+        for (let c = 0; c < columns; c++) html += '<td>' + statusCell(inline(row[c] ?? '')) + '</td>';
+        html += '</tr>';
+      }
+      out.push(html + '</tbody></table></div>');
+      continue;
+    }
+
+    // Alinti ve uyari kutusu
+    if (/^\s*>/.test(line)) {
+      flushParagraph(para);
+      const body = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) {
+        body.push(lines[i].replace(/^\s*>\s?/, ''));
+        i++;
+      }
+      const alert = body[0] && body[0].match(/^\[!(\w+)\]\s*$/);
+      if (alert && ALERTS[alert[1].toUpperCase()]) {
+        const [kind, label] = ALERTS[alert[1].toUpperCase()];
+        const inner = render(body.slice(1).join('\n'));
+        out.push(
+          '<div class="callout ' + kind + '"><span class="callout-label">' + label + '</span>' + inner.html + '</div>'
+        );
+      } else {
+        out.push('<blockquote>' + render(body.join('\n')).html + '</blockquote>');
+      }
+      continue;
+    }
+
+    // Liste
+    const bullet = line.match(/^(\s*)([-*+]|\d+[.)])\s+(.*)$/);
+    if (bullet) {
+      flushParagraph(para);
+      const block = [];
+      while (i < lines.length) {
+        const cur = lines[i];
+        if (/^\s*([-*+]|\d+[.)])\s+/.test(cur) || (cur.trim() && /^\s{2,}/.test(cur))) {
+          block.push(cur);
+          i++;
+          continue;
+        }
+        if (!cur.trim() && i + 1 < lines.length && /^\s{2,}\S/.test(lines[i + 1])) {
+          block.push(cur);
+          i++;
+          continue;
+        }
+        break;
+      }
+      out.push(renderList(block));
+      continue;
+    }
+
+    if (!line.trim()) {
+      flushParagraph(para);
+      i++;
+      continue;
+    }
+
+    para.push(line);
+    i++;
+  }
+
+  flushParagraph(para);
+  return { html: out.join('\n'), headings };
+}
+
+/** Ic ice listeleri girinti derinligine gore kurar. */
+function renderList(block) {
+  const items = [];
+  for (const raw of block) {
+    const m = raw.match(/^(\s*)([-*+]|\d+[.)])\s+(.*)$/);
+    if (m) {
+      items.push({ indent: m[1].replace(/\t/g, '  ').length, ordered: /\d/.test(m[2]), lines: [m[3]] });
+    } else if (items.length) {
+      items[items.length - 1].lines.push(raw.trim());
+    }
+  }
+  if (!items.length) return '';
+
+  const build = (start, indent) => {
+    const parts = [];
+    let k = start;
+    const ordered = items[start].ordered;
+    while (k < items.length && items[k].indent >= indent) {
+      if (items[k].indent > indent) {
+        const [child, next] = build(k, items[k].indent);
+        parts[parts.length - 1] = parts[parts.length - 1].replace(/<\/li>$/, child + '</li>');
+        k = next;
+        continue;
+      }
+      parts.push('<li>' + inline(items[k].lines.join(' ')) + '</li>');
+      k++;
+    }
+    const tag = ordered ? 'ol' : 'ul';
+    return ['<' + tag + '>' + parts.join('') + '</' + tag + '>', k];
+  };
+
+  return build(0, items[0].indent)[0];
+}
+
+/* ═══ Giris sayfasi ══════════════════════════════════════════════════════════
+   README rozetleri ve HTML tablosu site icin yeniden yazildi; buradaki sayilar
+   son dogrulama calistirmasindan gelir.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+function homePage() {
+  return `
+<div class="doc-head hero">
+  <div class="doc-eyebrow">Türkiye kripto borsaları için .NET SDK</div>
+  <h1>Tek kod, her borsa</h1>
+  <p class="lede">
+    Türkiye'deki borsaların API'leri birbirine benzemez: farklı imzalama şemaları, farklı
+    sembol biçimleri, farklı WebSocket protokolleri. TRCrypto bu farkları kapatır ve
+    <a href="https://github.com/JKorf/CryptoExchange.Net" target="_blank" rel="noopener noreferrer">CryptoExchange.Net</a>
+    ekosisteminin bildiğiniz yüzeyini Türk borsalarına getirir.
+  </p>
+</div>
+
+<dl class="metrics">
+  <div class="metric"><dt>Borsa</dt><dd>2<span>/ 4 planlı</span></dd></div>
+  <div class="metric"><dt>Birim test</dt><dd>185</dd></div>
+  <div class="metric"><dt>Canlı test</dt><dd>13</dd></div>
+  <div class="metric"><dt>Hedef platform</dt><dd>5</dd></div>
+  <div class="metric"><dt>Doğrulama bulgusu</dt><dd>39</dd></div>
+</dl>
+
+<h2 id="tez">Aynı kod, iki borsa</h2>
+<p>
+  Çağıran taraf hangi borsayla konuştuğunu bilmez. Her borsa kendi sembol biçimini
+  üretir, kendi zarfını açar, kendi imzalama şemasını kullanır — aşağıdaki kodda
+  bunların hiçbiri görünmez.
+</p>
+
+<div class="thesis">
+  <div class="code" style="margin:0;border:0;border-radius:0">
+    <div class="code-bar"><span class="code-lang">csharp</span></div>
+    <pre><code>${highlight(`var symbol = new SharedSymbol(TradingMode.Spot, "BTC", "TRY");
+
+IOrderBookRestClient[] borsalar =
+[
+    new BtcTurkRestClient().SpotApi.SharedClient,
+    new BinanceTRRestClient().SpotApi.SharedClient
+];
+
+foreach (var borsa in borsalar)
+{
+    var defter = await borsa.GetOrderBookAsync(new GetOrderBookRequest(symbol, 5));
+    Console.WriteLine($"{borsa.Exchange}: {defter.Data.Bids[0].Price:N0} TRY");
+}`, 'csharp')}</code></pre>
+  </div>
+  <div class="thesis-out">
+    <div class="venue">
+      <div class="venue-name">BtcTurk</div>
+      <div class="venue-native">native sembol · BTCTRY</div>
+      <div class="venue-price">3.786.255<small>TRY</small></div>
+    </div>
+    <div class="venue">
+      <div class="venue-name">Binance TR</div>
+      <div class="venue-native">native sembol · BTC_TRY</div>
+      <div class="venue-price">3.788.222<small>TRY</small></div>
+    </div>
+  </div>
+</div>
+<p style="font-family:var(--font-mono);font-size:12px;color:var(--ink-3)">
+  Örnek uygulamanın gerçek çıktısı — <code>examples/TRCrypto.Examples.Console</code>, bölüm 11.
+</p>
+
+<h2 id="paketler">Paketler</h2>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Paket</th><th>Kapsam</th><th>Durum</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>TRCrypto.BtcTurk</code></td>
+        <td>REST · WebSocket · SharedApis · kimlik doğrulama</td>
+        <td><span class="pill ok">geliştiriliyor</span></td>
+      </tr>
+      <tr>
+        <td><code>TRCrypto.BinanceTR</code></td>
+        <td>Public piyasa verisi — REST · WebSocket · SharedApis</td>
+        <td><span class="pill ok">geliştiriliyor</span></td>
+      </tr>
+      <tr><td><code>TRCrypto.Paribu</code></td><td>—</td><td><span class="pill wait">planlandı</span></td></tr>
+      <tr><td><code>TRCrypto.Bitexen</code></td><td>—</td><td><span class="pill wait">planlandı</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout important">
+  <span class="callout-label">Önemli</span>
+  <p>
+    <strong>Bu proje resmi değildir.</strong> Bağımsız bir çalışmadır; BtcTurk, Binance TR,
+    Paribu, Bitexen veya JKorf ile resmi bir bağlantısı yoktur. Borsaların API'lerinde
+    yapacağı değişikliklerden veya hizmet kesintilerinden sorumlu değildir.
+  </p>
+  <p>Henüz NuGet'e yayınlanmadı; ilk sürüm <code>0.1.0-preview</code> olarak planlanıyor.</p>
+</div>
+
+<h2 id="nereden">Nereden başlamalı</h2>
+<div class="cards">
+  <a class="card" href="#/durum">
+    <div class="card-title">Durum ve yol haritası</div>
+    <div class="card-desc">Ne bitti, ne kaldı, hangi karar neden verildi.</div>
+  </a>
+  <a class="card" href="#/btcturk">
+    <div class="card-title">TRCrypto.BtcTurk</div>
+    <div class="card-desc">Kurulum, uç listesi, sembol biçimi ve hata yönetimi.</div>
+  </a>
+  <a class="card" href="#/binance-tr">
+    <div class="card-title">TRCrypto.BinanceTR</div>
+    <div class="card-desc">Public piyasa verisi ve borsanın bilinmesi gereken sınırları.</div>
+  </a>
+  <a class="card" href="#/anahtar-guvenlik">
+    <div class="card-title">API anahtarı bağlama</div>
+    <div class="card-desc">En az yetki, IP kısıtlaması ve anahtarı sızdırmadan saklama.</div>
+  </a>
+  <a class="card" href="#/spesifikasyon">
+    <div class="card-title">Teknik spesifikasyon</div>
+    <div class="card-desc">Mimari kararlar ve canlı doğrulamayla bulunan 39 sapma.</div>
+  </a>
+  <a class="card" href="#/katki">
+    <div class="card-title">Katkı rehberi</div>
+    <div class="card-desc">Depoyu kurma, test türleri ve uç yazma kuralları.</div>
+  </a>
+</div>
+
+<h2 id="kurulum">Kurulum</h2>
+<div class="code">
+  <div class="code-bar"><span class="code-lang">bash</span><span class="grow"></span><button class="copy" type="button" data-code="dotnet add package TRCrypto.BtcTurk">kopyala</button></div>
+  <pre><code>${highlight('# NuGet yayini bekliyor; simdilik depoyu klonlayin\ngit clone ' + REPO + '.git\ncd TRCrypto.Net\ndotnet build -c Release', 'bash')}</code></pre>
+</div>
+<p>
+  Hedef platformlar: <code>net8.0</code> · <code>net9.0</code> · <code>net10.0</code> ·
+  <code>netstandard2.0</code> · <code>netstandard2.1</code>
+</p>
+`;
+}
+
+/* ═══ Uygulama ═══════════════════════════════════════════════════════════════ */
+
+const railEl = document.getElementById('rail');
+const docEl = document.getElementById('doc');
+const tocEl = document.getElementById('toc');
+const searchEl = document.getElementById('search');
+const scrimEl = document.getElementById('scrim');
+const menuBtn = document.getElementById('menuBtn');
+const themeBtn = document.getElementById('themeBtn');
+
+const flat = NAV.flatMap((g) => g.pages.map((p) => ({ ...p, group: g.group })));
+
+function buildRail() {
+  let html = '';
+  for (const group of NAV) {
+    html += '<div class="rail-group"><h2>' + esc(group.group) + '</h2><ul>';
+    for (const page of group.pages) {
+      html += '<li><a href="#/' + page.id + '" data-id="' + page.id + '">' + esc(page.title) + '</a></li>';
+    }
+    html += '</ul></div>';
+  }
+  html +=
+    '<div class="rail-foot">' +
+    '<a href="' + REPO + '" target="_blank" rel="noopener noreferrer">GitHub deposu</a><br>' +
+    'MIT lisansı<br>' +
+    '<span title="Sitenin üretildiği doküman setinin parmak izi">doküman ' + esc(GENERATED) + '</span>' +
+    '</div>';
+  railEl.innerHTML = html;
+}
+
+function markCurrent(id) {
+  for (const a of railEl.querySelectorAll('a[data-id]')) {
+    if (a.dataset.id === id) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  }
+}
+
+function buildToc(headings) {
+  if (headings.length < 2) {
+    tocEl.innerHTML = '';
+    return;
+  }
+  let html = '<h2>Bu sayfada</h2><ul>';
+  for (const h of headings) {
+    html += '<li><a href="#' + h.id + '" class="' + (h.level === 3 ? 'lvl3' : '') + '">' + esc(h.text) + '</a></li>';
+  }
+  tocEl.innerHTML = html + '</ul>';
+}
+
+function neighbours(id) {
+  const index = flat.findIndex((p) => p.id === id);
+  return { prev: flat[index - 1], next: flat[index + 1] };
+}
+
+function footer(id) {
+  const { prev, next } = neighbours(id);
+  if (!prev && !next) return '';
+  return (
+    '<div class="doc-foot">' +
+    (prev ? '<a class="prev" href="#/' + prev.id + '">' + esc(prev.title) + '</a>' : '<span></span>') +
+    (next ? '<a class="next" href="#/' + next.id + '">' + esc(next.title) + '</a>' : '<span></span>') +
+    '</div>'
+  );
+}
+
+function showPage(id, anchor) {
+  const page = DOCS[id];
+  if (!page) return showPage('giris');
+
+  markCurrent(id);
+  document.title = (id === 'giris' ? 'TRCrypto.Net Kılavuzu' : page.title + ' · TRCrypto.Net');
+
+  if (id === 'giris') {
+    docEl.innerHTML = homePage() + footer(id);
+    buildToc([
+      { id: 'tez', text: 'Aynı kod, iki borsa', level: 2 },
+      { id: 'paketler', text: 'Paketler', level: 2 },
+      { id: 'nereden', text: 'Nereden başlamalı', level: 2 },
+      { id: 'kurulum', text: 'Kurulum', level: 2 },
+    ]);
+  } else {
+    const { html, headings } = render(page.body);
+    const group = flat.find((p) => p.id === id).group;
+    const source = page.source
+      ? '<div class="doc-source">kaynak · <a href="' + REPO + '/blob/main/' + page.source +
+        '" target="_blank" rel="noopener noreferrer">' + esc(page.source) + '</a></div>'
+      : '';
+    docEl.innerHTML =
+      '<div class="doc-head"><div class="doc-eyebrow">' + esc(group) + '</div><h1>' +
+      esc(page.heading) + '</h1>' + source + '</div>' + html + footer(id);
+    buildToc(headings);
+  }
+
+  wireCopy();
+  observeHeadings();
+
+  if (anchor) {
+    const target = document.getElementById(anchor);
+    if (target) {
+      target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      return;
+    }
+  }
+  window.scrollTo(0, 0);
+}
+
+function wireCopy() {
+  for (const btn of docEl.querySelectorAll('.copy')) {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.code);
+        btn.textContent = 'kopyalandı';
+        btn.dataset.done = '1';
+      } catch {
+        btn.textContent = 'kopyalanamadı';
+      }
+      setTimeout(() => {
+        btn.textContent = 'kopyala';
+        delete btn.dataset.done;
+      }, 1600);
+    });
+  }
+}
+
+let observer = null;
+function observeHeadings() {
+  if (observer) observer.disconnect();
+  const links = new Map();
+  for (const a of tocEl.querySelectorAll('a')) links.set(a.getAttribute('href').slice(1), a);
+  if (!links.size) return;
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        for (const a of links.values()) a.classList.remove('active');
+        links.get(entry.target.id)?.classList.add('active');
+      }
+    },
+    { rootMargin: '-70px 0px -72% 0px', threshold: 0 }
+  );
+
+  for (const id of links.keys()) {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  }
+}
+
+/* ── Arama ───────────────────────────────────────────────────────────────── */
+
+function searchDocs(query) {
+  const needle = query.toLocaleLowerCase('tr');
+  const hits = [];
+
+  for (const meta of flat) {
+    const page = DOCS[meta.id];
+    const body = page.body ?? '';
+    const haystack = (page.heading + '\n' + body).toLocaleLowerCase('tr');
+    const at = haystack.indexOf(needle);
+    if (at < 0) continue;
+
+    const plain = body.replace(/[`*#>|]/g, ' ').replace(/\s+/g, ' ');
+    const pos = plain.toLocaleLowerCase('tr').indexOf(needle);
+    const from = Math.max(0, pos - 70);
+    const snippet = pos < 0 ? plain.slice(0, 150) : plain.slice(from, from + 190);
+
+    hits.push({ meta, page, snippet: (from > 0 ? '…' : '') + snippet.trim() + '…', rank: at });
+  }
+
+  hits.sort((a, b) => a.rank - b.rank);
+  return hits.slice(0, 24);
+}
+
+function showSearch(query) {
+  markCurrent(null);
+  tocEl.innerHTML = '';
+  document.title = 'Arama · TRCrypto.Net';
+
+  const hits = searchDocs(query);
+  let html =
+    '<div class="doc-head"><div class="doc-eyebrow">Arama</div><h1>' +
+    esc(query) + '</h1><div class="doc-source">' +
+    (hits.length ? hits.length + ' sayfada bulundu' : 'sonuç yok') + '</div></div>';
+
+  if (!hits.length) {
+    html += '<p class="empty">Bu terim dokümanlarda geçmiyor. Farklı bir yazım deneyin.</p>';
+  } else {
+    const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    html += '<div class="results">';
+    for (const hit of hits) {
+      html +=
+        '<a class="result" href="#/' + hit.meta.id + '">' +
+        '<div class="result-where">' + esc(hit.meta.group) + '</div>' +
+        '<div class="result-title">' + esc(hit.page.heading) + '</div>' +
+        '<div class="result-snip">' + esc(hit.snippet).replace(re, '<mark>$1</mark>') + '</div></a>';
+    }
+    html += '</div>';
+  }
+
+  docEl.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+/* ── Yonlendirme ─────────────────────────────────────────────────────────── */
+
+function route() {
+  const hash = decodeURIComponent(location.hash.replace(/^#/, ''));
+
+  if (hash.startsWith('/ara/')) {
+    const query = hash.slice(5).trim();
+    if (query) {
+      searchEl.value = query;
+      showSearch(query);
+      return;
+    }
+  }
+
+  if (hash.startsWith('/')) {
+    const [id, anchor] = hash.slice(1).split('#');
+    showPage(id || 'giris', anchor);
+    return;
+  }
+
+  // Sayfa ici bag: mevcut sayfada kal, hedefe kaydir.
+  if (hash) {
+    const target = document.getElementById(hash);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+  }
+
+  showPage('giris');
+}
+
+let searchTimer = null;
+searchEl.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  const query = searchEl.value.trim();
+  searchTimer = setTimeout(() => {
+    if (query.length < 2) {
+      if (location.hash.startsWith('#/ara/')) location.hash = '#/giris';
+      return;
+    }
+    location.hash = '#/ara/' + encodeURIComponent(query);
+  }, 220);
+});
+
+searchEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    searchEl.value = '';
+    searchEl.blur();
+    if (location.hash.startsWith('#/ara/')) location.hash = '#/giris';
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchEl && !e.metaKey && !e.ctrlKey) {
+    e.preventDefault();
+    searchEl.focus();
+    searchEl.select();
+  }
+});
+
+/* ── Mobil cekmece ───────────────────────────────────────────────────────── */
+
+function setDrawer(open) {
+  railEl.dataset.open = open ? '1' : '';
+  scrimEl.dataset.open = open ? '1' : '';
+  menuBtn.setAttribute('aria-expanded', String(open));
+}
+menuBtn.addEventListener('click', () => setDrawer(railEl.dataset.open !== '1'));
+scrimEl.addEventListener('click', () => setDrawer(false));
+railEl.addEventListener('click', (e) => {
+  if (e.target.closest('a')) setDrawer(false);
+});
+
+/* ── Tema ────────────────────────────────────────────────────────────────── */
+
+const SUN = '<circle cx="8" cy="8" r="3.1"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/>';
+const MOON = '<path d="M13.4 9.6A5.8 5.8 0 0 1 6.4 2.6a5.9 5.9 0 1 0 7 7Z" stroke-linejoin="round"/>';
+
+function currentlyDark() {
+  const stamped = document.documentElement.getAttribute('data-theme');
+  if (stamped) return stamped === 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function paintThemeIcon() {
+  document.getElementById('themeIcon').innerHTML = currentlyDark() ? MOON : SUN;
+}
+
+themeBtn.addEventListener('click', () => {
+  const next = currentlyDark() ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('trcrypto-theme', next); } catch {}
+  paintThemeIcon();
+});
+
+try {
+  const saved = localStorage.getItem('trcrypto-theme');
+  if (saved === 'dark' || saved === 'light') document.documentElement.setAttribute('data-theme', saved);
+} catch {}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintThemeIcon);
+
+/* ── Baslat ──────────────────────────────────────────────────────────────── */
+
+buildRail();
+paintThemeIcon();
+window.addEventListener('hashchange', route);
+route();
+</script>
