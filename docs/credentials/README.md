@@ -11,7 +11,7 @@ Bu klasör, TRCrypto ile bir Türk kripto borsasına bağlanmak için gereken AP
 | Borsa | Rehber | Durum |
 |---|---|---|
 | BtcTurk | [btcturk.md](btcturk.md) | ✅ Hazır |
-| Binance TR | `binance-tr.md` | ⏳ Adapter ile birlikte |
+| Binance TR | [binance-tr.md](binance-tr.md) | ✅ Hazır (kimlik doğrulama henüz devre dışı) |
 | Paribu | `paribu.md` | ⏳ Adapter ile birlikte |
 | Bitexen | `bitexen.md` | ⏳ Faz 2 |
 

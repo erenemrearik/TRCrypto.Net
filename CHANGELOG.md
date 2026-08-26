@@ -39,6 +39,8 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
   - **Borsadan bağımsız yüzey** — REST tarafında sembol, emir defteri ve işlem
     arayüzleri; WebSocket tarafında ticker, işlem ve emir defteri arayüzleri
   - `services.AddTRCryptoBinanceTR(...)`
+- **Bağımlılık enjeksiyonu** — tek çağrı hem REST hem WebSocket istemcisini kaydeder;
+  socket istemcisi tekil olarak paylaşılır
 - **Belgeler** — borsa başına API anahtarı rehberi (`docs/credentials/`), resmi kaynaklı
   endpoint envanteri (`docs/vendor/`), teknik spesifikasyon ve doğrulama ekleri (`docs/spec/`)
 - **Secret koruması** — `.gitignore` blokları, `gitleaks` yapılandırması, pre-commit

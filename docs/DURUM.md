@@ -133,6 +133,7 @@ BtcTurk'tan üç önemli fark:
 |---|---|
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
+| `docs/credentials/binance-tr.md` | Binance TR'de anahtar alma; imzalama şemasının BtcTurk'ten farkları |
 | `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
 | `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-39) |
 
@@ -145,7 +146,7 @@ BtcTurk'tan üç önemli fark:
 | **Kullanıcıya özel socket akışları** | Giriş çalışıyor, ama mesaj gövdeleri (423/441/451/452/453) hesapta **hareket olmadan gelmiyor** ve hiçbir yerde belgelenmemiş. Modelleri yazmak için gerçek emir hareketi gerekiyor |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Emir uçlarının canlı doğrulaması** | Gerçek emir vermeyi gerektirir; bilinçli olarak ertelendi. İmzalama ve okuma uçları canlı doğrulandı |
-| **Binance TR: kimlik doğrulama** | İmzalama yazıldı ama canlı doğrulanmadı; bilinçli olarak devre dışı |
+| **Binance TR: kimlik doğrulama** | İmzalama yazıldı ama canlı doğrulanmadı; bilinçli olarak devre dışı. Anahtar geldiğinde şemayı doğrulayacak sonda testleri hazır (`AuthenticationProbeTests`, anahtarsızken atlanır) |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu · Bitexen** | M5–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
@@ -158,7 +159,7 @@ Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  185/185 (birim) + 8 (canli hesap)
+dotnet test  -c Release   →  185/185 (birim) + 13 (canli API) + 2 atlandi
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
@@ -252,13 +253,22 @@ Hazır olduğunda iki yol var:
 
 ## ⚠️ Açık konu: sistem saati
 
-Geliştirme makinesi ile BtcTurk sunucusu arasında tutarlı olarak **~19 saniye** fark ölçüldü.
-`X-Stamp` UTC milisaniye gerektirdiğinden bu, M2'de imzalı isteklerin reddedilmesine yol
-açar. İmzalı uçları gerçek bir hesaba karşı denemeden önce NTP ile senkronize edin.
+Geliştirme makinesinin saati düzeltildi; kalan sapma **~1,8 saniye**. Değer BtcTurk ve
+Binance TR sunucularına karşı ayrı ayrı ölçüldü ve ikisi de aynı sonucu verdiği için
+ölçüm hatası değil, gerçek bir kayma.
 
-Kontrol:
+| | Tolerans | Durum |
+|---|---|---|
+| BtcTurk | geniş | ✅ sorun yok — imzalı uçlar canlı doğrulandı |
+| Binance TR | `recvWindow` varsayılan **5000 ms** | ⚠️ pencere içinde, ama payı ~3,2 saniye |
 
-```csharp
-var serverTime = await client.SpotApi.ExchangeData.GetServerTimeAsync();
-Console.WriteLine((DateTime.UtcNow - serverTime.Data).TotalSeconds);
+Binance TR'nin penceresi dar olduğu için bu kayma büyürse imzalı istekler reddedilir.
+`ServerTimeIntegrationTests` her çalıştırmada sapmayı ölçer ve pencere aşılırsa
+başarısız olur — sorun anahtarı bağladıktan sonra değil, öncesinde görünür.
+
+Makine etki alanına bağlı olduğundan saat etki alanı denetleyicisinden gelir; kalıcı
+çözüm sistem yöneticisi tarafındadır.
+
+```bash
+dotnet test --filter "FullyQualifiedName~ServerTimeIntegrationTests" -l "console;verbosity=detailed"
 ```

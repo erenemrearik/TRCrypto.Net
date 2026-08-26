@@ -7,6 +7,7 @@
     <Project Path="src/TRCrypto.BtcTurk/TRCrypto.BtcTurk.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/TRCrypto.BinanceTR.IntegrationTests/TRCrypto.BinanceTR.IntegrationTests.csproj" />
     <Project Path="tests/TRCrypto.BinanceTR.UnitTests/TRCrypto.BinanceTR.UnitTests.csproj" />
     <Project Path="tests/TRCrypto.BtcTurk.IntegrationTests/TRCrypto.BtcTurk.IntegrationTests.csproj" />
     <Project Path="tests/TRCrypto.BtcTurk.UnitTests/TRCrypto.BtcTurk.UnitTests.csproj" />

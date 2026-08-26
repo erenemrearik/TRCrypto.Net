@@ -147,7 +147,7 @@ Geçersiz girdiler ağa çıkılmadan reddedilir — eksik fiyat, negatif miktar
 |---|---|
 | **Nerede kaldık, sonraki adım** | [docs/DURUM.md](docs/DURUM.md) |
 | API anahtarı alma ve bağlama | [docs/credentials/](docs/credentials/) |
-| BtcTurk endpoint envanteri | [docs/vendor/](docs/vendor/) |
+| Borsa endpoint envanterleri | [docs/vendor/](docs/vendor/) |
 | Teknik spesifikasyon + doğrulama ekleri | [docs/spec/](docs/spec/) |
 | Katkı rehberi | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Güvenlik açığı bildirimi | [SECURITY.md](SECURITY.md) |

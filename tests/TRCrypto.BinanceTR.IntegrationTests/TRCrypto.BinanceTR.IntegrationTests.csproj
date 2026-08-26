@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      Kimlik bilgileri bu kimlik altinda, depo klasorunun TAMAMEN DISINDA saklanir:
+      %APPDATA%\Microsoft\UserSecrets\<UserSecretsId>\secrets.json
+      Boylece yanlislikla commit edilmeleri mumkun degildir.
+    -->
+    <UserSecretsId>trcrypto-binancetr-integration</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TRCrypto.BinanceTR\TRCrypto.BinanceTR.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Xunit.SkippableFact" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+  </ItemGroup>
+
+</Project>

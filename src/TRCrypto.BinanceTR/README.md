@@ -78,6 +78,9 @@ HTTP 200 içinde döner. Kütüphane bunu başarısız sonuca çevirir.
 doğrulanmadığı için bilinçli olarak devre dışı: doğrulanmamış bir imzalama, isteklerin
 nedeni belirsiz şekilde reddedilmesine yol açardı.
 
+Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
+[docs/credentials/binance-tr.md](https://github.com/erenemrearik/TRCrypto.Net/blob/main/docs/credentials/binance-tr.md)
+
 ## Desteklenen uçlar
 
 | Uç | Metod | Durum |
