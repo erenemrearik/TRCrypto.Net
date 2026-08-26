@@ -172,6 +172,10 @@ canlı API                 →  379 parite, native == shared
 dotnet run --project examples/TRCrypto.Examples.Console
 ```
 
+Son bölüm (`[11] Iki borsa, tek kod`) projenin varlık nedenini çalıştırarak gösterir:
+tek bir `SharedSymbol` ile her iki borsadan REST ve WebSocket üzerinden fiyat okunur,
+çağıran kod hiçbir borsanın sembol biçimini veya zarfını görmez.
+
 ---
 
 ## Bilinmesi gereken kararlar

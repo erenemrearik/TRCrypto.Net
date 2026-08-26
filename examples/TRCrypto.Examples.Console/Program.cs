@@ -1,4 +1,5 @@
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.BinanceTR.Clients;
 using TRCrypto.BtcTurk;
 using TRCrypto.BtcTurk.Clients;
 using TRCrypto.BtcTurk.Enums;
@@ -209,6 +210,71 @@ if (tickerSub.Success)
 
 await socket.SpotApi.UnsubscribeAllAsync();
 Console.WriteLine("  tum abonelikler kapatildi");
+
+// ─── 11) Iki borsa, tek kod ──────────────────────────────────────────────────
+// Projenin varlik nedeni: cagiran kod hangi borsayla konustugunu bilmez.
+// Her borsa kendi sembol bicimini uretir (BTCTRY / BTC_TRY) ve kendi zarfini acar;
+// asagidaki kodda bunlarin hicbiri gorunmez.
+Console.WriteLine($"\n[11] Iki borsa, tek kod");
+
+var restBorsalar = new (string Ad, IOrderBookRestClient Istemci)[]
+{
+    ("BtcTurk  ", client.SpotApi.SharedClient),
+    ("BinanceTR", new BinanceTRRestClient().SpotApi.SharedClient)
+};
+
+foreach (var (ad, restIstemci) in restBorsalar)
+{
+    var defter = await restIstemci.GetOrderBookAsync(new GetOrderBookRequest(sharedSymbol, 5));
+    Console.WriteLine(defter.Success
+        ? $"  {ad} REST      : en iyi alis {defter.Data.Bids[0].Price,12:N0} TRY"
+        : $"  {ad} REST      : {defter.Error}");
+}
+
+// Yetenekler borsadan borsaya degisir ve bu fark bildirilir: BtcTurk REST ticker
+// sunar, Binance TR sunmaz. Uygulanmamis bir arayuzu bildirmek Discover() ciktisini
+// yaniltici hale getirirdi.
+using var binanceRest = new BinanceTRRestClient();
+Console.WriteLine($"  REST ticker        : BtcTurk={client.SpotApi.SharedClient is ISpotTickerRestClient}, " +
+                  $"BinanceTR={binanceRest.SpotApi.SharedClient is ISpotTickerRestClient}");
+Console.WriteLine("  (Binance TR ticker verisini yalnizca WebSocket uzerinden sunuyor)");
+
+// Ayni sey socket tarafinda da gecerli: tek bir SharedSymbol, iki borsa.
+using var binanceSocket = new BinanceTRSocketClient();
+var socketBorsalar = new (string Ad, ITickerSocketClient Socket)[]
+{
+    ("BtcTurk  ", socket.SpotApi.SharedClient),
+    ("BinanceTR", binanceSocket.SpotApi.SharedClient)
+};
+
+var fiyatlar = new decimal?[socketBorsalar.Length];
+var abonelikler = new List<CryptoExchange.Net.Objects.Sockets.UpdateSubscription>();
+
+for (var i = 0; i < socketBorsalar.Length; i++)
+{
+    var index = i;
+    var sonuc = await socketBorsalar[i].Socket.SubscribeToTickerUpdatesAsync(
+        new SubscribeTickerRequest(sharedSymbol),
+        update => fiyatlar[index] = update.Data.LastPrice);
+
+    if (sonuc.Success)
+        abonelikler.Add(sonuc.Data);
+}
+
+await Task.Delay(8000);
+
+for (var i = 0; i < socketBorsalar.Length; i++)
+    Console.WriteLine($"  {socketBorsalar[i].Ad} canli   : {fiyatlar[i]?.ToString("N0") ?? "veri gelmedi"} TRY");
+
+if (fiyatlar[0] is { } btcTurkFiyat && fiyatlar[1] is { } binanceFiyat)
+{
+    var fark = Math.Abs(btcTurkFiyat - binanceFiyat);
+    Console.WriteLine($"  Fark               : {fark:N0} TRY ({fark / btcTurkFiyat:P3})");
+}
+
+foreach (var abonelik in abonelikler)
+    await abonelik.CloseAsync();
+Console.WriteLine("  abonelikler kapatildi");
 
 Console.WriteLine("\nTamamlandi.");
 return 0;

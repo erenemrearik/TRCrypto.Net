@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\TRCrypto.BinanceTR\TRCrypto.BinanceTR.csproj" />
     <ProjectReference Include="..\..\src\TRCrypto.BtcTurk\TRCrypto.BtcTurk.csproj" />
   </ItemGroup>
 

@@ -160,7 +160,7 @@ Geçersiz girdiler ağa çıkılmadan reddedilir — eksik fiyat, negatif miktar
 ```bash
 dotnet build -c Release
 dotnet test  -c Release
-dotnet run --project examples/TRCrypto.Examples.Console   # canli public API dogrulamasi
+dotnet run --project examples/TRCrypto.Examples.Console   # iki borsaya karsi canli dogrulama
 ```
 
 ### Secret koruması
