@@ -107,10 +107,11 @@ yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağ
 
 | Konu | Neden |
 |---|---|
-| **Kullanıcıya özel socket akışları** | Giriş imzası REST'ten farklı üretiliyor gibi görünüyor; canlı hesapla doğrulanmadan uygulanmamalı (yanlış imza sessizce başarısız olur) |
+| **Kullanıcıya özel socket akışları** | **API anahtarı bekleniyor.** Mesaj gövdeleri (423/441/451/452/453) hiçbir yerde belgelenmemiş ve giriş yapmadan akış gelmiyor — modelleri uydurmak gerekirdi |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Canlı private doğrulama** | API anahtarı yok. İmzalama sabit test vektörleriyle, uçlar contract testleriyle doğrulandı; gerçek hesaba karşı hiç çalıştırılmadı |
-| **Binance TR · Paribu · Bitexen** | M4–M6 |
+| **Binance TR adaptörü** | Envanteri çıkarıldı (docs/vendor/binance-tr-capabilities.md), kod yazılmadı |
+| **Paribu · Bitexen** | M5–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
 ---
