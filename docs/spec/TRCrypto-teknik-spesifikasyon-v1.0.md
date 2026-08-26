@@ -1144,3 +1144,88 @@ edildiğinde üretilir. **Gövdeleri hâlâ bilinmiyor** ve dokümantasyonda da 
 Sonuç: özel akış modelleri yazılabilmesi için hesapta gerçek bir emir hareketi gerekiyor.
 Emir girme ve iptal (`451`, `452`) piyasadan uzak bir limit emriyle eşleşme olmadan
 gözlenebilir; işlem bildirimleri (`423`, `441`) ise gerçek bir eşleşme gerektirir.
+
+---
+
+## E.9 Binance TR Bulguları
+
+### D-32 — Yanıt zarfı BtcTurk'ten tamamen farklı
+
+| | BtcTurk | Binance TR |
+|---|---|---|
+| Başarı | `success` (bool) | **yok** — `code == 0` |
+| Mesaj | `message` | `msg` |
+| Zaman | — | `timestamp` (zarf seviyesinde) |
+
+İki borsa için tek bir zarf modeli kullanılamaz. Her adaptörün kendi zarfı ve kendi hata
+çevirisi vardır. Bu, spesifikasyonun "her borsa bağımsız adapter" kararını (ADR-003)
+doğruluyor.
+
+Sunucu saati ucu gövdesinde veri taşımaz; istenen değer yalnızca zarftadır. Bu yüzden
+zarfı açmayan ayrı bir gönderim yolu gerekti.
+
+### D-33 — Global Binance'te public olan uçlar burada anahtar istiyor
+
+`/api/v3/*` yolları — global Binance'te herkese açık piyasa verisi uçları — Binance TR'de
+`3701 Invalid API-key, IP, or permissions` döndürüyor. Global Binance için yazılmış kod
+burada çalışmaz; ADR-005'in öngördüğü durum tam olarak budur.
+
+**Sonuç:** REST üzerinden anahtarsız ticker verisi alınamıyor. BtcTurk'te bedava olan bir
+yetenek burada anahtar gerektiriyor ve `Discover()` bu farkı bildiriyor.
+
+### D-34 — Başarılı görünüp boş dönen uçlar
+
+`market/trades` ve `market/klines` `code: 0` ile yanıt verip boş liste döndürüyor
+(denenen tüm paritelerde, tarih filtresiyle veya filtresiz).
+
+Hata dönen bir uçtan daha tehlikelidir: çağıran taraf bunu "işlem yok" olarak okur.
+İşlem verisi için `agg-trades` kullanılır; her iki veri de WebSocket üzerinden sorunsuz
+akıyor (D-36).
+
+### D-35 — Emir defteri kademe sayısı sabit değerlerle sınırlı
+
+Yalnızca `5, 10, 20, 50, 100, 500, 1000` kabul ediliyor. Diğer değerler
+`1106 Incorrect Page number` ile reddediliyor — mesaj sorunun limit olduğunu **söylemiyor**.
+İstemci bunu ağa çıkmadan reddeder.
+
+### D-36 — WebSocket, REST'in veremediğini veriyor
+
+| Veri | REST | WebSocket |
+|---|---|---|
+| Ticker | ❌ anahtar gerekiyor | ✅ anahtarsız |
+| Tekil işlemler | ⚠️ boş liste | ✅ çalışıyor |
+| Mum verisi | ⚠️ boş liste | ✅ çalışıyor |
+
+Bu nedenle Binance TR'de ticker desteği yalnızca socket yüzeyinde sunuluyor.
+
+### D-37 — Sembol formatı aynı borsa içinde üç farklı biçimde
+
+| Yer | Biçim |
+|---|---|
+| REST istek ve yanıt | `BTC_TRY` |
+| WebSocket abonelik | `btctry` |
+| WebSocket yanıt | `BTCTRY` |
+
+Abonelikte yanlış biçim **hata üretmez**: bağlantı kurulur, hiçbir mesaj gelmez. Sorun
+ancak "veri akmıyor" olarak fark edilir, bu yüzden dönüşüm testle sabitlenmiştir.
+
+### D-38 — Alan eşleşmesi büyük/küçük harfe duyarlı olmalı
+
+WebSocket akışları tek harfli alanlar kullanır ve harf büyüklüğü anlam taşır: `p` fiyat
+değişimi / `P` yüzde değişim, `b` alış fiyatı / `B` alış miktarı, `U` ilk sıra / `u` son sıra.
+
+Duyarsız eşleşme bu çiftleri çakıştırır ve ayrıştırma tamamen başarısız olur.
+
+**BtcTurk tam tersini gerektiriyordu:** orada aynı alan uçlar arasında farklı harf
+büyüklüğüyle geldiği için duyarsız eşleşme şarttı (D-17). İki borsa için tek bir
+serileştirme ayarı kullanılamaz.
+
+### D-39 — Yönlendirme kimliği bağlantıya değil mesaja bağlı olmalı
+
+Binance TR'de akış, bağlantı adresinin parçasıdır (`/ws/<akış>`). İlk uygulamada
+yönlendirme kimliği istemci üzerinde bir alanda tutuldu; her yeni abonelik öncekinin
+kimliğini ezdi ve **yalnızca en son abonelik mesaj aldı**. Diğerleri hata vermeden sessizce
+boş kaldı.
+
+Kimlik artık mesajın kendisinden türetiliyor: olay türü `e` alanından, taşımayan akışlar
+için sabit bir görüntü kimliğinden. Regresyon testi bu davranışı sabitler.

@@ -57,12 +57,19 @@ internal record BinanceTRResponse<T> : IBinanceTRResponse
 }
 
 /// <summary>Binance TR yanitlarini ayristirirken kullanilan ortak serilestirme ayarlari.</summary>
+/// <remarks>
+/// <b>Alan eslesmesi buyuk/kucuk harfe duyarlidir.</b> WebSocket akislari tek harfli ve
+/// harf buyuklugu anlam tasiyan alanlar kullanir: <c>p</c> fiyat degisimini, <c>P</c> yuzde
+/// degisimini; <c>b</c> alis fiyatini, <c>B</c> alis miktarini; <c>u</c> ve <c>U</c> farkli
+/// sira numaralarini gosterir. Duyarsiz eslesme bu ciftleri cakistirir ve ayristirma
+/// tamamen basarisiz olur.
+/// </remarks>
 internal static class BinanceTRJsonOptions
 {
     /// <summary>Varsayilan ayarlar.</summary>
     public static JsonSerializerOptions Default { get; } = new()
     {
-        PropertyNameCaseInsensitive = true,
+        PropertyNameCaseInsensitive = false,
         NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
     };
 }

@@ -5,7 +5,7 @@
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=CI&logo=github&style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/testler-144%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
+[![Tests](https://img.shields.io/badge/testler-172%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
 
@@ -50,7 +50,7 @@ TRCrypto her borsa için **iki yüzey** sunar:
 </tr>
 <tr>
   <td><code>TRCrypto.BinanceTR</code></td>
-  <td>Public piyasa verisi (REST)</td>
+  <td>Public piyasa verisi (REST + WebSocket)</td>
   <td><img src="https://img.shields.io/badge/geliştiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
 </tr>
 <tr>
@@ -70,9 +70,10 @@ TRCrypto her borsa için **iki yüzey** sunar:
 **BtcTurk'te çalışan:** piyasa verisi · mum verisi · bakiye · emir işlemleri · işlem
 geçmişi · gerçek zamanlı akışlar — hepsi hem native hem SharedApis üzerinden.
 
-**Binance TR:** sunucu saati, pariteler, emir defteri ve toplu işlemler — public REST.
+**Binance TR:** pariteler, emir defteri, işlemler ve gerçek zamanlı akışlar (ticker dahil)
+— hem native hem SharedApis üzerinden.
 
-**Henüz yok:** BtcTurk özel socket akışları, Binance TR kimlik doğrulama ve WebSocket, Paribu, Bitexen.
+**Henüz yok:** BtcTurk özel socket akışları, Binance TR kimlik doğrulama, Paribu, Bitexen.
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
 
 ---

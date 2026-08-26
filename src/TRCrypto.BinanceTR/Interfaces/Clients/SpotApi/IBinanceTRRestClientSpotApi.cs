@@ -5,4 +5,7 @@ public interface IBinanceTRRestClientSpotApi : IRestApiClient<BinanceTRCredentia
 {
     /// <summary>Piyasa verisi uclari.</summary>
     IBinanceTRRestClientSpotApiExchangeData ExchangeData { get; }
+
+    /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
+    IBinanceTRRestClientSpotApiShared SharedClient { get; }
 }

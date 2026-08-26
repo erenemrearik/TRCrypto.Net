@@ -2,9 +2,9 @@
 
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/blob/main/LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#kurulum)
-[![Durum](https://img.shields.io/badge/durum-piyasa%20verisi-yellow?style=flat-square)](#desteklenen-uçlar)
+[![Durum](https://img.shields.io/badge/durum-REST%20+%20WebSocket-yellow?style=flat-square)](#desteklenen-uçlar)
 
-Binance TR REST API'si için .NET client kütüphanesi.
+Binance TR REST ve WebSocket API'leri için .NET client kütüphanesi.
 [CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) üzerine kuruludur.
 
 > **Resmi değildir.** Bu paket bağımsız bir çalışmadır; Binance TR ile bir bağlantısı yoktur.
@@ -86,11 +86,15 @@ nedeni belirsiz şekilde reddedilmesine yol açardı.
 | `/open/v1/common/symbols` | `GetSymbolsAsync` | ✅ |
 | `/open/v1/market/depth` | `GetOrderBookAsync` | ✅ |
 | `/open/v1/market/agg-trades` | `GetAggregatedTradesAsync` | ✅ |
-| Ticker | — | ❌ Anahtarsız mümkün değil |
-| Kline | — | ⚠️ Borsa boş liste döndürüyor |
+| Ticker (REST) | — | ❌ Anahtarsız mümkün değil |
+| Kline (REST) | — | ⚠️ Borsa boş liste döndürüyor |
 | Hesap · emir işlemleri | — | ⏳ Kimlik doğrulama gerekir |
-| WebSocket | — | ⏳ |
-| SharedApis | — | ⏳ |
+| WS ticker | `SubscribeToTickerUpdatesAsync` | ✅ |
+| WS trade · aggTrade | `SubscribeToTradeUpdatesAsync` vb. | ✅ |
+| WS emir defteri | `SubscribeToOrderBookUpdatesAsync` | ✅ |
+| WS kline | `SubscribeToKlineUpdatesAsync` | ✅ |
+| SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |
+| SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` | ✅ |
 
 Resmi API belgeleri: [binance.tr/apidocs](https://www.binance.tr/apidocs)
 

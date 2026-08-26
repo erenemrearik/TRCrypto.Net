@@ -10,7 +10,7 @@
 
 BtcTurk **tamamlandı** (REST + WebSocket + shared); yalnızca kullanıcıya özel socket
 akışları eksik ve bunlar hesapta emir hareketi gerektiriyor.
-**Binance TR başladı** — public piyasa verisi çalışıyor.
+**Binance TR: REST + WebSocket + shared yüzey** çalışıyor; kimlik doğrulama bekliyor.
 
 ---
 
@@ -106,11 +106,23 @@ olduğunu söylemiyor. Ayrıntı: [vendor/binance-tr-capabilities.md](vendor/bin
 | `/open/v1/market/depth` | `GetOrderBookAsync` |
 | `/open/v1/market/agg-trades` | `GetAggregatedTradesAsync` |
 
+**WebSocket** (`socket.SpotApi`): ticker · trade · aggTrade · depth · depth5/10/20 · kline
+
+Ayrıntı: [vendor/binance-tr-websocket.md](vendor/binance-tr-websocket.md)
+
+**Shared yüzey:** REST tarafında `ISpotSymbolRestClient` · `IOrderBookRestClient` ·
+`IRecentTradeRestClient`; socket tarafında `ITickerSocketClient` · `ITradeSocketClient` ·
+`IOrderBookSocketClient`.
+
+Aynı kod artık iki borsayla çalışıyor — canlı doğrulandı: tek bir `SharedSymbol` ile
+her iki borsadan paralel fiyat okunuyor, her biri kendi sembol biçimini (`BTCTRY` /
+`BTC_TRY`) kullanırken çağıran kod hiçbirini görmüyor.
+
 BtcTurk'tan üç önemli fark:
 
 1. **Zarf farklı** — `success` alanı yok, başarı `code == 0`; mesaj `msg`; zarfta `timestamp`
 2. **Sembol alt çizgili** — `BTC_TRY` (BtcTurk: `BTCTRY`)
-3. **Ticker anahtarsız alınamıyor** — `/api/v3/*` burada public değil
+3. **Ticker REST'te anahtarsız alınamıyor** — `/api/v3/*` burada public değil; socket'te çalışıyor
 
 ### Belgeler ✅
 
@@ -119,7 +131,7 @@ BtcTurk'tan üç önemli fark:
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-31) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-39) |
 
 ---
 
@@ -131,8 +143,7 @@ BtcTurk'tan üç önemli fark:
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Emir uçlarının canlı doğrulaması** | Gerçek emir vermeyi gerektirir; bilinçli olarak ertelendi. İmzalama ve okuma uçları canlı doğrulandı |
 | **Binance TR: kimlik doğrulama** | İmzalama yazıldı ama canlı doğrulanmadı; bilinçli olarak devre dışı |
-| **Binance TR: WebSocket ve shared yüzey** | Sırada |
-| **Binance TR: ticker** | Borsa anahtarsız ticker sunmuyor (`/api/v3/*` bile anahtar istiyor) |
+| **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu · Bitexen** | M5–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
@@ -144,7 +155,7 @@ Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  144/144 (birim) + 7 (canli hesap)
+dotnet test  -c Release   →  172/172 (birim) + 7 (canli hesap)
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
