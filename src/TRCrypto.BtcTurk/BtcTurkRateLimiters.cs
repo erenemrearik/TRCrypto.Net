@@ -23,6 +23,8 @@ public class BtcTurkRateLimiters
 
     internal IRateLimitGate GraphRest { get; private set; }
 
+    internal IRateLimitGate Socket { get; private set; }
+
     /// <summary>Bir istek limitine takildiginda tetiklenir.</summary>
     public event Action<RateLimitEvent>? RateLimitTriggered;
 
@@ -65,7 +67,19 @@ public class BtcTurkRateLimiters
                 TimeSpan.FromMinutes(10),
                 RateLimitWindowType.Sliding));
 
+        // Dokumante edilen limit: dakikada 15 baglanti istegi; asimda 60 sn engel.
+        // Abonelik istekleri bu limite dahil degildir.
+        Socket = new RateLimitGate("Socket")
+            .AddGuard(new RateLimitGuard(
+                RateLimitGuard.PerHost,
+                new IGuardFilter[] { new LimitItemTypeFilter(RateLimitItemType.Connection) },
+                15,
+                TimeSpan.FromMinutes(1),
+                RateLimitWindowType.Sliding));
+
         PublicRest.RateLimitTriggered += x => RateLimitTriggered?.Invoke(x);
+        Socket.RateLimitTriggered += x => RateLimitTriggered?.Invoke(x);
+        Socket.RateLimitUpdated += x => RateLimitUpdated?.Invoke(x);
         GraphRest.RateLimitTriggered += x => RateLimitTriggered?.Invoke(x);
         GraphRest.RateLimitUpdated += x => RateLimitUpdated?.Invoke(x);
         PrivateRest.RateLimitTriggered += x => RateLimitTriggered?.Invoke(x);

@@ -8,9 +8,8 @@
 
 ## Tek cümleyle
 
-BtcTurk'ün **REST yüzeyi tamamlandı** — piyasa verisi, mum verisi, bakiye, emir
-işlemleri ve işlem geçmişi; hepsi hem native hem borsadan bağımsız yüzeyde.
-**WebSocket henüz yok**; diğer üç borsaya başlanmadı.
+BtcTurk **tamamlandı** — REST, WebSocket ve borsadan bağımsız yüzey. Yalnızca
+kullanıcıya özel socket akışları eksik. Diğer üç borsaya başlanmadı.
 
 ---
 
@@ -78,6 +77,21 @@ Bu uç **ayrı bir host** kullanır, **standart zarfı taşımaz** ve zaman damg
 
 Yani BtcTurk artık borsadan bağımsız kodun tüm ortak REST işlemlerini destekliyor.
 
+
+### M3 — WebSocket ✅
+
+Protokol resmi dokümanda gövdesiz listelendiği için **canlı bağlantıdan** çözüldü.
+Ayrıntı: [vendor/btcturk-websocket.md](vendor/btcturk-websocket.md)
+
+| Kanal | Metod | Shared |
+|---|---|---|
+| ticker | `SubscribeToTickerUpdatesAsync` | `ITickerSocketClient` |
+| trade | `SubscribeToTradeUpdatesAsync` | `ITradeSocketClient` |
+| orderbook | `SubscribeToOrderBookUpdatesAsync` | `IOrderBookSocketClient` |
+
+Mesajlar `[tip, gövde]` dizisi biçimindedir; yönlendirme dizinin ilk elemanına göre
+yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağlanır.
+
 ### Belgeler ✅
 
 | Dosya | İçerik |
@@ -85,7 +99,7 @@ Yani BtcTurk artık borsadan bağımsız kodun tüm ortak REST işlemlerini dest
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-22) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-28) |
 
 ---
 
@@ -93,7 +107,7 @@ Yani BtcTurk artık borsadan bağımsız kodun tüm ortak REST işlemlerini dest
 
 | Konu | Neden |
 |---|---|
-| **WebSocket** | M3 — sıradaki iş |
+| **Kullanıcıya özel socket akışları** | Giriş imzası REST'ten farklı üretiliyor gibi görünüyor; canlı hesapla doğrulanmadan uygulanmamalı (yanlış imza sessizce başarısız olur) |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Canlı private doğrulama** | API anahtarı yok. İmzalama sabit test vektörleriyle, uçlar contract testleriyle doğrulandı; gerçek hesaba karşı hiç çalıştırılmadı |
 | **Binance TR · Paribu · Bitexen** | M4–M6 |
@@ -107,7 +121,7 @@ Son çalıştırma (25 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  87/87 geçti
+dotnet test  -c Release   →  110/110 geçti
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
 ```
@@ -138,7 +152,7 @@ dotnet run --project examples/TRCrypto.Examples.Console
 
 ## Dokümantasyonda olmayan, canlı API'de bulunan davranışlar
 
-Ayrıntısı `docs/spec/` ekinde D-7…D-22. En önemlisi:
+Ayrıntısı `docs/spec/` ekinde D-7…D-28. En önemlisi:
 
 > **`code` alanının tipi uçlar arasında tutarsız:** çoğu uç `0` (sayı) döndürürken
 > emir defteri `"SUCCESS"` (metin) döndürüyor. `int` olarak modellemek emir defteri
@@ -152,20 +166,18 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 ## Sonraki adım
 
-**1. WebSocket (M3)**
+**1. Sonraki borsa (M4)**
 
-Vendor freeze: `websocket-feed/*` sayfaları. Kanal/olay/model yapısı, kimlik doğrulama
-akışı, yeniden bağlanma ve abonelik yönetimi. Emir iptalinin kesinleştiği **kanal 452**
-da burada; iptalin eşzamansız olduğu sorunu ancak WebSocket ile tam çözülür.
+Binance TR. Convention'lar BtcTurk üzerinde eksiksiz oturdu; aynı sıra izlenir:
+vendor freeze → public REST → auth → private REST → WebSocket → shared.
 
-**2. Sonraki borsa (M4)**
+**2. Kullanıcıya özel socket akışları**
 
-Binance TR. Convention'lar BtcTurk üzerinde oturdu; aynı sıra izlenir:
-vendor freeze → public REST → auth → private REST → shared.
+Emir iptalinin kesinleştiği kanal 452 burada. Canlı bir hesap gerektirir.
 
 **3. Ön sürüm**
 
-BtcTurk REST tamamlandığına göre NuGet v0.1.0-preview yayınlanabilir. Workflow hazır;
+BtcTurk tamamlandığına göre NuGet v0.1.0-preview yayınlanabilir. Workflow hazır;
 `NUGET_API_KEY` ve environment onayı eksik.
 
 ---

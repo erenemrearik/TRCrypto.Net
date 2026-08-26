@@ -1035,3 +1035,55 @@ yapan tüketiciler native API kullanmalıdır.
 
 İşlem geçmişi ucunda `orderId`, diğer parametrelerle birlikte kullanılamaz. Sessizce yok
 saymak yanlış sonuç döndürürdü; birlikte verildiklerinde `ArgumentException` fırlatılır.
+
+---
+
+## E.7 Beşinci Tur Bulguları (WebSocket)
+
+### D-23 — Socket mesajları dizi zarfı kullanır
+
+Mesajlar `[tip, gövde]` biçiminde iki elemanlı bir dizidir; tip numarası gövdenin içinde
+de tekrar edilir. REST tarafındaki hiçbir kalıp buna benzemez.
+
+Yönlendirme dizinin **ilk elemanına** göre yapılır. Bu, alan referansının derinliğinin
+doğru verilmesini gerektirir: kök dizinin kendisi 0. seviyededir, **elemanları 1. seviyede
+okunur**. Derinlik 0 verildiğinde hiçbir alan eşleşmez, her mesaj "değerlendirilemedi"
+diye düşer ve abonelik onayı beklenirken zaman aşımına uğrar — belirti ile neden
+arasındaki mesafe büyük olduğu için bu davranış bir regresyon testiyle sabitlenmiştir.
+
+### D-24 — Dokümante edilmemiş mesaj kodları
+
+| Kod | Durum |
+|---|---|
+| `991` | Bağlantı kurulur kurulmaz, istenmeden gönderilen sürüm mesajı. Resmi model listesinde yoktur. |
+| `421` | Trade kanalına abone olunduğunda gelen kod. Resmi liste yalnızca `422 TradeSingle` içerir; gelen mesaj bir **liste** taşır. |
+
+Bilinmeyen kodu ölümcül sayan bir istemci, daha ilk mesajda bağlantıyı düşürürdü.
+
+### D-25 — Socket alan adları REST'ten tamamen farklı
+
+Ticker alanları tek/iki harfe kısaltılmıştır (`B`, `A`, `PS`, `LA`, `DP`…) ve değerler
+**metin** olarak gelir; REST ticker ucu aynı veriyi açık adlarla ve **sayı** olarak
+döndürür. Aynı kavram için iki ayrı model gerekir.
+
+### D-26 — İşlem yönü sayısal ve anlamı belgesiz
+
+Socket akışındaki `S` alanı sayısaldır; REST `"buy"` / `"sell"` metni kullanır. Sayının
+hangi yöne karşılık geldiği hiçbir yerde yazmaz.
+
+Tahmin etmek yerine, canlı akıştaki işlem kimlikleri REST işlem ucundaki karşılıklarıyla
+eşleştirildi: 15 eşleşen işlemde çelişkisiz olarak **`0` satış, `1` alış**. Eşleme bir
+testle sabitlendi; borsa kodları değiştirirse test kırılır, kütüphane sessizce yanlış yön
+raporlamaz.
+
+### D-27 — Emir defteri sıra numarası taşır
+
+`CS` alanı, fark mesajlarında atlama olup olmadığını anlamayı sağlar. Bu bilgi olmadan
+defter sessizce bozulabilir; alan native modelde korunur ve tüketiciye sunulur.
+
+### D-28 — Socket giriş imzası REST'ten farklı görünüyor
+
+Resmi dokümantasyon socket giriş imzasının `publicKey + nonce` üzerinden hesaplandığını
+belirtir; REST ise `apiKey + stamp` kullanır. Bu fark canlı bir hesapla doğrulanmadığı
+için kullanıcıya özel akışlar **uygulanmamıştır** — yanlış imza sessizce başarısız olur ve
+hata mesajı nedeni göstermez.

@@ -176,5 +176,39 @@ Console.WriteLine($"  Time-in-force      : {tif}");
 var openOrders = await orderClient.GetOpenSpotOrdersAsync(new GetOpenOrdersRequest(sharedSymbol));
 Console.WriteLine($"  Kimliksiz sorgu    : Success={openOrders.Success} (istisna yok)");
 
+// ─── 10) Gercek zamanli akislar ──────────────────────────────────────────────
+Console.WriteLine($"\n[10] WebSocket");
+
+var socket = new BtcTurkSocketClient();
+int tickerCount = 0, bookCount = 0;
+
+var tickerSub = await socket.SpotApi.SubscribeToTickerUpdatesAsync(native, update =>
+{
+    if (Interlocked.Increment(ref tickerCount) == 1)
+        Console.WriteLine($"  ilk ticker         : {update.Data.LastPrice:N0} TRY");
+});
+Console.WriteLine($"  ticker abonelik    : {tickerSub.Success}");
+
+var bookSub = await socket.SpotApi.SubscribeToOrderBookUpdatesAsync(native, update =>
+{
+    if (Interlocked.Increment(ref bookCount) == 1)
+        Console.WriteLine($"  ilk emir defteri   : sira={update.Data.Sequence}, {update.Data.Bids.Count} alis kademesi");
+});
+Console.WriteLine($"  defter abonelik    : {bookSub.Success}");
+
+await Task.Delay(6000);
+Console.WriteLine($"  6 saniyede gelen   : {tickerCount} ticker, {bookCount} defter");
+
+if (tickerSub.Success)
+{
+    await tickerSub.Data.CloseAsync();
+    var beforeClose = tickerCount;
+    await Task.Delay(3000);
+    Console.WriteLine($"  kapatma sonrasi    : {tickerCount - beforeClose} ticker (0 olmali)");
+}
+
+await socket.SpotApi.UnsubscribeAllAsync();
+Console.WriteLine("  tum abonelikler kapatildi");
+
 Console.WriteLine("\nTamamlandi.");
 return 0;

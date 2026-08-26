@@ -20,9 +20,15 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
   - `GetTickersAsync` · `GetTickerAsync` · `GetTickersByQuoteAssetAsync`
   - `GetOrderBookAsync`
   - `GetTradesAsync`
-- **Borsadan bağımsız yüzey** (`SharedApis`) — `ISpotSymbolRestClient`,
-  `ISpotTickerRestClient`, `IOrderBookRestClient`, `IRecentTradeRestClient` ve
-  `Discover()` ile yetenek keşfi
+- **Kimlik doğrulama** — HMAC-SHA256 imzalama (`X-PCK` / `X-Stamp` / `X-Signature`)
+- **Hesap ve emir uçları** — bakiye, işlem geçmişi, açık emirler, emir geçmişi,
+  emir sorgulama, emir oluşturma ve iptal
+- **Mum verisi** — ayrı bir host üzerinde çalışan grafik API'si
+- **WebSocket** — ticker, işlem ve emir defteri akışları; yeniden bağlanma ve
+  abonelik geri kurma dahil
+- **Borsadan bağımsız yüzey** (`SharedApis`) — REST tarafında sembol, ticker, emir
+  defteri, işlem, mum, bakiye ve emir arayüzleri; WebSocket tarafında ticker, işlem
+  ve emir defteri arayüzleri; `Discover()` ile yetenek keşfi
 - **İstek limitleri** — resmi dokümantasyondan alınan değerlerle uygulanıyor
 - **Bağımlılık enjeksiyonu** — `services.AddTRCryptoBtcTurk(...)`
 - **Belgeler** — borsa başına API anahtarı rehberi (`docs/credentials/`), resmi kaynaklı
@@ -32,9 +38,9 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 
 ### Bilinen sınırlamalar
 
-- Kimlik doğrulama (imzalama) henüz uygulanmadı; yalnızca public uçlar kullanılabilir
-- Bakiye, emir işlemleri ve WebSocket desteği yok
-- OHLC / kline ucu, resmi dokümantasyondan doğrulanamadığı için eklenmedi
+- Kullanıcıya özel socket akışları (emir/bakiye bildirimleri) henüz yok
+- Kimlik doğrulama gerektiren uçlar gerçek bir hesaba karşı çalıştırılmadı; imzalama
+  sabit test vektörleriyle, uçlar contract testleriyle doğrulandı
 - Binance TR, Paribu ve Bitexen adaptörleri planlandı, başlanmadı
 
 ### Notlar
