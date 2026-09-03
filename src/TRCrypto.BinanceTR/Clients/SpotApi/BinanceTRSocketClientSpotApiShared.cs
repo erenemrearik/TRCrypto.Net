@@ -95,6 +95,51 @@ internal partial class BinanceTRSocketClientSpotApi : IBinanceTRSocketClientSpot
 
     #endregion
 
+    #region Kline
+
+    // Borsanin REST mum ucu bos liste donduruyor; mum verisi yalnizca bu akistan gelir.
+    SubscribeKlineOptions IKlineSocketClient.SubscribeKlineOptions { get; } = new(
+        BinanceTRExchange.ExchangeName,
+        false,
+        SharedKlineInterval.OneMinute,
+        SharedKlineInterval.ThreeMinutes,
+        SharedKlineInterval.FiveMinutes,
+        SharedKlineInterval.FifteenMinutes,
+        SharedKlineInterval.ThirtyMinutes,
+        SharedKlineInterval.OneHour,
+        SharedKlineInterval.FourHours,
+        SharedKlineInterval.OneDay,
+        SharedKlineInterval.OneWeek);
+
+    async Task<WebSocketResult<UpdateSubscription>> IKlineSocketClient.SubscribeToKlineUpdatesAsync(
+        SubscribeKlineRequest request,
+        Action<DataEvent<SharedKline>> handler,
+        CancellationToken ct)
+    {
+        var validationError = ((IKlineSocketClient)this).SubscribeKlineOptions.ValidateRequest(request, this);
+        if (validationError != null)
+            return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
+
+        var symbol = request.Symbol!.GetSymbol(FormatSymbol);
+
+        return await SubscribeToKlineUpdatesAsync(
+            symbol,
+            (Enums.KlineInterval)request.Interval,
+            update => handler(Convert(update,
+                new SharedKline(
+                    request.Symbol,
+                    update.Data.Symbol,
+                    update.Data.Kline.OpenTime,
+                    update.Data.Kline.ClosePrice,
+                    update.Data.Kline.HighPrice,
+                    update.Data.Kline.LowPrice,
+                    update.Data.Kline.OpenPrice,
+                    new SharedOrderQuantity(update.Data.Kline.Volume, update.Data.Kline.QuoteVolume)))),
+            ct).ConfigureAwait(false);
+    }
+
+    #endregion
+
     #region Order book
 
     // Akis sabit kademe sayilari sunar; borsa 5, 10 ve 20 destekler.

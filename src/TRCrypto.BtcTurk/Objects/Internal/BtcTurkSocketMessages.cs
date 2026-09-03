@@ -115,3 +115,16 @@ internal record BtcTurkSocketResult
     [JsonPropertyName("message")]
     public string? Message { get; init; }
 }
+
+/// <summary>Kanal ustunde abone olunan olay adlari.</summary>
+internal static class BtcTurkSocketEvent
+{
+    /// <summary>
+    /// Tum pariteleri kapsayan olay.
+    /// </summary>
+    /// <remarks>
+    /// Bos bir olay adi da onaylanir ama hicbir guncelleme uretmez; deger canli
+    /// baglantida dogrulanmistir.
+    /// </remarks>
+    public const string All = "all";
+}

@@ -1,0 +1,49 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "list": [
+      {
+        "orderId": "1234567",
+        "clientId": "abc123",
+        "symbol": "BTC_TRY",
+        "symbolType": 1,
+        "side": 0,
+        "type": 1,
+        "price": "3500000",
+        "origQty": "0.005",
+        "origQuoteQty": "17500",
+        "executedQty": "0.002",
+        "executedPrice": "3499000",
+        "executedQuoteQty": "6998",
+        "timeInForce": 1,
+        "stopPrice": "0",
+        "icebergQty": "0",
+        "status": 1,
+        "isWorking": 1,
+        "createTime": 1787780690155
+      },
+      {
+        "orderId": "1234568",
+        "clientId": "abc124",
+        "symbol": "BTC_TRY",
+        "symbolType": 1,
+        "side": 1,
+        "type": 2,
+        "price": "0",
+        "origQty": "0.001",
+        "origQuoteQty": "0",
+        "executedQty": "0.001",
+        "executedPrice": "3910000",
+        "executedQuoteQty": "3910",
+        "timeInForce": 1,
+        "stopPrice": "0",
+        "icebergQty": "0",
+        "status": 2,
+        "isWorking": 0,
+        "createTime": 1787780700155
+      }
+    ]
+  },
+  "timestamp": 1787780710155
+}

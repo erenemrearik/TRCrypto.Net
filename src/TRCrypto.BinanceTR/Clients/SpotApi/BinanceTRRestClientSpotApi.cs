@@ -25,6 +25,12 @@ internal partial class BinanceTRRestClientSpotApi
     /// <inheritdoc />
     public IBinanceTRRestClientSpotApiExchangeData ExchangeData { get; }
 
+    /// <inheritdoc />
+    public IBinanceTRRestClientSpotApiAccount Account { get; }
+
+    /// <inheritdoc />
+    public IBinanceTRRestClientSpotApiTrading Trading { get; }
+
     internal BinanceTRRestClientSpotApi(
         ILoggerFactory? loggerFactory, HttpClient? httpClient, BinanceTRRestOptions options)
         : base(
@@ -36,6 +42,8 @@ internal partial class BinanceTRRestClientSpotApi
             options.SpotOptions)
     {
         ExchangeData = new BinanceTRRestClientSpotApiExchangeData(this);
+        Account = new BinanceTRRestClientSpotApiAccount(this);
+        Trading = new BinanceTRRestClientSpotApiTrading(this);
     }
 
     /// <inheritdoc />

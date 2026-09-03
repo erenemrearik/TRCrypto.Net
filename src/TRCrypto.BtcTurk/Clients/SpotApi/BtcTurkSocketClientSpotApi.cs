@@ -57,6 +57,24 @@ internal partial class BtcTurkSocketClientSpotApi
         => new(credentials);
 
     /// <inheritdoc />
+    public async Task<WebSocketResult<UpdateSubscription>> SubscribeToAllTickerUpdatesAsync(
+        Action<DataEvent<BtcTurkSocketTickerList>> onMessage,
+        CancellationToken ct = default)
+    {
+        // Olay adi "all" olmalidir. Bos birakildiginda borsa abonelik istegini
+        // ONAYLIYOR ama hicbir guncelleme gondermiyor; hata donmedigi icin sorun
+        // yalnizca "veri akmiyor" olarak fark edilir. Canli olarak dogrulanmistir.
+        var subscription = new BtcTurkSubscription<BtcTurkSocketTickerList>(
+            _logger,
+            BtcTurkSocketChannel.Ticker,
+            BtcTurkSocketEvent.All,
+            [BtcTurkSocketMessageType.TickerAll],
+            onMessage);
+
+        return await SubscribeAsync(subscription, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<WebSocketResult<UpdateSubscription>> SubscribeToTickerUpdatesAsync(
         string symbol,
         Action<DataEvent<BtcTurkSocketTicker>> onMessage,

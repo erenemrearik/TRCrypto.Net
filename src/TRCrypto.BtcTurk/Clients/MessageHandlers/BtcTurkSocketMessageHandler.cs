@@ -28,6 +28,11 @@ internal class BtcTurkSocketMessageHandler : JsonSocketMessageHandler
         AddTopicMapping<BtcTurkSocketUpdate<BtcTurkSocketTradeUpdate>>(x => x.Data.Symbol);
         AddTopicMapping<BtcTurkSocketUpdate<BtcTurkSocketOrderBook>>(x => x.Data.Symbol);
 
+        // Tum pariteler akisinda parite adi yoktur; konu adi mesajin olay alanindan
+        // okunur. Esleme kayitli degilse mesajlar hicbir abonelige ulasmaz ve akis
+        // hata vermeden sessiz kalir.
+        AddTopicMapping<BtcTurkSocketUpdate<BtcTurkSocketTickerList>>(x => x.Data.Event);
+
         // Abonelik onaylari hangi istegin yanitlandigini yalnizca mesaj metninde tasir.
         AddTopicMapping<BtcTurkSocketUpdate<BtcTurkSocketResult>>(x => ExtractTopic(x.Data.Message));
     }

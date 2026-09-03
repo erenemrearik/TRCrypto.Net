@@ -20,6 +20,20 @@ public interface IBtcTurkSocketClientSpotApi : ISocketApiClient<BtcTurkCredentia
     IBtcTurkSocketClientSpotApiShared SharedClient { get; }
 
     /// <summary>
+    /// Borsadaki tum paritelerin ozet fiyat bilgisini tek abonelikle dinler.
+    /// </summary>
+    /// <remarks>
+    /// Her guncelleme borsadaki paritelerin tamamini tasir. Tek bir pariteyi izlemek
+    /// icin <see cref="SubscribeToTickerUpdatesAsync"/> daha az veri aktarir.
+    /// </remarks>
+    /// <param name="onMessage">Her guncellemede cagrilir.</param>
+    /// <param name="ct">Abonelik iptal belirteci.</param>
+    /// <returns>Abonelik; kapatmak icin <c>CloseAsync</c> cagrilir.</returns>
+    Task<WebSocketResult<UpdateSubscription>> SubscribeToAllTickerUpdatesAsync(
+        Action<DataEvent<BtcTurkSocketTickerList>> onMessage,
+        CancellationToken ct = default);
+
+    /// <summary>
     /// Bir paritenin ozet fiyat bilgisindeki degisiklikleri dinler.
     /// </summary>
     /// <param name="symbol">Native sembol adi, ornegin <c>BTCTRY</c>.</param>

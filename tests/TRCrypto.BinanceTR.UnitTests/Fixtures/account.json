@@ -1,0 +1,20 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "makerCommission": "0.001",
+    "takerCommission": "0.001",
+    "buyerCommission": "0",
+    "sellerCommission": "0",
+    "fiatMakerCommission": "0.0015",
+    "fiatTakerCommission": "0.0015",
+    "canTrade": 1,
+    "canWithdraw": 0,
+    "canDeposit": 1,
+    "accountAssets": [
+      { "asset": "TRY", "free": "1250.75", "locked": "300.00" },
+      { "asset": "BTC", "free": "0.01234567", "locked": "0" }
+    ]
+  },
+  "timestamp": 1787780690155
+}

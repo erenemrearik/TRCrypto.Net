@@ -38,8 +38,16 @@ internal record BinanceTRResponse<T> : IBinanceTRResponse
     public int Code { get; init; }
 
     /// <summary>["<c>msg</c>"] Durum aciklamasi.</summary>
+    /// <remarks>
+    /// Emir olusturma ucu ayni bilgiyi <c>message</c> alaninda dondurur; ikisi de okunur.
+    /// Tek bir ad beklemek, hatanin o ucta bos gorunmesine yol acardi.
+    /// </remarks>
     [JsonPropertyName("msg")]
     public string? Message { get; init; }
+
+    /// <summary>["<c>message</c>"] Emir olusturma ucunun kullandigi durum aciklamasi.</summary>
+    [JsonPropertyName("message")]
+    public string? AlternateMessage { get; init; }
 
     /// <summary>["<c>timestamp</c>"] Yanitin uretildigi an (UTC).</summary>
     /// <remarks>Sunucu saati bu alandan okunur; ayri bir sunucu saati ucu yoktur.</remarks>
@@ -50,6 +58,10 @@ internal record BinanceTRResponse<T> : IBinanceTRResponse
     /// <summary>["<c>data</c>"] Yanit govdesi; hata durumunda ve bazi uclarda <c>null</c>.</summary>
     [JsonPropertyName("data")]
     public T? Data { get; init; }
+
+    /// <inheritdoc />
+    [JsonIgnore]
+    string? IBinanceTRResponse.Message => string.IsNullOrEmpty(Message) ? AlternateMessage : Message;
 
     /// <inheritdoc />
     [JsonIgnore]

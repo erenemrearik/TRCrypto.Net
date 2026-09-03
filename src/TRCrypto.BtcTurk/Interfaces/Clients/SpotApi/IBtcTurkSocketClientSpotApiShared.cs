@@ -12,6 +12,7 @@ namespace TRCrypto.BtcTurk.Interfaces.Clients.SpotApi;
 public interface IBtcTurkSocketClientSpotApiShared :
     ISharedClient,
     ITickerSocketClient,
+    ITickersSocketClient,
     ITradeSocketClient,
     IOrderBookSocketClient
 {

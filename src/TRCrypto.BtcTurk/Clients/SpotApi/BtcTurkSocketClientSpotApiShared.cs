@@ -26,6 +26,41 @@ internal partial class BtcTurkSocketClientSpotApi : IBtcTurkSocketClientSpotApiS
     /// <inheritdoc />
     public SharedClientInfo Discover() => SharedUtils.GetClientInfo(BtcTurkExchange.Metadata, this);
 
+    #region All tickers
+
+    SubscribeTickersOptions ITickersSocketClient.SubscribeAllTickersOptions { get; }
+        = new(BtcTurkExchange.ExchangeName, SharedTickerType.Day24H);
+
+    async Task<WebSocketResult<UpdateSubscription>> ITickersSocketClient.SubscribeToAllTickersUpdatesAsync(
+        SubscribeAllTickersRequest request,
+        Action<DataEvent<SharedSpotTicker[]>> handler,
+        CancellationToken ct)
+    {
+        var validationError = ((ITickersSocketClient)this).SubscribeAllTickersOptions
+            .ValidateRequest(request, this);
+        if (validationError != null)
+            return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
+
+        return await SubscribeToAllTickerUpdatesAsync(update => handler(Convert(update,
+            update.Data.Items.Select(ToSharedTicker).ToArray())), ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Native ticker ogesini borsadan bagimsiz karsiligina cevirir.</summary>
+    /// <remarks>
+    /// Base ve quote varlik adlari ayri alanlardan okunur; sembol adi ayristirilmaz.
+    /// </remarks>
+    private static SharedSpotTicker ToSharedTicker(Objects.Models.Socket.BtcTurkSocketTicker ticker)
+        => new(
+            new SharedSymbol(TradingMode.Spot, ticker.NumeratorSymbol, ticker.DenominatorSymbol),
+            ticker.Symbol,
+            ticker.LastPrice,
+            ticker.HighPrice,
+            ticker.LowPrice,
+            new SharedOrderQuantity(ticker.Volume),
+            ticker.DailyChangePercentage);
+
+    #endregion
+
     #region Ticker
 
     SubscribeTickerOptions ITickerSocketClient.SubscribeTickerOptions { get; }

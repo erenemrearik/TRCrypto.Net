@@ -1,0 +1,21 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "orderId": 1234567,
+    "orderListId": -1,
+    "clientId": "abc123",
+    "symbol": "BTC_TRY",
+    "side": 0,
+    "type": 1,
+    "price": "3500000",
+    "status": 3,
+    "origQty": "0.005",
+    "origQuoteQty": "17500",
+    "executedQty": "0",
+    "executedPrice": "0",
+    "executedQuoteQty": "0",
+    "createTime": 1787780690155
+  },
+  "timestamp": 1787780710155
+}

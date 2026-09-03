@@ -1,0 +1,23 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "list": [
+      {
+        "tradeId": "3311",
+        "orderId": "1234567",
+        "symbol": "BTC_TRY",
+        "price": "3499000",
+        "qty": "0.002",
+        "quoteQty": "6998",
+        "commission": "6.998",
+        "commissionAsset": "TRY",
+        "isBuyer": 1,
+        "isMaker": 0,
+        "isBestMatch": 1,
+        "time": "1787780690276"
+      }
+    ]
+  },
+  "timestamp": 1787780710155
+}

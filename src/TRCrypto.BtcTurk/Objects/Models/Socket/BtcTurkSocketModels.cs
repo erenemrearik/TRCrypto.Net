@@ -190,3 +190,27 @@ public record BtcTurkSocketOrderBookEntry : ISymbolOrderBookEntry
         set => throw new NotSupportedException("Emir defteri kademesi degistirilemez.");
     }
 }
+
+/// <summary>
+/// Tum pariteleri tasiyan ticker guncellemesi.
+/// </summary>
+/// <remarks>
+/// Borsa bu akisi <c>401</c> koduyla gonderir. Ogelerin alan semasi tek parite
+/// akisiyla (<c>402</c>) aynidir, bu yuzden <see cref="BtcTurkSocketTicker"/>
+/// yeniden kullanilir.
+/// </remarks>
+[SerializationModel]
+public record BtcTurkSocketTickerList
+{
+    /// <summary>["<c>items</c>"] Borsadaki tum pariteler.</summary>
+    [JsonPropertyName("items")]
+    public List<BtcTurkSocketTicker> Items { get; init; } = [];
+
+    /// <summary>["<c>event</c>"] Abone olunan olay adi.</summary>
+    /// <remarks>
+    /// Tekil parite akislarinda bu alan parite adini tasir ve mesajlar ona gore
+    /// yonlendirilir. Liste akisinda parite adi yoktur; yonlendirme bu alana dayanir.
+    /// </remarks>
+    [JsonPropertyName("event")]
+    public string Event { get; init; } = string.Empty;
+}

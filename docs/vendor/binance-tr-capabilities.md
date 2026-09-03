@@ -143,17 +143,67 @@ Global Binance ile aynı kısaltmalar: `a` toplu işlem kimliği, `p` fiyat, `q`
 
 ---
 
-## Private uçlar (dokümantasyondan, denenmedi)
+## Private uçlar
 
-| Method | Path |
+Tamamı imza ister. Şemalar resmi dokümantasyondan alındı; canlı doğrulama API anahtarı
+geldiğinde yapılacaktır.
+
+| Method | Path | Durum |
+|---|---|---|
+| GET | `/open/v1/account/spot` | ✅ Uygulandı |
+| POST | `/open/v1/orders` | ✅ Uygulandı |
+| GET | `/open/v1/orders` | ✅ Uygulandı |
+| GET | `/open/v1/orders/detail` | ✅ Uygulandı |
+| POST | `/open/v1/orders/cancel` | ✅ Uygulandı |
+| POST | `/open/v1/orders/batch-cancel` | ⏳ Envanteri çıkarıldı |
+| POST | `/open/v1/user-listen-token` | ⏳ Envanteri çıkarıldı |
+
+`user-listen-token`, kullanıcı akışı için token üretir. Token kendiliğinden yenilenmez ve
+yaşam döngüsü yönetimi gerektirir.
+
+### İmza
+
+Sorgu dizesi ile istek gövdesi parametre sırasına göre birleştirilir, secret ile
+HMAC SHA256 hesaplanır. Secret **Base64 çözülmez**, imza **onaltılık** kodlanır ve
+anahtar `X-MBX-APIKEY` başlığıyla gönderilir. Her imzalı istekte `timestamp` zorunludur;
+`recvWindow` isteğe bağlıdır, varsayılanı 5000 ms, en fazla 60000 ms olabilir.
+
+### Sayısal enum değerleri
+
+Bu uçlar durum ve tür bilgisini metin yerine **sayı** olarak taşır. Global Binance metin
+kullandığı için oradan taşınan kod burada sessizce yanlış çözümlenir.
+
+| Alan | Değerler |
 |---|---|
-| GET | `/open/v1/account/spot` |
-| POST | `/open/v1/orders` |
-| GET | `/open/v1/orders` |
-| GET | `/open/v1/orders/detail` |
-| POST | `/open/v1/orders/cancel` |
-| POST | `/open/v1/orders/batch-cancel` |
-| POST | `/open/v1/user-listen-token` |
+| `side` | 0 alış · 1 satış |
+| `type` | 1 limit · 2 piyasa · 3 stop loss · 4 stop loss limit · 5 take profit · 6 take profit limit · 7 limit maker |
+| `status` | -2 sistem işliyor · 0 yeni · 1 kısmen doldu · 2 doldu · 3 iptal · 4 iptal bekliyor · 5 reddedildi · 6 süresi doldu |
+| `timeInForce` | 1 GTC · 2 IOC · 3 FOK · 4 GTX |
+| `symbolType` | 1 ana · 2 sonraki |
+| `direct` | `prev` artan · `next` azalan |
+
+### Zarf alan adı tutarsız
+
+Emir oluşturma yanıtı hata metnini `message` alanında, diğer private uçlar `msg` alanında
+döndürür. Tek bir alan adı beklemek, hata mesajının bazı uçlarda boş görünmesine yol açar;
+kütüphane her ikisini de okur.
+
+### Yanıt alanları
+
+`GET /open/v1/account/spot` → `makerCommission`, `takerCommission`, `buyerCommission`,
+`sellerCommission`, `fiatMakerCommission`, `fiatTakerCommission`, `canTrade`,
+`canWithdraw`, `canDeposit`, `accountAssets[]` (`asset`, `free`, `locked`).
+
+`POST /open/v1/orders` → `orderId`, `createTime`.
+
+`GET /open/v1/orders` → `list[]` içinde `orderId`, `clientId`, `symbol`, `symbolType`,
+`side`, `type`, `price`, `origQty`, `origQuoteQty`, `executedQty`, `executedPrice`,
+`executedQuoteQty`, `timeInForce`, `stopPrice`, `icebergQty`, `status`, `isWorking`,
+`createTime`.
+
+`GET /open/v1/orders/detail` ve `POST /open/v1/orders/cancel` → `orderId`, `orderListId`,
+`clientId`, `symbol`, `side`, `type`, `price`, `status`, `origQty`, `origQuoteQty`,
+`executedQty`, `executedPrice`, `executedQuoteQty`, `createTime`.
 
 `user-listen-token`, kullanıcı akışı için token üretir. Spesifikasyon (Bölüm 11.2) bu
 tokenın kendiliğinden yenilenmediğini, lifecycle yönetimi gerektiğini belirtir.
@@ -162,8 +212,7 @@ tokenın kendiliğinden yenilenmediğini, lifecycle yönetimi gerektiğini belir
 
 ## Henüz Doğrulanmamış
 
-- Private uçların yanıt şemaları (anahtar gerekiyor)
-- İmzanın tam olarak neyin üzerinden hesaplandığı (query + body birleşimi, sıralama)
+- İmzanın canlı bir hesapta kabul edilip edilmediği (anahtar gerekiyor)
 - Mum verisi için anahtarsız bir yol olup olmadığı
 - `trades` ucunun neden boş döndüğü
 - WebSocket protokolü ve `type` alanının akış adresini nasıl belirlediği

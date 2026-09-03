@@ -19,6 +19,8 @@ public interface IBinanceTRRestClientSpotApiShared :
     ISharedClient,
     ISpotSymbolRestClient,
     IOrderBookRestClient,
+    IBalanceRestClient,
+    ISpotOrderRestClient,
     IRecentTradeRestClient
 {
 }

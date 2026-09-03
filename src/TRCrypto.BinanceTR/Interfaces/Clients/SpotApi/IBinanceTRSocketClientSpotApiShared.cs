@@ -13,6 +13,7 @@ public interface IBinanceTRSocketClientSpotApiShared :
     ISharedClient,
     ITickerSocketClient,
     ITradeSocketClient,
+    IKlineSocketClient,
     IOrderBookSocketClient
 {
 }

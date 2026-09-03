@@ -6,6 +6,16 @@ public interface IBinanceTRRestClientSpotApi : IRestApiClient<BinanceTRCredentia
     /// <summary>Piyasa verisi uclari.</summary>
     IBinanceTRRestClientSpotApiExchangeData ExchangeData { get; }
 
+    /// <summary>
+    /// Hesap bilgisi uclari. API anahtari gerektirir.
+    /// </summary>
+    IBinanceTRRestClientSpotApiAccount Account { get; }
+
+    /// <summary>
+    /// Emir uclari. API anahtari gerektirir.
+    /// </summary>
+    IBinanceTRRestClientSpotApiTrading Trading { get; }
+
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     IBinanceTRRestClientSpotApiShared SharedClient { get; }
 }

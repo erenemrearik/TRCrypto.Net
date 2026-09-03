@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using CryptoExchange.Net;
 using CryptoExchange.Net.Clients;
 
 namespace TRCrypto.BinanceTR;
@@ -18,12 +19,22 @@ namespace TRCrypto.BinanceTR;
 /// BtcTurk'ten iki fark: secret Base64 cozulmez ve imza Base64 degil hex kodlanir.
 /// </para>
 /// <para>
-/// <b>Bu sinif henuz canli bir hesapla dogrulanmamistir.</b> Kimlik dogrulama gerektiren
-/// uclar bu surumde sunulmamaktadir.
+/// Sema resmi dokumantasyondan alinmis ve yayimlanmis test vektoruyle dogrulanmistir.
+/// Canli bir hesaba karsi denenmesi API anahtari geldiginde yapilacaktir; bunun icin
+/// <c>AuthenticationProbeTests</c> hazirdir.
 /// </para>
 /// </remarks>
 public class BinanceTRAuthenticationProvider : AuthenticationProvider<BinanceTRCredentials, HMACCredential>
 {
+    /// <summary>Anahtarin gonderildigi baslik.</summary>
+    internal const string ApiKeyHeader = "X-MBX-APIKEY";
+
+    /// <summary>Zorunlu zaman damgasi parametresi.</summary>
+    internal const string TimestampParameter = "timestamp";
+
+    /// <summary>Imza parametresi.</summary>
+    internal const string SignatureParameter = "signature";
+
     private readonly byte[] _secretBytes;
 
     /// <summary>Yeni bir imzalama saglayicisi olusturur.</summary>
@@ -53,17 +64,63 @@ public class BinanceTRAuthenticationProvider : AuthenticationProvider<BinanceTRC
     }
 
     /// <inheritdoc />
-    /// <exception cref="NotSupportedException">
-    /// Imzalama canli bir hesapla dogrulanmadigi icin firlatilir. Bu surum yalnizca
-    /// kimlik dogrulama gerektirmeyen uclari destekler.
-    /// </exception>
+    /// <remarks>
+    /// Imzalanan yuk, sorgu dizesi ile govdenin parametre sirasina gore birlesimidir.
+    /// Imza kendisi disindaki tum parametreler uzerinden hesaplandigi icin en sona eklenir;
+    /// baska bir yere konulursa sunucu farkli bir yuk uzerinden dogrulama yapar ve istegi
+    /// reddeder.
+    /// </remarks>
     public override void ProcessRequest(RestApiClient apiClient, RestRequestConfiguration requestConfig)
     {
         if (!requestConfig.RequestDefinition.Authenticated)
             return;
 
-        throw new NotSupportedException(
-            "Binance TR istek imzalama henuz canli olarak dogrulanmadi. " +
-            "Bu surum yalnizca kimlik dogrulama gerektirmeyen uclari destekler.");
+        requestConfig.Headers ??= new Dictionary<string, string>();
+        requestConfig.Headers[ApiKeyHeader] = Credential.Key;
+
+        // Zaman damgasi sunucu saatiyle uyumlu olmalidir. Borsa istegi yalnizca
+        // recvWindow icinde kabul eder; varsayilan pencere 5 saniyedir.
+        var timestamp = DateTimeConverter
+            .ConvertToMilliseconds(GetTimestamp(apiClient))!
+            .Value
+            .ToString(CultureInfo.InvariantCulture);
+
+        var parameters = requestConfig.ParameterPosition == HttpMethodParameterPosition.InUri
+            ? requestConfig.QueryParameters
+            : requestConfig.BodyParameters;
+
+        parameters!.Add(TimestampParameter, timestamp);
+
+        var payload = BuildPayload(requestConfig);
+        parameters.Add(SignatureParameter, CreateSignature(payload));
     }
+
+    /// <summary>
+    /// Imzalanacak yuku olusturur.
+    /// </summary>
+    /// <remarks>
+    /// Sorgu dizesi ve govde, dokumantasyonda tarif edildigi gibi parametre sirasina gore
+    /// pesipese eklenir. Parametreler yeniden siralanmaz: sunucu istegin uzerindeki sirayi
+    /// kullanir, alfabetik siralama imzayi bozar.
+    /// <para>
+    /// Dizeyi kutuphanenin istegi kurarken kullandigi yardimci uretir. Elle kurulan bir
+    /// dize, kacislama ya da sayi bicimi farki yuzunden gonderilenden ayrisabilir ve imza
+    /// sessizce gecersiz olur.
+    /// </para>
+    /// </remarks>
+    private static string BuildPayload(RestRequestConfiguration requestConfig)
+    {
+        var query = Serialize(requestConfig.QueryParameters, requestConfig.ArraySerialization);
+        var body = Serialize(requestConfig.BodyParameters, requestConfig.ArraySerialization);
+
+        if (query.Length == 0)
+            return body;
+
+        return body.Length == 0 ? query : query + "&" + body;
+    }
+
+    private static string Serialize(Parameters? parameters, ArrayParametersSerialization arraySerialization)
+        => parameters == null || parameters.Count == 0
+            ? string.Empty
+            : parameters.CreateParamString(true, arraySerialization);
 }
