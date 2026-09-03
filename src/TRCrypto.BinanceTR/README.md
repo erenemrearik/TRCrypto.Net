@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/blob/main/LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#kurulum)
-[![Durum](https://img.shields.io/badge/durum-REST%20+%20WebSocket-yellow?style=flat-square)](#desteklenen-uçlar)
+[![Durum](https://img.shields.io/badge/durum-REST%20+%20WebSocket%20+%20hesap-yellow?style=flat-square)](#desteklenen-uçlar)
 
 Binance TR REST ve WebSocket API'leri için .NET client kütüphanesi.
 [CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) üzerine kuruludur.
@@ -54,15 +54,15 @@ Yanıtlarda base/quote ayrı alanlarda gelir; sembol adını ayrıştırmanız g
 > `/api/v3/*` uçları burada API anahtarı ister. Bu nedenle bu sürümde ticker desteği yok.
 
 Ayrıca borsanın `market/trades` ve `market/klines` uçları şu an **başarılı görünüp boş
-liste** döndürüyor (denenen tüm paritelerde). İşlem verisi için toplu işlemler ucu
-kullanılmalıdır. Ayrıntı:
+liste** döndürüyor (denenen tüm paritelerde). İşlem verisi için toplu işlemler ucu,
+mum verisi için WebSocket akışı kullanılmalıdır. Ayrıntı:
 [docs/vendor/binance-tr-capabilities.md](https://github.com/erenemrearik/TRCrypto.Net/blob/main/docs/vendor/binance-tr-capabilities.md)
 
 ## Emir defteri kademe sayısı
 
 Borsa yalnızca şu değerleri kabul eder: **5, 10, 20, 50, 100, 500, 1000**.
 
-Diğer değerler yanıltıcı bir `Incorrect Page number` hatasıyla reddedilir — hata mesajı
+Diğer değerler yanıltıcı bir `Incorrect Page number` hatasıyla reddedilir. Hata mesajı
 sorunun limit olduğunu söylemez. Kütüphane bunu **ağa çıkmadan** reddeder.
 
 ## Hata yönetimi
@@ -74,9 +74,28 @@ HTTP 200 içinde döner. Kütüphane bunu başarısız sonuca çevirir.
 
 ## Kimlik doğrulama
 
-**Bu sürümde yoktur.** İmzalama altyapısı yazıldı ancak canlı bir hesapla
-doğrulanmadığı için bilinçli olarak devre dışı: doğrulanmamış bir imzalama, isteklerin
-nedeni belirsiz şekilde reddedilmesine yol açardı.
+Bakiye, emir ve işlem geçmişi uçları API anahtarı ister. İmzalama şeması resmi
+dokümantasyondan alındı ve yayımlanmış imza test vektörüyle doğrulandı.
+
+```csharp
+var client = new BinanceTRRestClient(options =>
+{
+    options.ApiCredentials = new BinanceTRCredentials(key, secret);
+});
+
+var account = await client.SpotApi.Account.GetAccountAsync();
+```
+
+> [!NOTE]
+> Private uçlar henüz **canlı bir hesaba karşı çalıştırılmadı.** Şema doğru kabul
+> ediliyor ancak bunun kanıtı bir anahtar bağlandığında elde edilecek; hazır bekleyen
+> sonda testleri (`AuthenticationProbeTests`) bunu ilk çalıştırmada bildirir.
+
+> [!WARNING]
+> Sistem saatiniz sunucuyla uyumlu olmalıdır. Borsa imzalı istekleri yalnızca
+> `recvWindow` içinde kabul eder ve varsayılan pencere **5000 ms**'dir. Bu, BtcTurk'ün
+> toleransına göre dardır: birkaç saniyelik kayma orada sorun çıkarmazken burada tüm
+> imzalı istekleri reddettirir.
 
 Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 [docs/credentials/binance-tr.md](https://github.com/erenemrearik/TRCrypto.Net/blob/main/docs/credentials/binance-tr.md)
@@ -89,15 +108,21 @@ Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 | `/open/v1/common/symbols` | `GetSymbolsAsync` | ✅ |
 | `/open/v1/market/depth` | `GetOrderBookAsync` | ✅ |
 | `/open/v1/market/agg-trades` | `GetAggregatedTradesAsync` | ✅ |
-| Ticker (REST) | — | ❌ Anahtarsız mümkün değil |
-| Kline (REST) | — | ⚠️ Borsa boş liste döndürüyor |
-| Hesap · emir işlemleri | — | ⏳ Kimlik doğrulama gerekir |
+| Ticker (REST) | yok | ❌ Anahtarsız mümkün değil |
+| Kline (REST) | yok | ⚠️ Borsa boş liste döndürüyor |
+| `/open/v1/account/spot` | `Account.GetAccountAsync` | ✅ |
+| `/open/v1/orders` (POST) | `Trading.PlaceOrderAsync` | ✅ |
+| `/open/v1/orders` (GET) | `Trading.GetOrdersAsync` | ✅ |
+| `/open/v1/orders/detail` | `Trading.GetOrderAsync` | ✅ |
+| `/open/v1/orders/cancel` | `Trading.CancelOrderAsync` | ✅ |
+| `/open/v1/orders/trades` | `Trading.GetUserTradesAsync` | ✅ |
 | WS ticker | `SubscribeToTickerUpdatesAsync` | ✅ |
 | WS trade · aggTrade | `SubscribeToTradeUpdatesAsync` vb. | ✅ |
 | WS emir defteri | `SubscribeToOrderBookUpdatesAsync` | ✅ |
 | WS kline | `SubscribeToKlineUpdatesAsync` | ✅ |
+| SharedApis (bakiye ve emir) | `IBalanceRestClient` · `ISpotOrderRestClient` | ✅ |
 | SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |
-| SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` | ✅ |
+| SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` · `IKlineSocketClient` | ✅ |
 
 ## Bağımlılık enjeksiyonu
 

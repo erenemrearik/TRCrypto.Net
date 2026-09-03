@@ -11,7 +11,7 @@ namespace TRCrypto.BinanceTR.UnitTests;
 /// <remarks>
 /// Bu testler gercek bir hatayi yakalar: yonlendirme kimligi baglantiya bagli bir alanda
 /// tutuldugunda, ayni istemci uzerinden acilan her yeni abonelik oncekinin kimligini
-/// eziyordu ve yalnizca en son abonelik mesaj aliyordu. Digerleri sessizce bos kaliyordu —
+/// eziyordu ve yalnizca en son abonelik mesaj aliyordu. Digerleri sessizce bos kaliyordu;
 /// hata yok, veri yok. Kimlik artik mesajin kendisinden turetiliyor.
 /// </remarks>
 public class SocketRoutingTests

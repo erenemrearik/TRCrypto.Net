@@ -766,7 +766,7 @@ R18 - JKorf/cryptoexchange-skills-hub: https://github.com/JKorf/cryptoexchange-s
 ---
 ---
 
-# EK — Doğrulama Notları (24 Ağustos 2026)
+# EK: Doğrulama Notları (24 Ağustos 2026)
 
 > Bu bölüm orijinal spesifikasyonun parçası **değildir**. Geliştirme başlarken doküman
 > Bölüm 3.5'in emrettiği gibi ("eski sürüm signature'ını ezbere kopyalamak yerine güncel
@@ -783,18 +783,18 @@ R18 - JKorf/cryptoexchange-skills-hub: https://github.com/JKorf/cryptoexchange-s
 | BtcTurk auth: `X-PCK` / `X-Stamp` / `X-Signature`, HMAC-SHA256, Base64 secret | ✅ Doğru | `docs.btcturk.com/docs/authentication/authentication-v1` |
 | BtcTurk sembol formatı `BTCTRY` | ✅ Doğru (istek tarafı) | Resmi örnek: `?pairSymbol=BTCUSDT` |
 | Bitexen imza şeması `HMAC(apiKey+userName+passPhrase+timestamp+body)` | ✅ Doğru | Bağımsız üretim implementasyonuyla karşılaştırıldı |
-| Binance TR faaliyette | ✅ Doğru | binance.tr — lisanslı, 200+ TRY paritesi |
+| Binance TR faaliyette | ✅ Doğru | binance.tr; lisanslı, 200+ TRY paritesi |
 
 ## E.2 Düzeltmeler
 
-### D-1 — Bölüm 10.5 eksik: hata ayrıştırma mimarisi
+### D-1: Bölüm 10.5 eksik: hata ayrıştırma mimarisi
 
 Doküman "Exchange'in response envelope'ı native modelde doğru parse edilir" diyor ama
 **nasıl** olduğunu söylemiyor. CryptoExchange.Net 12.5.0'da hata ayrıştırma
 `MessageHandler.ParseErrorResponse()` üzerinden yapılır. `BtcTurkErrors` ve
 envelope→error dönüşümü bu mekanizmaya bağlanmalıdır.
 
-### D-2 — Bölüm 18.3'teki `RequestDefinition` örneği şekilseldir
+### D-2: Bölüm 18.3'teki `RequestDefinition` örneği şekilseldir
 
 12.5.0'ın gerçek imzası:
 
@@ -814,7 +814,7 @@ Ayrıca uri/body parametrelerini ayıran ikinci bir overload vardır. Base sın�
 `protected abstract TAuthenticationProvider CreateAuthenticationProvider(TApiCredentials)`
 implementasyonu ister.
 
-### D-3 — Bölüm 7.2 eksik: BtcTurk sembol ayrıştırmaya gerek yok
+### D-3: Bölüm 7.2 eksik: BtcTurk sembol ayrıştırmaya gerek yok
 
 Doküman BtcTurk için "Concatenate uppercase" diyor; bu **istek** tarafı için doğrudur.
 Ancak **yanıt** tarafında BtcTurk parite bileşenlerini zaten ayrı alanlar olarak döndürür:
@@ -828,13 +828,13 @@ Ancak **yanıt** tarafında BtcTurk parite bileşenlerini zaten ayrı alanlar ol
 Sembol string'ini ayrıştıran bir heuristik **yazılmayacaktır**. Bu, RISK-05'in
 (TL/TRY alias karmaşası) BtcTurk özelindeki etkisini ortadan kaldırır.
 
-### D-4 — Bölüm 7.4'e ek: iki farklı zaman damgası birimi
+### D-4: Bölüm 7.4'e ek: iki farklı zaman damgası birimi
 
 BtcTurk'te **OHLC hariç tüm** zaman damgaları milisaniye, **OHLC saniye** cinsindendir.
 Tek bir `DateTimeConverter` varsayımı hatalıdır; iki ayrı converter gerekir ve her biri
 kendi fixture'ıyla test edilmelidir.
 
-### D-5 — Bölüm 7.3'e ek: varlık sınıflandırması zorunlu
+### D-5: Bölüm 7.3'e ek: varlık sınıflandırması zorunlu
 
 `ISpotSymbolRestClient`, `SharedSymbolCatalog` üzerinden varlıkları `SharedAssetType`
 (`Unspecified` / `Crypto` / `Fiat` / `TradFi`) ve nullable `SharedAssetSubType`
@@ -847,7 +847,7 @@ kendi fixture'ıyla test edilmelidir.
 Geçerli kombinasyonlar: `Crypto`+`StableCoin`, `TradFi`+`Equity`, `TradFi`+`Commodity`,
 `Fiat`+(alt tip yok). Sınıflandırılmamış varlık kripto **varsayılmaz**.
 
-### D-6 — Bölüm 17.2 önceliği yükseltildi: P1 → P0
+### D-6: Bölüm 17.2 önceliği yükseltildi: P1 → P0
 
 Doküman JKorf'un AI assistant dosyalarını "P1 developer-experience hedefi" olarak
 işaretlemiş. Ancak `JKorf/cryptoexchange-skills-hub` artık canlıdır ve 33 kurulabilir
@@ -869,7 +869,7 @@ dondurulacaktır.
 Piyasa verisi uçları eklenirken ortaya çıkan, **yalnızca canlı API ile tespit edilebilen**
 ve resmi dokümantasyonda yer almayan davranışlar:
 
-### D-7 — `code` alanının tipi uçlar arasında tutarsız
+### D-7: `code` alanının tipi uçlar arasında tutarsız
 
 | Uç | `code` |
 |---|---|
@@ -880,15 +880,15 @@ Zarf modelinde bu alanı `int` olarak tanımlamak, emir defteri çağrılarını
 hatasıyla **tamamen kırar**. Alan metin olarak taşınır; sayısal değerler dönüştürülür.
 
 Bu, doküman Bölüm 15.3'ün ("sanitized real response fixture olarak saklanır") neden
-gerekli olduğunun somut kanıtıdır — resmi örnek yanıtlarla çalışılsaydı hata üretime kadar
+gerekli olduğunun somut kanıtıdır. Resmi örnek yanıtlarla çalışılsaydı hata üretime kadar
 fark edilmezdi.
 
-### D-8 — Başarılı yanıtlarda `message` boş string
+### D-8: Başarılı yanıtlarda `message` boş string
 
 Dokümantasyon `null` gösterir; canlı API `""` döndürür. Null kontrolü yerine
 `string.IsNullOrEmpty` kullanılmalıdır.
 
-### D-9 — Alan adları uçlar arasında tutarsız
+### D-9: Alan adları uçlar arasında tutarsız
 
 Aynı kavram farklı uçlarda farklı adlandırılır:
 
@@ -899,17 +899,17 @@ Aynı kavram farklı uçlarda farklı adlandırılır:
 
 Ayrıca sayısal alanlar ticker'da **sayı**, trades'te **metin** olarak gelir.
 
-### D-10 — Ticker ucu tek parite için de dizi döner
+### D-10: Ticker ucu tek parite için de dizi döner
 
 `?pairSymbol=` verildiğinde bile yanıt bir dizidir. Boş dizi, bilinmeyen sembol anlamına
 gelir ve `ErrorType.UnknownSymbol` olarak yüzeye çıkarılır.
 
-### D-11 — Trades yanıtında dokümante edilmemiş `side` alanı
+### D-11: Trades yanıtında dokümante edilmemiş `side` alanı
 
 Canlı yanıt `"side": "buy"` / `"sell"` içerir; resmi örnekte yoktur. Shared katmanında
 `SharedOrderSide` eşlemesi için kullanılır.
 
-### D-12 — Emir defteri kademeleri `ISymbolOrderBookEntry` gerektirir
+### D-12: Emir defteri kademeleri `ISymbolOrderBookEntry` gerektirir
 
 `SharedOrderBook` yapıcısı `ISymbolOrderBookEntry[]` ister. Bu arayüz **değiştirilebilir**
 (`set`) özellikler tanımlar; modelimiz değiştirilemez olduğundan arayüz açıkça uygulanır ve
@@ -917,9 +917,9 @@ Canlı yanıt `"side": "buy"` / `"sell"` içerir; resmi örnekte yoktur. Shared 
 
 ---
 
-## E.5 Üçüncü Tur Bulguları (M2 — kimlik doğrulama)
+## E.5 Üçüncü Tur Bulguları (M2: kimlik doğrulama)
 
-### D-13 — Bakiye ucu ondalık ayırıcı olarak virgül kullanır
+### D-13: Bakiye ucu ondalık ayırıcı olarak virgül kullanır
 
 Resmi dokümantasyondaki bakiye örneği:
 
@@ -933,14 +933,14 @@ emir dokümantasyonu ondalık ayırıcı olarak noktayı açıkça şart koşar.
 
 **Etki:** Bakiyeyi `InvariantCulture` ile ayrıştırmak virgülü binlik ayırıcı sayar ve
 tutarı kat kat büyük gösterir. Bir bakiye görüntüleme kütüphanesinde bu sessiz ve
-tehlikeli bir hatadır — istisna fırlatmaz, sadece yanlış sayı üretir.
+tehlikeli bir hatadır, çünkü istisna fırlatmaz ve sadece yanlış sayı üretir.
 
 **Çözüm:** `BtcTurkDecimalConverter` her iki ayırıcıyı da kabul eder. Belirsizlik yoktur:
 BtcTurk binlik ayırıcı kullanmadığından (büyük sayılar `"3708000"` biçimindedir) bir
 virgül her zaman ondalık ayırıcıdır. Doküman Bölüm 7.4'ün "decimal precision kaybı testi"
 gereksinimi bu senaryoyu da kapsayacak biçimde uygulanmıştır.
 
-### D-14 — Kimlik doğrulama için resmi test vektörü yok
+### D-14: Kimlik doğrulama için resmi test vektörü yok
 
 Doküman Bölüm 15.2, imzalamanın "resmi sample/test vector ile birebir" doğrulanmasını
 şart koşar. BtcTurk böyle bir vektör yayınlamaz; `authentication/usage` sayfası da kod
@@ -951,17 +951,17 @@ Doküman Bölüm 15.2, imzalamanın "resmi sample/test vector ile birebir" doğr
 oluşacak *yanlış* imzayı da içerir; böylece zincirin bu adımının gerçekten uygulandığı
 kanıtlanır. Vektörler `docs/vendor/btcturk-capabilities.md` dosyasına da kaydedildi.
 
-### D-15 — `RestRequestValidator` özel converter'lı alanları doğrulayamıyor
+### D-15: `RestRequestValidator` özel converter'lı alanları doğrulayamıyor
 
 CryptoExchange.Net'in contract test yardımcısı, ham JSON metnini model değeriyle birebir
 karşılaştırır. Virgül ayırıcılı bakiye alanları bu karşılaştırmada başarısız olur
 (`"27223,72..."` vs `27223.72...`).
 
-**Çözüm:** Bakiye ucunun contract testi `skipResponseValidation: true` ile çalıştırılır —
-istek üretimi ve imzalama doğrulanır. Yanıt eşlemesi ayrı ve daha ayrıntılı bir test
+**Çözüm:** Bakiye ucunun contract testi `skipResponseValidation: true` ile çalıştırılır;
+bu sayede istek üretimi ve imzalama doğrulanır. Yanıt eşlemesi ayrı ve daha ayrıntılı bir test
 sınıfında (`BalanceTests`) kapsanır.
 
-### D-16 — Emir iptali eşzamansızdır
+### D-16: Emir iptali eşzamansızdır
 
 `DELETE /api/v1/order` HTTP 200 döndürdüğünde istek yalnızca **alınmıştır**. Resmi
 dokümantasyon iptalin kesinleşmesinin WebSocket kanalı 452 üzerinden duyurulduğunu belirtir.
@@ -970,9 +970,9 @@ Başarılı yanıtı "emir iptal edildi" olarak yorumlamak, bir işlem botunda a
 ikinci kez emir girilmesine yol açabilir. `CancelOrderAsync` dokümantasyonu bu davranışı
 açıkça uyarı olarak taşır; kesinleşme için durum ayrıca sorgulanmalıdır.
 
-Ayrıca bu uçta `code` alanı boş string döner — D-7'deki tip tutarsızlığının ikinci örneği.
+Ayrıca bu uçta `code` alanı boş metin döner. Bu, D-7'deki tip tutarsızlığının ikinci örneği.
 
-### D-17 — Emir alan adları uçlar arasında farklı
+### D-17: Emir alan adları uçlar arasında farklı
 
 | Kavram | open orders | all orders | single order | submit order |
 |---|---|---|---|---|
@@ -984,7 +984,7 @@ Büyük/küçük harf farkları ayrıştırmayı etkilemez (eşleme duyarsızdı
 `time`/`datetime` ve `orderClientId`/`newOrderClientId` gerçek isim farklarıdır ve emir
 oluşturma yanıtı için ayrı bir model gerektirir (`BtcTurkOrderPlacement`).
 
-### D-18 — Emir yöntemi yazımı uçlar arasında farklı
+### D-18: Emir yöntemi yazımı uçlar arasında farklı
 
 `exchangeinfo` ucu `STOP_MARKET` / `STOP_LIMIT` (alt çizgili, büyük harf) döndürürken emir
 uçları `stopmarket` / `stoplimit` (alt çizgisiz, küçük harf) döndürür. Enum eşlemesi
@@ -995,9 +995,9 @@ büyük/küçük harfe duyarsızdır ama alt çizgi farkını çözemez; bu nede
 
 ## E.6 Dördüncü Tur Bulguları (kline + kullanıcı işlem geçmişi)
 
-### D-19 — Kline ucu ayrı host ve ayrı format kullanır
+### D-19: Kline ucu ayrı host ve ayrı format kullanır
 
-`GET https://graph-api.btcturk.com/v1/klines/history` — `api.btcturk.com` değil.
+`GET https://graph-api.btcturk.com/v1/klines/history` kullanılır, `api.btcturk.com` değil.
 
 Bu uç, projedeki ortak kalıbın **iki** varsayımını birden kırar:
 
@@ -1006,14 +1006,14 @@ Bu uç, projedeki ortak kalıbın **iki** varsayımını birden kırar:
    `SendAsync<T>` bu uçta çalışmaz. Ham yanıt için ayrı bir `SendRawAsync<T>` yolu eklendi.
 
 Ayrıca veriler **paralel diziler** halinde gelir (`t`, `o`, `h`, `l`, `c`, `v`) ve zaman
-damgaları **saniye** cinsindendir — diğer tüm uçlar milisaniye kullanır.
+damgaları **saniye** cinsindendir; diğer tüm uçlar milisaniye kullanır.
 
 Dizi uzunlukları birbirini tutmadığında hangi değerin hangi muma ait olduğu belirsizdir;
 eksik veriyi tahmin etmek yerine `InvalidOperationException` fırlatılır.
 
 Canlı yanıtta, resmi dokümantasyonda geçmeyen bir `s` (durum) alanı bulunur.
 
-### D-20 — Kullanıcı işlem geçmişinde tutarlar işaretlidir
+### D-20: Kullanıcı işlem geçmişinde tutarlar işaretlidir
 
 `amount`, `fee` ve `tax` satış işlemlerinde **negatif** gelir; işaret varlığın hesaptan
 çıktığını belirtir. Mutlak değer bekleyen bir hesaplama (toplam hacim, komisyon toplamı)
@@ -1022,7 +1022,7 @@ işareti yok sayarsa sonuç sessizce yanlış çıkar.
 Native modelde işaret korunur. Borsadan bağımsız modele geçerken mutlaka mutlak değere
 çevrilir, çünkü yön zaten `Side` alanında taşınır.
 
-### D-21 — `tax` alanının shared karşılığı yok
+### D-21: `tax` alanının shared karşılığı yok
 
 BtcTurk her işlem için ayrı bir vergi/kesinti tutarı bildirir. Bu alan Türkiye'ye özgüdür;
 `SharedUserTrade` modelinde yalnızca `Fee` bulunur ve vergi orada temsil edilemez.
@@ -1031,7 +1031,7 @@ Komisyona eklemek toplamı bozar, atmak bilgi kaybettirir. Seçilen yol: native 
 korunur, shared yüzeyde yalnızca komisyon aktarılır ve bu sınır belgelenir. Vergi hesabı
 yapan tüketiciler native API kullanmalıdır.
 
-### D-22 — `orderId` filtresi diğer filtrelerle birleştirilemez
+### D-22: `orderId` filtresi diğer filtrelerle birleştirilemez
 
 İşlem geçmişi ucunda `orderId`, diğer parametrelerle birlikte kullanılamaz. Sessizce yok
 saymak yanlış sonuç döndürürdü; birlikte verildiklerinde `ArgumentException` fırlatılır.
@@ -1040,7 +1040,7 @@ saymak yanlış sonuç döndürürdü; birlikte verildiklerinde `ArgumentExcepti
 
 ## E.7 Beşinci Tur Bulguları (WebSocket)
 
-### D-23 — Socket mesajları dizi zarfı kullanır
+### D-23: Socket mesajları dizi zarfı kullanır
 
 Mesajlar `[tip, gövde]` biçiminde iki elemanlı bir dizidir; tip numarası gövdenin içinde
 de tekrar edilir. REST tarafındaki hiçbir kalıp buna benzemez.
@@ -1048,10 +1048,10 @@ de tekrar edilir. REST tarafındaki hiçbir kalıp buna benzemez.
 Yönlendirme dizinin **ilk elemanına** göre yapılır. Bu, alan referansının derinliğinin
 doğru verilmesini gerektirir: kök dizinin kendisi 0. seviyededir, **elemanları 1. seviyede
 okunur**. Derinlik 0 verildiğinde hiçbir alan eşleşmez, her mesaj "değerlendirilemedi"
-diye düşer ve abonelik onayı beklenirken zaman aşımına uğrar — belirti ile neden
+diye düşer ve abonelik onayı beklenirken zaman aşımına uğrar. Belirti ile neden
 arasındaki mesafe büyük olduğu için bu davranış bir regresyon testiyle sabitlenmiştir.
 
-### D-24 — Dokümante edilmemiş mesaj kodları
+### D-24: Dokümante edilmemiş mesaj kodları
 
 | Kod | Durum |
 |---|---|
@@ -1060,13 +1060,13 @@ arasındaki mesafe büyük olduğu için bu davranış bir regresyon testiyle sa
 
 Bilinmeyen kodu ölümcül sayan bir istemci, daha ilk mesajda bağlantıyı düşürürdü.
 
-### D-25 — Socket alan adları REST'ten tamamen farklı
+### D-25: Socket alan adları REST'ten tamamen farklı
 
 Ticker alanları tek/iki harfe kısaltılmıştır (`B`, `A`, `PS`, `LA`, `DP`…) ve değerler
 **metin** olarak gelir; REST ticker ucu aynı veriyi açık adlarla ve **sayı** olarak
 döndürür. Aynı kavram için iki ayrı model gerekir.
 
-### D-26 — İşlem yönü sayısal ve anlamı belgesiz
+### D-26: İşlem yönü sayısal ve anlamı belgesiz
 
 Socket akışındaki `S` alanı sayısaldır; REST `"buy"` / `"sell"` metni kullanır. Sayının
 hangi yöne karşılık geldiği hiçbir yerde yazmaz.
@@ -1076,16 +1076,16 @@ eşleştirildi: 15 eşleşen işlemde çelişkisiz olarak **`0` satış, `1` al�
 testle sabitlendi; borsa kodları değiştirirse test kırılır, kütüphane sessizce yanlış yön
 raporlamaz.
 
-### D-27 — Emir defteri sıra numarası taşır
+### D-27: Emir defteri sıra numarası taşır
 
 `CS` alanı, fark mesajlarında atlama olup olmadığını anlamayı sağlar. Bu bilgi olmadan
 defter sessizce bozulabilir; alan native modelde korunur ve tüketiciye sunulur.
 
-### D-28 — Socket giriş imzası REST'ten farklı görünüyor
+### D-28: Socket giriş imzası REST'ten farklı görünüyor
 
 Resmi dokümantasyon socket giriş imzasının `publicKey + nonce` üzerinden hesaplandığını
 belirtir; REST ise `apiKey + stamp` kullanır. Bu fark canlı bir hesapla doğrulanmadığı
-için kullanıcıya özel akışlar **uygulanmamıştır** — yanlış imza sessizce başarısız olur ve
+için kullanıcıya özel akışlar **uygulanmamıştır**, çünkü yanlış imza sessizce başarısız olur ve
 hata mesajı nedeni göstermez.
 
 ---
@@ -1095,7 +1095,7 @@ hata mesajı nedeni göstermez.
 Gerçek bir BtcTurk hesabına karşı yapılan ilk doğrulama turu. Yalnızca okuma işlemleri
 yapıldı; emir oluşturulmadı.
 
-### D-13 DÜZELTİLDİ — bakiye ucu nokta kullanıyor, virgül değil
+### D-13 DÜZELTİLDİ: bakiye ucu nokta kullanıyor, virgül değil
 
 Doküman E.4'te (D-13) resmi dokümantasyonun bakiye örneğine dayanarak "bu uç virgül
 kullanır" denmişti. **Canlı yanıt bunu yalanladı:** ondalıklı alanların tamamı nokta
@@ -1110,14 +1110,14 @@ görünür. Savunmacı davranmanın maliyeti yok.
 tehlikeli olduğunu gösteriyor. D-7'de resmi örnek eksikti; burada resmi örnek fazladan
 bir şey vaat ediyordu.
 
-### D-29 — REST imzalama gerçek hesapta doğrulandı
+### D-29: REST imzalama gerçek hesapta doğrulandı
 
 `Base64Decode(secret)` → `HMAC-SHA256(apiKey + stamp)` → `Base64` zinciri kabul edildi.
 Bakiye ucu başarıyla çağrıldı, yanıt ayrıştırıldı ve her varlık için
-`toplam = serbest + kilitli` eşitliği doğrulandı — bu eşitlik aynı zamanda ondalık
+`toplam = serbest + kilitli` eşitliği doğrulandı. Bu eşitlik aynı zamanda ondalık
 çözümünün canlı kanıtıdır.
 
-### D-30 — Socket giriş imzası REST'ten GERÇEKTEN farklı
+### D-30: Socket giriş imzası REST'ten GERÇEKTEN farklı
 
 E.7'de (D-28) bu fark "doğrulanmadı" olarak işaretlenmişti. Canlı denemeyle kesinleşti:
 
@@ -1132,7 +1132,7 @@ zaman damgasından bağımsız bir sayıdır (denemede sabit `3000` kabul edildi
 Yanlış imza yalnızca `Unauthorized - Invalid Signature` döndürür ve hangi varsayımın
 hatalı olduğunu belirtmez; bu yüzden adayları tek tek denemek tek güvenilir yoldu.
 
-### D-31 — Özel akış mesajları hesap hareketi olmadan gelmiyor
+### D-31: Özel akış mesajları hesap hareketi olmadan gelmiyor
 
 Giriş yaptıktan sonra 45 saniye dinlendi. Yalnızca giriş onayı (`114`) ve sürüm mesajı
 (`991`) geldi. `423` (UserTrade), `441` (OrderMatch), `451`/`452`/`453` (Order*)
@@ -1149,13 +1149,13 @@ gözlenebilir; işlem bildirimleri (`423`, `441`) ise gerçek bir eşleşme gere
 
 ## E.9 Binance TR Bulguları
 
-### D-32 — Yanıt zarfı BtcTurk'ten tamamen farklı
+### D-32: Yanıt zarfı BtcTurk'ten tamamen farklı
 
 | | BtcTurk | Binance TR |
 |---|---|---|
-| Başarı | `success` (bool) | **yok** — `code == 0` |
+| Başarı | `success` (bool) | **yok**; `code == 0` |
 | Mesaj | `message` | `msg` |
-| Zaman | — | `timestamp` (zarf seviyesinde) |
+| Zaman | yok | `timestamp` (zarf seviyesinde) |
 
 İki borsa için tek bir zarf modeli kullanılamaz. Her adaptörün kendi zarfı ve kendi hata
 çevirisi vardır. Bu, spesifikasyonun "her borsa bağımsız adapter" kararını (ADR-003)
@@ -1164,16 +1164,16 @@ doğruluyor.
 Sunucu saati ucu gövdesinde veri taşımaz; istenen değer yalnızca zarftadır. Bu yüzden
 zarfı açmayan ayrı bir gönderim yolu gerekti.
 
-### D-33 — Global Binance'te public olan uçlar burada anahtar istiyor
+### D-33: Global Binance'te public olan uçlar burada anahtar istiyor
 
-`/api/v3/*` yolları — global Binance'te herkese açık piyasa verisi uçları — Binance TR'de
+`/api/v3/*` yolları, yani global Binance'te herkese açık olan piyasa verisi uçları, Binance TR'de
 `3701 Invalid API-key, IP, or permissions` döndürüyor. Global Binance için yazılmış kod
 burada çalışmaz; ADR-005'in öngördüğü durum tam olarak budur.
 
 **Sonuç:** REST üzerinden anahtarsız ticker verisi alınamıyor. BtcTurk'te bedava olan bir
 yetenek burada anahtar gerektiriyor ve `Discover()` bu farkı bildiriyor.
 
-### D-34 — Başarılı görünüp boş dönen uçlar
+### D-34: Başarılı görünüp boş dönen uçlar
 
 `market/trades` ve `market/klines` `code: 0` ile yanıt verip boş liste döndürüyor
 (denenen tüm paritelerde, tarih filtresiyle veya filtresiz).
@@ -1182,13 +1182,13 @@ Hata dönen bir uçtan daha tehlikelidir: çağıran taraf bunu "işlem yok" ola
 İşlem verisi için `agg-trades` kullanılır; her iki veri de WebSocket üzerinden sorunsuz
 akıyor (D-36).
 
-### D-35 — Emir defteri kademe sayısı sabit değerlerle sınırlı
+### D-35: Emir defteri kademe sayısı sabit değerlerle sınırlı
 
 Yalnızca `5, 10, 20, 50, 100, 500, 1000` kabul ediliyor. Diğer değerler
-`1106 Incorrect Page number` ile reddediliyor — mesaj sorunun limit olduğunu **söylemiyor**.
+`1106 Incorrect Page number` ile reddediliyor ve mesaj sorunun limit olduğunu **söylemiyor**.
 İstemci bunu ağa çıkmadan reddeder.
 
-### D-36 — WebSocket, REST'in veremediğini veriyor
+### D-36: WebSocket, REST'in veremediğini veriyor
 
 | Veri | REST | WebSocket |
 |---|---|---|
@@ -1198,7 +1198,7 @@ Yalnızca `5, 10, 20, 50, 100, 500, 1000` kabul ediliyor. Diğer değerler
 
 Bu nedenle Binance TR'de ticker desteği yalnızca socket yüzeyinde sunuluyor.
 
-### D-37 — Sembol formatı aynı borsa içinde üç farklı biçimde
+### D-37: Sembol formatı aynı borsa içinde üç farklı biçimde
 
 | Yer | Biçim |
 |---|---|
@@ -1209,7 +1209,7 @@ Bu nedenle Binance TR'de ticker desteği yalnızca socket yüzeyinde sunuluyor.
 Abonelikte yanlış biçim **hata üretmez**: bağlantı kurulur, hiçbir mesaj gelmez. Sorun
 ancak "veri akmıyor" olarak fark edilir, bu yüzden dönüşüm testle sabitlenmiştir.
 
-### D-38 — Alan eşleşmesi büyük/küçük harfe duyarlı olmalı
+### D-38: Alan eşleşmesi büyük/küçük harfe duyarlı olmalı
 
 WebSocket akışları tek harfli alanlar kullanır ve harf büyüklüğü anlam taşır: `p` fiyat
 değişimi / `P` yüzde değişim, `b` alış fiyatı / `B` alış miktarı, `U` ilk sıra / `u` son sıra.
@@ -1220,7 +1220,7 @@ Duyarsız eşleşme bu çiftleri çakıştırır ve ayrıştırma tamamen başar
 büyüklüğüyle geldiği için duyarsız eşleşme şarttı (D-17). İki borsa için tek bir
 serileştirme ayarı kullanılamaz.
 
-### D-39 — Yönlendirme kimliği bağlantıya değil mesaja bağlı olmalı
+### D-39: Yönlendirme kimliği bağlantıya değil mesaja bağlı olmalı
 
 Binance TR'de akış, bağlantı adresinin parçasıdır (`/ws/<akış>`). İlk uygulamada
 yönlendirme kimliği istemci üzerinde bir alanda tutuldu; her yeni abonelik öncekinin
@@ -1229,3 +1229,79 @@ boş kaldı.
 
 Kimlik artık mesajın kendisinden türetiliyor: olay türü `e` alanından, taşımayan akışlar
 için sabit bir görüntü kimliğinden. Regresyon testi bu davranışı sabitler.
+
+---
+
+## E.10 Yüzeyler Tamamlanırken Çıkan Bulgular
+
+### D-40. BtcTurk tüm ticker akışında olay adı "all" olmalıdır
+
+Kanal 401, borsadaki bütün pariteleri tek abonelikle gönderir. Abonelik isteğinde
+`event` alanı **`"all"`** olmalıdır.
+
+Boş bir olay adıyla ya da alan hiç gönderilmeden abone olunduğunda borsa
+`{"ok": true, "message": "join|ticker:"}` yanıtını veriyor, yani **isteği onaylıyor**,
+ama tek bir güncelleme bile göndermiyor. Üç aday ayrı bağlantılarda denendi:
+
+| Abonelik isteği | Onay | Gelen 401 mesajı |
+|---|---|---|
+| `event: ""` | ✅ ok | 0 |
+| `event` alanı yok | ✅ ok | 0 |
+| `event: "all"` | ✅ ok | 12 |
+
+Hata dönmediği için sorun ancak "veri akmıyor" olarak fark edilir. Değer testle
+sabitlenmiştir.
+
+Gövde `{items: [...], channel, event, type}` biçimindedir ve her mesaj 379 paritenin
+tamamını taşır. Öğelerin alan şeması tek parite akışıyla (kod 402) aynıdır, bu yüzden
+ayrı bir model gerekmez.
+
+### D-41. Yönlendirme eşlemesi gövde tipine göre kayıtlıdır
+
+Kütüphane, gelen mesajın hangi aboneliğe ait olduğunu gövde tipine bağlı bir eşlemeden
+okur. Yeni bir gövde tipi için eşleme kaydedilmezse konu adı `null` döner ve mesaj hiçbir
+aboneliğe ulaşmaz.
+
+Bu, D-40'ın uygulanması sırasında yaşandı: abonelik başarıyla kuruldu, sunucu saniyede bir
+mesaj gönderdi, ama hiçbiri kullanıcının işlevine ulaşmadı. İz kaydı nedeni açıkça
+gösterdi:
+
+```
+received message not matched to any listener.
+TypeIdentifier: 401, TopicFilter: (null), registered TopicFilters for type: [all]
+```
+
+Liste akışında parite adı bulunmadığı için konu adı, mesajın kendi `event` alanından
+okunur. Kimliğin istemcide tutulan bir alandan değil mesajın içeriğinden türetilmesi
+kuralı, Binance TR tarafında da aynı sınıftan bir hataya yol açmıştı (D-39).
+
+### D-42. Binance TR private uçları sayısal enum kullanır
+
+Emir yönü, türü, durumu ve geçerlilik süresi metin değil **sayı** olarak taşınır.
+
+| Alan | Değerler |
+|---|---|
+| `side` | 0 alış · 1 satış |
+| `type` | 1 limit · 2 piyasa · 3 stop loss · 4 stop loss limit · 5 take profit · 6 take profit limit · 7 limit maker |
+| `status` | -2 sistem işliyor · 0 yeni · 1 kısmen doldu · 2 doldu · 3 iptal · 4 iptal bekliyor · 5 reddedildi · 6 süresi doldu |
+| `timeInForce` | 1 GTC · 2 IOC · 3 FOK · 4 GTX |
+
+Global Binance aynı bilgileri metin olarak döndürür. Oradan taşınan kod burada sessizce
+yanlış çözümlenir: örneğin `status: 2` metin bekleyen bir eşlemede tanınmaz ve emir
+"bilinmeyen durum" olarak okunur.
+
+Hesap izinleri (`canTrade`, `canWithdraw`, `canDeposit`) ve işlem bayrakları
+(`isBuyer`, `isMaker`, `isWorking`) da mantıksal değer yerine 0 ya da 1 gönderilir.
+
+### D-43. Emir oluşturma yanıtı hata mesajını farklı bir alanda döndürür
+
+`POST /open/v1/orders` hata metnini `message` alanında, diğer bütün private uçlar `msg`
+alanında döndürür. Tek bir alan adı beklemek, emir hatalarının mesajsız görünmesine yol
+açar; bu da en çok bilgi gereken anda en az bilgi verildiği anlamına gelir. Zarf her iki
+adı da okur.
+
+### D-44. Zaman damgaları uçlar arasında sayı ya da metin olabilir
+
+Emir kayıtlarında `createTime` sayı olarak, işlem kayıtlarında `time` metin olarak gelir.
+İkisi de milisaniyedir. Varsayılan çözümleyici her iki durumda da hata verir; kütüphanenin
+zaman dönüştürücüsü iki biçimi de okur.

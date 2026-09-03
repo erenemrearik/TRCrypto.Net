@@ -1,4 +1,4 @@
-# Proje Durumu — Nerede Kaldık?
+# Proje Durumu
 
 > **Son güncelleme:** 27 Ağustos 2026
 > Bu dosya, projeye ara verip döndüğünüzde ya da yeni biri katıldığında okunacak
@@ -16,7 +16,7 @@ akışları eksik ve bunlar hesapta emir hareketi gerektiriyor.
 
 ## Tamamlananlar
 
-### M0 — Proje temeli ✅
+### M0. Proje temeli ✅
 
 | Ne | Nerede |
 |---|---|
@@ -26,7 +26,7 @@ akışları eksik ve bunlar hesapta emir hareketi gerektiriyor.
 | CI (derle/test/paketle/secret tara) | `.github/workflows/ci.yml` |
 | Secret koruması | `.gitignore`, `.gitleaks.toml`, `.githooks/pre-commit`, `.env.example` |
 
-### M1 — BtcTurk public piyasa verisi ✅
+### M1. BtcTurk public piyasa verisi ✅
 
 **Native uçlar** (`client.SpotApi.ExchangeData`):
 
@@ -38,7 +38,7 @@ akışları eksik ve bunlar hesapta emir hareketi gerektiriyor.
 | `/api/v2/orderbook` | `GetOrderBookAsync` |
 | `/api/v2/trades` | `GetTradesAsync` |
 
-### M2 — Kimlik doğrulama + private REST ✅
+### M2. Kimlik doğrulama ve private REST ✅
 
 İmzalama zinciri: `Base64(HMAC-SHA256(Base64Decode(secret), apiKey + stamp))`,
 başlıklar `X-PCK` / `X-Stamp` / `X-Signature`. Resmi test vektörü olmadığı için
@@ -61,7 +61,7 @@ deterministik vektörler üretilip testlere sabitlendi.
 | `POST /api/v1/order` | `PlaceOrderAsync` |
 | `DELETE /api/v1/order` | `CancelOrderAsync` |
 
-### Kline — ayrı host ✅
+### Kline verisi ayrı bir sunucuda ✅
 
 `GET graph-api.btcturk.com/v1/klines/history` → `ExchangeData.GetKlinesAsync`
 
@@ -79,7 +79,7 @@ Bu uç **ayrı bir host** kullanır, **standart zarfı taşımaz** ve zaman damg
 Yani BtcTurk artık borsadan bağımsız kodun tüm ortak REST işlemlerini destekliyor.
 
 
-### M3 — WebSocket ✅
+### M3. WebSocket ✅
 
 Protokol resmi dokümanda gövdesiz listelendiği için **canlı bağlantıdan** çözüldü.
 Ayrıntı: [vendor/btcturk-websocket.md](vendor/btcturk-websocket.md)
@@ -94,7 +94,7 @@ Mesajlar `[tip, gövde]` dizisi biçimindedir; yönlendirme dizinin ilk elemanı
 yapılır. Yeniden bağlanma ve abonelik geri kurma kütüphane tarafından sağlanır.
 
 
-### M4 — Binance TR public piyasa verisi ✅
+### M4. Binance TR ✅
 
 Envanter canlı denemeyle çıkarıldı; dokümantasyon hangi uçların gerçekten public
 olduğunu söylemiyor. Ayrıntı: [vendor/binance-tr-capabilities.md](vendor/binance-tr-capabilities.md)
@@ -110,22 +110,27 @@ olduğunu söylemiyor. Ayrıntı: [vendor/binance-tr-capabilities.md](vendor/bin
 
 Ayrıntı: [vendor/binance-tr-websocket.md](vendor/binance-tr-websocket.md)
 
-**Bağımlılık enjeksiyonu:** `services.AddTRCryptoBinanceTR(...)` — REST ve WebSocket
-istemcilerini birlikte kaydeder.
+**Bağımlılık enjeksiyonu:** `services.AddTRCryptoBinanceTR(...)` çağrısı REST ve
+WebSocket istemcilerini birlikte kaydeder.
+
+**Private uçlar** (`client.SpotApi.Account` ve `client.SpotApi.Trading`): hesap bilgisi,
+emir oluşturma, emir listesi, emir ayrıntısı, emir iptali ve işlem geçmişi. İmzalama
+etkin; canlı hesap doğrulaması anahtar geldiğinde yapılacak.
 
 **Shared yüzey:** REST tarafında `ISpotSymbolRestClient` · `IOrderBookRestClient` ·
-`IRecentTradeRestClient`; socket tarafında `ITickerSocketClient` · `ITradeSocketClient` ·
-`IOrderBookSocketClient`.
+`IRecentTradeRestClient` · `IBalanceRestClient` · `ISpotOrderRestClient`; socket
+tarafında `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` ·
+`IKlineSocketClient`.
 
-Aynı kod artık iki borsayla çalışıyor — canlı doğrulandı: tek bir `SharedSymbol` ile
+Aynı kod artık iki borsayla çalışıyor ve bu canlı olarak doğrulandı. Tek bir `SharedSymbol` ile
 her iki borsadan paralel fiyat okunuyor, her biri kendi sembol biçimini (`BTCTRY` /
 `BTC_TRY`) kullanırken çağıran kod hiçbirini görmüyor.
 
 BtcTurk'tan üç önemli fark:
 
-1. **Zarf farklı** — `success` alanı yok, başarı `code == 0`; mesaj `msg`; zarfta `timestamp`
-2. **Sembol alt çizgili** — `BTC_TRY` (BtcTurk: `BTCTRY`)
-3. **Ticker REST'te anahtarsız alınamıyor** — `/api/v3/*` burada public değil; socket'te çalışıyor
+1. **Zarf farklı.** `success` alanı yok, başarı `code == 0`; mesaj `msg`; zarfta `timestamp`
+2. **Sembol alt çizgili.** `BTC_TRY` kullanılır, BtcTurk ise `BTCTRY` yazar
+3. **Ticker REST'te anahtarsız alınamıyor.** `/api/v3/*` burada public değil, ama socket'te çalışıyor
 
 ### Belgeler ✅
 
@@ -135,7 +140,7 @@ BtcTurk'tan üç önemli fark:
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/credentials/binance-tr.md` | Binance TR'de anahtar alma; imzalama şemasının BtcTurk'ten farkları |
 | `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-39) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-44) |
 
 ---
 
@@ -146,7 +151,7 @@ BtcTurk'tan üç önemli fark:
 | **Kullanıcıya özel socket akışları** | Giriş çalışıyor, ama mesaj gövdeleri (423/441/451/452/453) hesapta **hareket olmadan gelmiyor** ve hiçbir yerde belgelenmemiş. Modelleri yazmak için gerçek emir hareketi gerekiyor |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Emir uçlarının canlı doğrulaması** | Gerçek emir vermeyi gerektirir; bilinçli olarak ertelendi. İmzalama ve okuma uçları canlı doğrulandı |
-| **Binance TR: kimlik doğrulama** | İmzalama yazıldı ama canlı doğrulanmadı; bilinçli olarak devre dışı. Anahtar geldiğinde şemayı doğrulayacak sonda testleri hazır (`AuthenticationProbeTests`, anahtarsızken atlanır) |
+| **Binance TR: private uçların canlı doğrulaması** | Şema resmi dokümantasyondan alındı, imzalama yayımlanmış test vektörüyle doğrulandı. Gerçek bir hesaba karşı denenmesi anahtar geldiğinde yapılacak; `AuthenticationProbeTests` bunu ilk çalıştırmada bildirir |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu · Bitexen** | M5–M6 |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
@@ -159,7 +164,7 @@ Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  185/185 birim · 13 canli API · 2 atlandi (anahtar yok)
+dotnet test  -c Release   →  212/212 birim · 13 canli API · 2 atlandi (anahtar yok)
                              birim testler her PR'da, canli testler haftalik iste
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
@@ -183,7 +188,7 @@ tek bir `SharedSymbol` ile her iki borsadan REST ve WebSocket üzerinden fiyat o
 1. **Endpoint'ler uydurulmaz.** Yalnızca resmi dokümantasyondan doğrulanan uçlar yazılır
    (ADR-010). Doğrulanamayan uç, yazılmak yerine `docs/vendor/` altında "dondurulmamış"
    olarak işaretlenir.
-2. **Fixture'lar canlı API'den alınır.** Resmi örnek yanıtlar eksik/yanıltıcı olabiliyor —
+2. **Fixture'lar canlı API'den alınır.** Resmi örnek yanıtlar eksik ya da yanıltıcı olabiliyor;
    aşağıdaki bulgular bunun kanıtı.
 3. **Enum'larda `Unknown` üyesi tanımlanmaz.** CryptoExchange.Net konvansiyonu: bilinmeyen
    değer tanımsız bir enum değerine düşer, `Enum.IsDefined` ile tespit edilir.
@@ -227,14 +232,14 @@ BtcTurk tamamlandığına göre NuGet v0.1.0-preview yayınlanabilir. Workflow h
 
 ## ✅ Canlı hesap doğrulaması yapıldı (26 Ağu 2026)
 
-Gerçek bir hesaba karşı doğrulananlar — yalnızca okuma, emir oluşturulmadı:
+Gerçek bir hesaba karşı doğrulananlar. Yalnızca okuma yapıldı, emir oluşturulmadı:
 
 | Doğrulama | Sonuç |
 |---|---|
 | REST imzalama | ✅ Kabul edildi |
 | Bakiye ucu | ✅ Ayrıştırıldı; toplam = serbest + kilitli |
-| Ondalık ayırıcı | ✅ **Nokta** — dokümantasyondaki virgüllü örnek yanıltıcıymış |
-| Socket giriş imzası | ✅ `publicKey + nonce` — REST'ten farklı, dört aday denendi |
+| Ondalık ayırıcı | ✅ **Nokta.** Dokümantasyondaki virgüllü örnek yanıltıcıymış |
+| Socket giriş imzası | ✅ `publicKey + nonce`, REST'ten farklı. Dört aday denendi |
 
 **Hâlâ doğrulanmayan:** emir oluşturma/iptal uçları ve özel akış mesajları.
 
@@ -264,12 +269,12 @@ Binance TR sunucularına karşı ayrı ayrı ölçüldü ve ikisi de aynı sonuc
 
 | | Tolerans | Durum |
 |---|---|---|
-| BtcTurk | geniş | ✅ sorun yok — imzalı uçlar canlı doğrulandı |
+| BtcTurk | geniş | ✅ sorun yok, imzalı uçlar canlı doğrulandı |
 | Binance TR | `recvWindow` varsayılan **5000 ms** | ⚠️ pencere içinde, ama payı ~3,2 saniye |
 
 Binance TR'nin penceresi dar olduğu için bu kayma büyürse imzalı istekler reddedilir.
 `ServerTimeIntegrationTests` her çalıştırmada sapmayı ölçer ve pencere aşılırsa
-başarısız olur — sorun anahtarı bağladıktan sonra değil, öncesinde görünür.
+başarısız olur. Böylece sorun, anahtarı bağladıktan sonra değil öncesinde görünür.
 
 Makine etki alanına bağlı olduğundan saat etki alanı denetleyicisinden gelir; kalıcı
 çözüm sistem yöneticisi tarafındadır.

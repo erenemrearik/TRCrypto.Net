@@ -1,4 +1,4 @@
-# Binance TR — API Anahtarı Alma ve Bağlama Rehberi
+# Binance TR API Anahtarı Alma ve Bağlama Rehberi
 
 > **Kaynak:** [binance.tr/apidocs](https://www.binance.tr/apidocs) · panel akışı Binance TR
 > hesap arayüzünden doğrulanmıştır
@@ -10,7 +10,7 @@
 
 **Bu sürümde anahtar hiçbir işe yaramaz.** `TRCrypto.BinanceTR` şu an yalnızca kimlik
 doğrulama gerektirmeyen uçları sunuyor; imzalama yazıldı ama **canlı doğrulanmadığı için
-bilinçli olarak devre dışı** — doğrulanmamış bir imzalama, isteklerin nedeni belirsiz
+bilinçli olarak devre dışıydı.** Doğrulanmamış bir imzalama, isteklerin nedeni belirsiz
 şekilde reddedilmesine yol açardı.
 
 ```csharp
@@ -52,7 +52,7 @@ Resmi dokümantasyon uçları üç güvenlik seviyesine ayırır:
 
 | Seviye | Ne gerekir |
 |---|---|
-| `NONE` | Hiçbir şey — herkese açık uçlar |
+| `NONE` | Hiçbir şey; herkese açık uçlar |
 | `API_KEY` | Yalnızca `X-MBX-APIKEY` başlığı |
 | `SIGNED` | Anahtar **ve** HMAC-SHA256 imzası |
 
@@ -60,7 +60,7 @@ Panel tarafında verilecek izinler için kural nettir:
 
 | Amaç | Açılacak izin | Kapalı kalacak |
 |---|---|---|
-| Piyasa verisi okuma | **hiçbiri** — anahtar bile gerekmez | hepsi |
+| Piyasa verisi okuma | **hiçbiri**, anahtar bile gerekmez | hepsi |
 | Bakiye ve hesap okuma | okuma izni | alım satım, **çekim** |
 | Emir verme / iptal | alım satım | **çekim** |
 
@@ -82,7 +82,7 @@ seçeneğini işaretleyin ve istemcinizin çıkış IP'sini girin.
 |---|---|
 | Yerel geliştirme | Kendi genel IP'niz (`curl ifconfig.me`) |
 | Sunucu / VPS | Sunucunun sabit çıkış IP'si |
-| GitHub Actions | Sabit IP yok — CI'da imzalı istek çalıştırmayın |
+| GitHub Actions | Sabit IP yok; CI'da imzalı istek çalıştırmayın |
 
 Ev bağlantınızın IP'si değişebilir; "yetkisiz" hatası alıp izinleri doğru sanıyorsanız
 ilk bakılacak yer burasıdır.
@@ -117,18 +117,18 @@ builder.Services.AddTRCryptoBinanceTR(options =>
 
 ---
 
-## 5. Secret formatı — BtcTurk'ten farkı
+## 5. Secret formatının BtcTurk'ten farkı
 
 | | BtcTurk | Binance TR |
 |---|---|---|
-| Secret | **Base64** — imzalamadan önce çözülür | **Ham metin** — çözülmez |
+| Secret | **Base64**, imzalamadan önce çözülür | **Ham metin**, çözülmez |
 | İmza kodlaması | Base64 | **Onaltılık (hex)** |
 | Başlık | `X-PCK` · `X-Stamp` · `X-Signature` | `X-MBX-APIKEY` + `signature` parametresi |
 
 İki borsanın imzalama şeması birbirine benzemez. Aynı yardımcı kodu ikisinde de
 kullanmaya çalışmak sessizce yanlış imza üretir.
 
-TRCrypto her iki dönüşümü de sizin için yapar — secret'ı **panelde gördüğünüz haliyle**
+TRCrypto her iki dönüşümü de sizin için yapar. Secret'ı **panelde gördüğünüz haliyle**
 verin.
 
 ---
@@ -159,16 +159,16 @@ sürüyorsa çözüm sistem yöneticisindedir.
 
 | Belirti | Neden / çözüm |
 |---|---|
-| `3701 Invalid API-key, IP, or permissions` | Üç ayrı nedeni tek mesajda toplar: anahtar yanlış, IP listede değil veya izin işaretli değil. **`/api/v3/*` yollarında ise anahtarınız değil, yol yanlıştır** — bkz. aşağıdaki not |
+| `3701 Invalid API-key, IP, or permissions` | Üç ayrı nedeni tek mesajda toplar: anahtar yanlış, IP listede değil veya izin işaretli değil. **`/api/v3/*` yollarında ise anahtarınız değil, yol yanlıştır**; aşağıdaki nota bakın |
 | Zaman damgası / `recvWindow` hatası | Sistem saati kaymış (bölüm 6) |
-| İmza geçersiz | Secret'ı Base64 çözmeye çalışmış olabilirsiniz — Binance TR'de çözülmez (bölüm 5) |
+| İmza geçersiz | Secret'ı Base64 çözmeye çalışmış olabilirsiniz; Binance TR'de çözülmez (bölüm 5) |
 | `1106 Incorrect Page number` | Emir defteri kademe sayısı desteklenmiyor; yalnızca 5, 10, 20, 50, 100, 500, 1000 kabul edilir. Mesaj sorunun limit olduğunu söylemez |
 | İşlem/mum listesi boş ama `code: 0` | Borsa bu REST uçlarını boş döndürüyor; veri WebSocket üzerinden gelir |
 | HTTP 429 / 418 | İstek limiti aşıldı; 418 IP yasağıdır ve süresi tekrarla uzar |
 
 > [!NOTE]
 > Global Binance'te herkese açık olan `/api/v3/*` uçları Binance TR'de **anahtar ister**.
-> Global Binance için yazılmış örnek kod burada çalışmaz — kullanılacak yollar
+> Global Binance için yazılmış örnek kod burada çalışmaz. Kullanılacak yollar
 > `/open/v1/...` altındadır.
 
 ---

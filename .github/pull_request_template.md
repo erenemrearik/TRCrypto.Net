@@ -8,8 +8,8 @@
 
 ## Kontrol listesi
 
-- [ ] `dotnet build -c Release` — uyarı yok
-- [ ] `dotnet test -c Release` — tüm testler geçiyor
+- [ ] `dotnet build -c Release` çalışıyor, uyarı yok
+- [ ] `dotnet test -c Release` çalışıyor, tüm testler geçiyor
 - [ ] Testi **önce** yazdım ve başarısız olduğunu gördüm
 - [ ] Commit'lerde gerçek kimlik bilgisi yok
 
@@ -17,7 +17,7 @@
 
 - [ ] Uç, **resmi dokümantasyondan** doğrulandı (üçüncü taraf kaynak değil)
 - [ ] `docs/vendor/<borsa>-capabilities.md` güncellendi (erişim tarihiyle)
-- [ ] Fixture eklendi — tercihen canlı API'den alınmış gerçek yanıt
+- [ ] Fixture eklendi, tercihen canlı API'den alınmış gerçek yanıt
 - [ ] Contract testi eklendi (`tests/.../Endpoints/`)
 - [ ] Geçersiz girdi ağa çıkmadan reddediliyor
 - [ ] README'deki uç tablosu güncellendi

@@ -59,7 +59,7 @@ body:
       label: Borsanın ham yanıtı
       description: |
         Varsa API'den dönen ham JSON. Bu, hatanın nedenini bulmakta en çok yardımcı olan
-        bilgidir — özellikle bir alanın tipi dokümantasyondan farklıysa.
+        bilgidir; özellikle bir alanın tipi dokümantasyondan farklıysa.
         **Kimlik bilgisi içeren alanları silin.**
       render: json
 

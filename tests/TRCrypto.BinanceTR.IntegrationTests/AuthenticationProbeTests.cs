@@ -13,7 +13,7 @@ namespace TRCrypto.BinanceTR.IntegrationTests;
 /// <para>
 /// <b>Bu testler kutuphanenin imzalama kodunu calistirmaz.</b> Kod bilincli olarak devre
 /// disidir ve cagrildiginda istisna firlatir; burada sema elle uygulanip dogrudan borsaya
-/// gonderilir. Amac, kodu etkinlestirmeden once semanin dogru oldugunu kanitlamaktir —
+/// gonderilir. Amac, kodu etkinlestirmeden once semanin dogru oldugunu kanitlamaktir;
 /// dogrulanmamis bir imzalama, isteklerin nedeni belirsiz sekilde reddedilmesine yol acar.
 /// </para>
 /// <para>

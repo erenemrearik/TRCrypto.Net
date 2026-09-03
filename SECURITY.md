@@ -33,7 +33,7 @@ açığı gizli tutmanızı rica ederiz.
 
 ## Kapsam dışı
 
-- Borsaların kendi API'lerindeki açıklar — doğrudan ilgili borsaya bildirin
+- Borsaların kendi API'lerindeki açıklar. Bunları doğrudan ilgili borsaya bildirin.
 - Kütüphaneyi kullanan uygulamanın kendi yapılandırma hataları
 - Anahtarını yanlışlıkla paylaşan kullanıcı senaryoları
   (yine de bkz. [docs/credentials/README.md](docs/credentials/README.md))

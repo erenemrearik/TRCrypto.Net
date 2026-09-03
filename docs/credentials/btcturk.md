@@ -1,4 +1,4 @@
-# BtcTurk — API Anahtarı Alma ve Bağlama Rehberi
+# BtcTurk API Anahtarı Alma ve Bağlama Rehberi
 
 > **Kaynak:** [docs.btcturk.com/docs/api-access-permissions](https://docs.btcturk.com/docs/api-access-permissions) ·
 > [authentication-v1](https://docs.btcturk.com/docs/authentication/authentication-v1)
@@ -29,7 +29,7 @@ Bu özellikler henüz eklenmedi.
    - Vereceğiniz **izinleri** seçin (bkz. bölüm 2)
    - İstemcinizin çalışacağı **IP adresini** girin (bkz. bölüm 3)
    - WebSocket erişimi gerekiyorsa ilgili seçeneği işaretleyin
-4. Formu gönderin — size bir **public key** ve bir **private key (secret)** verilir
+4. Formu gönderin. Size bir **public key** ve bir **private key (secret)** verilir
 
 > **Secret yalnızca bir kez gösterilir.** Kaybederseniz yeni anahtar oluşturmanız gerekir.
 > Kopyaladıktan sonra doğrudan bölüm 4'teki yönteme kaydedin.
@@ -51,7 +51,7 @@ TRCrypto özelliklerine göre gerekli minimum:
 
 | Ne yapacaksınız | Gereken izinler |
 |---|---|
-| Fiyat/parite/emir defteri okuma | **Hiçbiri — anahtar bile gerekmez** |
+| Fiyat, parite ve emir defteri okuma | **Hiçbiri; anahtar bile gerekmez** |
 | Bakiye görüntüleme | Toplam Varlık |
 | Emir geçmişi görüntüleme | Toplam Varlık + Hesap |
 | Emir verme / iptal | + Al-Sat |
@@ -70,7 +70,7 @@ Test emirlerini piyasadan çok uzak bir limit fiyatıyla verip hemen iptal edin.
 ## 3. IP allow-list
 
 Anahtar oluştururken IP girmek formun bir parçasıdır. Bu, anahtar sızsa bile başka bir
-makineden kullanılmasını engeller — **en etkili tek korumadır.**
+makineden kullanılmasını engeller ve **en etkili tek korumadır.**
 
 | Ortam | Ne yazmalı |
 |---|---|
@@ -121,12 +121,12 @@ builder.Services.AddTRCryptoBtcTurk(options =>
 
 ---
 
-## 5. Secret formatı — en sık yapılan hata
+## 5. Secret formatı: en sık yapılan hata
 
 BtcTurk'ün secret'ı **Base64 kodludur.** İmzalama sırasında ham metin olarak değil,
 **çözülmüş baytlar** HMAC anahtarı olarak kullanılır.
 
-TRCrypto bu çözümü sizin için yapar — secret'ı **olduğu gibi**, panelde gördüğünüz haliyle
+TRCrypto bu çözümü sizin için yapar. Secret'ı **olduğu gibi**, panelde gördüğünüz haliyle
 verin. Kendiniz decode etmeye çalışmayın.
 
 İmza zinciri (referans):
@@ -138,7 +138,7 @@ verin. Kendiniz decode etmeye çalışmayın.
 4. X-Signature = Base64Encode(digest)
 ```
 
-2. adım atlanırsa imza **sessizce yanlış** olur — hata mesajı "geçersiz imza" der ve
+2. adım atlanırsa imza **sessizce yanlış** olur. Hata mesajı "geçersiz imza" der ve
 nedeni belli olmaz.
 
 Gönderilen başlıklar: `X-PCK` (public key), `X-Stamp` (nonce), `X-Signature`.
@@ -177,6 +177,6 @@ Birkaç saniyenin üzerinde bir fark varsa Windows'ta
 
 ## 8. Anahtarım sızdıysa
 
-1. **Derhal** Hesap → API Erişimi sayfasından anahtarı silin — resmi talimat budur
+1. **Derhal** Hesap → API Erişimi sayfasından anahtarı silin; resmi talimat budur
 2. Hesap hareketlerinizi kontrol edin
 3. Yeni anahtar oluşturun ve IP allow-list'i doldurun

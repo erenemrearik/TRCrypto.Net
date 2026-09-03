@@ -1,4 +1,4 @@
-# BtcTurk — Vendor Capability Freeze
+# BtcTurk: Vendor Capability Freeze
 
 > **Story:** BTC-001 · **Erişim tarihi:** 24 Ağustos 2026
 > **Kaynak:** https://docs.btcturk.com/ (resmi dokümantasyon)
@@ -15,7 +15,7 @@
 | Public API sürümü | v2 |
 | Private API sürümü | v1 |
 | Durum sayfası | https://status.btcturk.com/ |
-| İstek sembol formatı | `BTCTRY` — birleşik, büyük harf, ayırıcı **yok** |
+| İstek sembol formatı | `BTCTRY`; birleşik, büyük harf, ayırıcı **yok** |
 | Zaman damgası | **milisaniye** (OHLC hariç) |
 | OHLC zaman damgası | **saniye** |
 | Content-Type | Auth gerektiren isteklerde `application/json` |
@@ -33,12 +33,12 @@ Tüm endpoint'ler şu yapıyı döndürür:
 > koduna yansımaz. Bu nedenle `success == false` durumu `HttpResult.Success == false` olarak
 > yüzeye çıkarılmalıdır (spesifikasyon Bölüm 10.5).
 >
-> ⚠️ **Kritik 2 — `code` alanının tipi uçlar arasında tutarsızdır:**
+> ⚠️ **Kritik 2: `code` alanının tipi uçlar arasında tutarsızdır.**
 >
 > | Uç | `code` değeri |
 > |---|---|
-> | exchangeinfo / ticker / trades | `0` — **sayı** |
-> | **orderbook** | `"SUCCESS"` — **metin** |
+> | exchangeinfo, ticker, trades | `0`, **sayı** |
+> | **orderbook** | `"SUCCESS"`, **metin** |
 >
 > Alanı `int` olarak modellemek emir defteri çağrılarını deserialization hatasıyla kırar.
 > Bu davranış resmi dokümantasyonda **geçmez**; canlı API ile tespit edilmiştir.
@@ -50,32 +50,32 @@ Tüm endpoint'ler şu yapıyı döndürür:
 
 | # | Method | Path | Parametreler | MVP eşlemesi |
 |---|---|---|---|---|
-| 1 | GET | `/api/v2/server/exchangeinfo` | — | `ISpotSymbolRestClient` + server time |
+| 1 | GET | `/api/v2/server/exchangeinfo` | yok | `ISpotSymbolRestClient` + server time |
 | 2 | GET | `/api/v2/ticker` | `pairSymbol` (ops.) | `ISpotTickerRestClient` |
 | 3 | GET | `/api/v2/ticker/currency` | `symbol` (ör. `usdt`) | native |
 | 4 | GET | `/api/v2/orderbook` | `pairSymbol` (zor.), `limit` (ops., varsayılan **25**) | `IOrderBookRestClient` |
 | 5 | GET | `/api/v2/trades` | `pairSymbol` (zor.), `last` (ops., **max 50**) | `IRecentTradeRestClient` |
 | 6 | GET | OHLC / kline | ⏳ PR-002'de doğrulanacak | `IKlineRestClient` |
 
-### 1 — Exchange Info
+### 1: Exchange Info
 
 `GET /api/v2/server/exchangeinfo` · parametresiz
 
 `data` alanları:
 
-- `timeZone` — `"UTC"`
-- `serverTime` — Unix ms (ör. `1641916253216`)
-- `symbols[]` — parite listesi
-- `currencies[]` — varlık bilgisi (`minWithdrawal`, `minDeposit`, `precision`, yatırma/çekme durum bayrakları)
+- `timeZone`: `"UTC"`
+- `serverTime`: Unix ms (ör. `1641916253216`)
+- `symbols[]`: parite listesi
+- `currencies[]`: varlık bilgisi (`minWithdrawal`, `minDeposit`, `precision`, yatırma/çekme durum bayrakları)
 
 `symbols[]` öğe alanları:
 
 | Alan | Açıklama |
 |---|---|
 | `id` | Sayısal parite kimliği |
-| `name` | `"BTCTRY"` — native sembol |
+| `name` | `"BTCTRY"`, native sembol |
 | `nameNormalized` | `"BTC_TRY"` |
-| `numerator` / `denominator` | **`"BTC"` / `"TRY"`** — base ve quote varlık, ayrı alanlar |
+| `numerator` ve `denominator` | **`"BTC"`** ve **`"TRY"`**; base ve quote varlık ayrı alanlarda |
 | `numeratorScale` / `denominatorScale` | Ondalık hassasiyet |
 | `status` | `"TRADING"` |
 | `hasFraction` | bool |
@@ -87,13 +87,13 @@ Tüm endpoint'ler şu yapıyı döndürür:
 | `priceRounding`, `isNew` | bool |
 | `marketPriceWarningThresholdPercentage` | decimal |
 
-> ✅ **`serverTime` bu yanıtın içindedir** — ayrı bir server-time endpoint'ine ihtiyaç yoktur.
+> ✅ **`serverTime` bu yanıtın içindedir.** Ayrı bir server-time ucuna ihtiyaç yoktur.
 > `GetServerTimestampAsync()` bu endpoint üzerinden karşılanır.
 >
 > ✅ **`numerator`/`denominator` ayrı alan olarak gelir.** `SharedSymbol` eşlemesi bu alanlardan
 > yapılır; sembol string'i **ayrıştırılmaz**. Bu, RISK-05'i (TL/TRY alias) ortadan kaldırır.
 
-### 4 — Order Book
+### 4: Order Book
 
 `GET /api/v2/orderbook?pairSymbol=BTCTRY&limit=25`
 
@@ -104,12 +104,12 @@ Tüm endpoint'ler şu yapıyı döndürür:
             "asks": [["33490.00","0.03681877"]] } }
 ```
 
-`bids`/`asks`: `[fiyat, miktar]` — her ikisi de **string**, `decimal`'e dönüştürülür.
+`bids` ve `asks`: `[fiyat, miktar]`. Her ikisi de **metin** gelir ve `decimal` değere dönüştürülür.
 
 > ⚠️ Gerçek zamanlı veride gecikme/arıza durumunda bu endpoint **HTTP 503** döndürür.
 > Geçici hata olarak sınıflandırılmalıdır (`IsTransient`).
 
-### 5 — Trades
+### 5: Trades
 
 `GET /api/v2/trades?pairSymbol=BTCUSDT&last=30` · `last` max **50** (istemci tarafında doğrulanır)
 
@@ -121,14 +121,14 @@ Tüm endpoint'ler şu yapıyı döndürür:
              "price": "33490", "amount": "0.00032747" }] }
 ```
 
-## Authentication (M2 — henüz implement edilmedi)
+## Authentication (M2: henüz implement edilmedi)
 
 Kaynak: `docs.btcturk.com/docs/authentication/authentication-v1`
 
 | Header | İçerik |
 |---|---|
 | `X-PCK` | API public key |
-| `X-Stamp` | Nonce — UTC **milisaniye** |
+| `X-Stamp` | Nonce; UTC **milisaniye** |
 | `X-Signature` | HMAC-SHA256 imza |
 
 **İmza zinciri:**
@@ -156,9 +156,9 @@ Panel: **Hesap > API Erişimi**. Key oluştururken IP adresi girişi form'un par
 
 Detaylı rehber: [`docs/credentials/btcturk.md`](../credentials/btcturk.md)
 
-### 2 — Ticker
+### 2: Ticker
 
-`GET /api/v2/ticker` (tüm pariteler) · `?pairSymbol=BTCTRY` (tek parite — **yine dizi döner**)
+`GET /api/v2/ticker` (tüm pariteler) · `?pairSymbol=BTCTRY` (tek parite; **yine dizi döner**)
 
 Alanlar: `pair`, `pairNormalized`, `numeratorSymbol`, `denominatorSymbol`, `timestamp` (ms),
 `last`, `high`, `low`, `bid`, `ask`, `open`, `volume`, `average`, `daily`, `dailyPercent`, `order`.
@@ -170,13 +170,13 @@ Alanlar: `pair`, `pairNormalized`, `numeratorSymbol`, `denominatorSymbol`, `time
 >
 > ⚠️ Tek parite istendiğinde de **dizi** döner; boş dizi bilinmeyen sembol anlamına gelir.
 
-### 5 — Trades (ek alan)
+### 5: Trades (ek alan)
 
 Canlı yanıt, resmi örnekte bulunmayan bir **`side`** alanı içerir (`"buy"` / `"sell"`).
 
 ## İstek Limitleri
 
-Kaynak: `docs.btcturk.com/docs/private-endpoints/rate-limits/` — IP bazlı, 24 Ağu 2026.
+Kaynak: `docs.btcturk.com/docs/private-endpoints/rate-limits/`. IP bazlıdır, 24 Ağu 2026.
 
 | Uç | Limit |
 |---|---|
@@ -206,14 +206,14 @@ Hepsi `X-PCK` + `X-Stamp` + `X-Signature` başlıklarını gerektirir.
 | 6 | DELETE | `/api/v1/order?id=` | ✅ Uygulandı |
 | 7 | GET | `/api/v1/users/transactions/trade` | ✅ Uygulandı |
 
-### 1 — Account Balance
+### 1: Account Balance
 
 `GET /api/v1/users/balances` · parametresiz · izin: **Toplam Varlık**
 
 Alanlar: `asset`, `assetname`, `balance`, `locked`, `free`, `orderFund`, `requestFund`,
 `precision`, `timestamp` (ms).
 
-> ### ⚠️ Kritik 4 — dokümantasyondaki ondalık örneği YANILTICI
+> ### ⚠️ Kritik 4: dokümantasyondaki ondalık örneği YANILTICI
 >
 > Resmi dokümantasyon bakiye tutarlarını **virgül** ayırıcılı gösterir:
 > `"balance": "27223,7283250757643288"`
@@ -224,10 +224,10 @@ Alanlar: `asset`, `assetname`, `balance`, `locked`, `free`, `orderFund`, `reques
 > Kütüphane yine de her iki ayırıcıyı kabul eder (`BtcTurkDecimalConverter`). Bunu
 > kaldırmadık: dokümantasyon virgül vaat ettiğine göre bazı hesap/ortam koşullarında
 > virgül dönme ihtimali var ve yanlış yorumlanan bir bakiye kat kat büyük görünür.
-> Belirsizlik yok — BtcTurk binlik ayırıcı kullanmaz, dolayısıyla virgül her zaman
+> Belirsizlik yoktur, çünkü BtcTurk binlik ayırıcı kullanmaz; dolayısıyla virgül her zaman
 > ondalık ayırıcıdır.
 
-### 2 — Open Orders
+### 2: Open Orders
 
 `GET /api/v1/openOrders?pairSymbol=BTCTRY` · izin: **Toplam Varlık**
 
@@ -235,7 +235,7 @@ Yanıt `asks` ve `bids` olarak iki listeye ayrılır. Emir alanları: `id`, `pri
 `quantity`, `stopPrice`, `pairSymbol`, `type`, `method`, `orderClientId`, `updateTime`,
 `status`, `leftAmount`. Ondalıklar **nokta** ayırıcılıdır (`"0.09733687"`).
 
-### 3 — Submit Order
+### 3: Submit Order
 
 `POST /api/v1/order` · izin: **Al-Sat**
 
@@ -255,7 +255,7 @@ Piyasa emirlerinde `price` yok sayılır (%5 tolerans).
 > ⚠️ Emir uçları gerçek para hareketi yaratır. ADR-009 uyarınca bu uçlarda otomatik
 > yeniden deneme **yapılmaz**.
 
-### 4 — Cancel Order
+### 4: Cancel Order
 
 `DELETE /api/v1/order?id=123456789` · izin: **Al-Sat**
 
@@ -263,7 +263,7 @@ Piyasa emirlerinde `price` yok sayılır (%5 tolerans).
 { "success": true, "message": "SUCCESS", "code": "", "data": {} }
 ```
 
-> ### ⚠️ Kritik 5 — başarılı yanıt iptalin tamamlandığı anlamına GELMEZ
+> ### ⚠️ Kritik 5: başarılı yanıt iptalin tamamlandığı anlamına GELMEZ
 >
 > Resmi dokümantasyon: istek alındığında HTTP 200 döner, ancak *"finalization of the
 > cancellation request is sent through WebSocket channel 452"*. Yani kesinleşme WebSocket
@@ -272,11 +272,11 @@ Piyasa emirlerinde `price` yok sayılır (%5 tolerans).
 > Emrin gerçekten iptal edildiğini varsaymak yerine durumu ayrıca sorgulayın.
 > Bu davranış `CancelOrderAsync` XML dokümantasyonunda da uyarı olarak yer alır.
 >
-> Ayrıca bu uçta `code` alanı **boş string** döner — `int` beklemek burada da kırılır.
+> Ayrıca bu uçta `code` alanı **boş metin** döner ve `int` beklemek burada da kırılır.
 
-### 5 — Get Single Order
+### 5: Get Single Order
 
-`GET /api/v1/order/{orderId}` — emir kimliği **yolda**, sorgu dizisinde değil.
+`GET /api/v1/order/{orderId}`. Emir kimliği **yolda** taşınır, sorgu dizesinde değil.
 Emir bulunamazsa HTTP 400 döner.
 
 > ⚠️ Alan adları uçlar arasında tutarsızdır:
@@ -284,7 +284,7 @@ Emir bulunamazsa HTTP 400 döner.
 > | Kavram | open orders | all orders | single order | submit order |
 > |---|---|---|---|---|
 > | Sembol | `pairsymbol` | `pairsymbol` | `pairSymbol` | `pairSymbol` |
-> | Normalize ad | — | `pairsymbolnormalized` | `pairSymbolNormalized` | `pairSymbolNormalized` |
+> | Normalize ad | yok | `pairsymbolnormalized` | `pairSymbolNormalized` | `pairSymbolNormalized` |
 > | Oluşturulma | `time` | `time` | `time` | **`datetime`** |
 > | İstemci kimliği | `orderClientId` | `orderClientId` | `orderClientId` | **`newOrderClientId`** |
 >
@@ -306,7 +306,7 @@ Resmi dokümantasyon test vektörü yayınlamaz. Algoritmanın bağımsız bir u
 | stamp | `1735689600000` |
 | **imza** | `7gyFGcOS+qnq46h/rl83VtpaEAsh8Th3Z3lQrF7g2I0=` |
 
-Base64 decode adımı atlanırsa imza `38qSfoys8cvFpd0FBe50RUaqT6Dl3iMO7iyblkzlqnw=` olur —
+Base64 decode adımı atlanırsa imza `38qSfoys8cvFpd0FBe50RUaqT6Dl3iMO7iyblkzlqnw=` olur;
 sessizce yanlış, ama borsa yalnızca genel bir kimlik doğrulama hatası döndürür.
 
 
@@ -318,7 +318,7 @@ Aşağıdakiler ilgili story açılırken resmi dokümandan doğrulanacaktır:
 - Emir defteri `limit` parametresinin üst sınırı (dokümante edilmemiş)
 - Rate limit değerleri (`private-endpoints/rate-limits`)
 - Hata kodları (`error-handling/*`)
-- WebSocket protokolü (`websocket-feed/*`) — kanal/olay/model yapısı
+- WebSocket protokolü (`websocket-feed/*`): kanal, olay ve model yapısı
 
 ## Kaynak Sayfaları
 

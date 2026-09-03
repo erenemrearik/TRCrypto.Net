@@ -1,12 +1,12 @@
-# API Kimlik Bilgileri — Genel Rehber
+# API Kimlik Bilgileri
 
 Bu klasör, TRCrypto ile bir Türk kripto borsasına bağlanmak için gereken API anahtarlarının
 **nasıl alınacağını, nasıl saklanacağını ve nasıl kullanılacağını** anlatır.
 
 İki okuyucu kitlesi için yazılmıştır:
 
-- **Kütüphaneyi kullanan geliştirici** — kendi hesabını kendi uygulamasına bağlayacak kişi
-- **TRCrypto'ya katkı veren geliştirici** — private endpoint testlerini çalıştıracak kişi
+- **Kütüphaneyi kullanan geliştirici:** kendi hesabını kendi uygulamasına bağlayacak kişi
+- **TRCrypto'ya katkı veren geliştirici:** private endpoint testlerini çalıştıracak kişi
 
 | Borsa | Rehber | Durum |
 |---|---|---|
@@ -46,7 +46,7 @@ verdiğiniz her izin saldırganın eline geçer.
 Yapmanız gereken:
 
 - Yalnızca ihtiyacınız olan izinleri işaretleyin
-- **IP allow-list'i mutlaka doldurun** — anahtar başka bir IP'den kullanılamasın
+- **IP allow-list'i mutlaka doldurun** ki anahtar başka bir IP'den kullanılamasın
 - Emir denemeleri için ana hesabınızı değil, **ayrı ve düşük bakiyeli bir hesap** kullanın
 - Anahtarları düzenli aralıklarla yenileyin
 - Farklı ortamlar (geliştirme / üretim) için **ayrı anahtarlar** kullanın
@@ -62,7 +62,7 @@ Yapmanız gereken:
 - Slack/WhatsApp/e-posta ile göndermek
 - Ekran görüntüsü veya log çıktısı paylaşırken maskelememek
 
-> Bir secret git geçmişine bir kez girerse, dosyayı silmek yetmez — geçmişte kalır.
+> Bir secret git geçmişine bir kez girerse, dosyayı silmek yetmez, çünkü geçmişte kalır.
 > Tek doğru çözüm **anahtarı borsada iptal edip yenisini oluşturmaktır**.
 
 ### ✅ Yerel geliştirmede: `dotnet user-secrets`
@@ -115,7 +115,7 @@ builder.Services.AddTRCryptoBtcTurk(options =>
         builder.Configuration["BtcTurk:ApiSecret"]!);
 });
 
-// Kullanım — client yeniden kullanılabilir, her istek için yenisini OLUŞTURMAYIN
+// Kullanim: client yeniden kullanilabilir, her istek icin yenisini OLUSTURMAYIN
 public sealed class PortfolioService(IBtcTurkRestClient client)
 {
     public async Task<decimal?> GetTryBalanceAsync(CancellationToken ct = default)
@@ -135,7 +135,7 @@ public sealed class PortfolioService(IBtcTurkRestClient client)
 - `BtcTurkCredentials.ToString()` ham secret yerine **maskeli fingerprint** döndürür
 - Secret hiçbir log kaydına, exception mesajına veya telemetry alanına yazılmaz
 - İstek gövdesi loglandığında `X-Signature` ve secret alanları redaction'dan geçer
-- Bunlar birim testleriyle doğrulanır — log çıktısı yakalanır ve ham secret'ın hiçbir
+- Bunlar birim testleriyle doğrulanır. Log çıktısı yakalanır ve ham secret'ın hiçbir
   yerde geçmediği assert edilir
 
 ---
@@ -146,7 +146,7 @@ public sealed class PortfolioService(IBtcTurkRestClient client)
 2. Hesap hareketlerinizi kontrol edin
 3. Yeni anahtar oluşturun, IP allow-list'i doldurun
 4. Sızıntı git geçmişindeyse: anahtar zaten iptal edildiği için geçmişi temizlemek
-   ikincil önceliktir — ama repo herkese açıksa `git filter-repo` ile temizleyin
+   ikincil önceliktir, ama repo herkese açıksa `git filter-repo` ile temizleyin
 
 ---
 
@@ -156,6 +156,6 @@ public sealed class PortfolioService(IBtcTurkRestClient client)
 |---|---|
 | İmza geçersiz / yetkisiz | Secret Base64 ise decode edilmemiş olabilir; anahtar/secret yer değiştirmiş olabilir |
 | İstek reddedildi, anahtar doğru | IP allow-list'te bulunduğunuz IP yok |
-| Zaman damgası hatası | Sistem saatiniz kaymış — NTP ile senkronize edin |
+| Zaman damgası hatası | Sistem saatiniz kaymış; NTP ile senkronize edin |
 | İzin hatası | Anahtarda ilgili izin işaretli değil |
 | Bakiye boş dönüyor | Anahtar farklı bir hesaba ait olabilir |

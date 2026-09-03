@@ -1,4 +1,4 @@
-# BtcTurk — Kline ve Kullanıcı İşlem Geçmişi
+# BtcTurk: Kline ve Kullanıcı İşlem Geçmişi
 
 > **Erişim tarihi:** 25 Ağustos 2026
 > Ana envanter: [btcturk-capabilities.md](btcturk-capabilities.md)
@@ -7,11 +7,11 @@
 
 ---
 
-## Kline / OHLC — ayrı host, ayrı format
+## Kline / OHLC: ayrı host, ayrı format
 
 `GET https://graph-api.btcturk.com/v1/klines/history`
 
-> ### ⚠️ Kritik 6 — bu uç diğerlerinden iki yönden ayrılır
+> ### ⚠️ Kritik 6: bu uç diğerlerinden iki yönden ayrılır
 >
 > **1. Farklı host.** `api.btcturk.com` değil, **`graph-api.btcturk.com`**.
 > Ortak taban adres bu uçta kullanılamaz.
@@ -44,15 +44,15 @@
 
 | Alan | Anlamı |
 |---|---|
-| `s` | Durum göstergesi (`"ok"`) — **resmi dokümantasyonda geçmez**, canlı yanıtta bulunur |
-| `t` | Zaman damgaları — **saniye** |
+| `s` | Durum göstergesi (`"ok"`). **Resmi dokümantasyonda geçmez**, canlı yanıtta bulunur |
+| `t` | Zaman damgaları, **saniye** cinsinden |
 | `o` `h` `l` `c` | Açılış, en yüksek, en düşük, kapanış |
 | `v` | Hacim (base varlık cinsinden) |
 
 > ⚠️ Veriler **paralel diziler** halinde gelir, mum nesneleri olarak değil.
 > Tüm dizilerin aynı uzunlukta olması beklenir; olmadığında yanıt bozuk sayılmalıdır.
 >
-> ⚠️ Zaman damgaları **saniye** cinsindendir — diğer tüm uçlar milisaniye kullanır.
+> ⚠️ Zaman damgaları **saniye** cinsindendir; diğer tüm uçlar milisaniye kullanır.
 > Milisaniye varsayan bir converter tarihleri 1970'e yakın gösterir.
 >
 > ⚠️ Değerler **sayı** olarak gelir, metin olarak değil.
@@ -104,7 +104,7 @@ Tarih aralığı verilmezse **son 30 gün** döner.
 }
 ```
 
-> ### ⚠️ Kritik 7 — tutarlar işaretlidir
+> ### ⚠️ Kritik 7: tutarlar işaretlidir
 >
 > `amount`, `fee` ve `tax` satış işlemlerinde **negatif** gelir. İşaret, varlığın
 > hesaptan çıktığını belirtir. Mutlak değer bekleyen bir hesaplama (toplam hacim,
@@ -116,7 +116,7 @@ Tarih aralığı verilmezse **son 30 gün** döner.
 > işlem modelinde temsil edilemez. Native modelde korunur; shared yüzeyde kaybolur.
 > Vergi/kesinti hesabı yapan tüketiciler native API kullanmalıdır.
 
-> ⚠️ `preciseAmount` **sayı**, `amount` **metin** olarak gelir — aynı değerin iki
+> ⚠️ `preciseAmount` **sayı**, `amount` ise **metin** olarak gelir. Aynı değerin iki
 > gösterimi. Hassasiyet gerektiğinde `preciseAmount` tercih edilmelidir.
 
 ---

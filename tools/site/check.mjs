@@ -47,7 +47,7 @@ for (const group of NAV) {
     try {
       out = render(doc.body);
     } catch (error) {
-      problems.push(`${page.id}: isleme sirasinda hata — ${error.message}`);
+      problems.push(`${page.id}: isleme sirasinda hata: ${error.message}`);
       continue;
     }
 
@@ -60,16 +60,16 @@ for (const group of NAV) {
     for (const tag of ['div', 'table', 'pre', 'code', 'ul', 'ol', 'li', 'blockquote', 'p', 'tr', 'td', 'th']) {
       const open = (out.html.match(new RegExp('<' + tag + '(?=[\\s>])', 'g')) ?? []).length;
       const close = (out.html.match(new RegExp('</' + tag + '>', 'g')) ?? []).length;
-      if (open !== close) problems.push(`${page.id}: <${tag}> dengesiz — ${open} acilis, ${close} kapanis`);
+      if (open !== close) problems.push(`${page.id}: <${tag}> dengesiz: ${open} acilis, ${close} kapanis`);
     }
 
     // Isaretlemenin metne sizmasi: govdede kalan markdown izleri.
     const leaked = out.html.match(/^(#{2,6} |\| )/m);
-    if (leaked) problems.push(`${page.id}: islenmemis markdown kalmis — ${JSON.stringify(leaked[0])}`);
+    if (leaked) problems.push(`${page.id}: islenmemis markdown kalmis: ${JSON.stringify(leaked[0])}`);
 
     // Baglantilar: depo icindeki .md yollari hash rotasina cevrilmis olmali.
     const mdLink = out.html.match(/href="(?!https?:)[^"]*\.md[^"]*"/);
-    if (mdLink) problems.push(`${page.id}: cevrilmemis dokuman baglantisi — ${mdLink[0]}`);
+    if (mdLink) problems.push(`${page.id}: cevrilmemis dokuman baglantisi: ${mdLink[0]}`);
   }
 }
 
@@ -83,5 +83,5 @@ if (problems.length) {
 
 console.log(
   `${pages} sayfa islendi, ${totalHeadings} baslik cikarildi, ` +
-  `${(totalHtml / 1024).toFixed(0)} KB HTML uretildi — sorun yok`
+  `${(totalHtml / 1024).toFixed(0)} KB HTML uretildi, sorun yok`
 );

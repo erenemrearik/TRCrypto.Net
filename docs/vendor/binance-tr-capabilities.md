@@ -1,4 +1,4 @@
-# Binance TR — Vendor Capability Freeze
+# Binance TR: Vendor Capability Freeze
 
 > **Erişim tarihi:** 26 Ağustos 2026
 > **Kaynak:** `binance.tr/apidocs` **ve canlı uç denemeleri**
@@ -16,7 +16,7 @@
 | WebSocket (tip 1) | `wss://stream-cloud.binance.tr` |
 | WebSocket (tip 3) | `wss://stream-tr.2meta.app` |
 | WebSocket API | `wss://ws-api.binance.tr:443/ws-api/v3` |
-| Sembol formatı | **`BTC_TRY`** — alt çizgili |
+| Sembol formatı | **`BTC_TRY`**, alt çizgili |
 | Kimlik doğrulama | `X-MBX-APIKEY` başlığı + HMAC-SHA256 imza |
 | İmzalanan | Query string + istek gövdesi |
 | Zorunlu parametre | `timestamp` (ms); opsiyonel `recvWindow` (varsayılan 5000, en fazla 60000) |
@@ -27,13 +27,13 @@
 { "code": 0, "msg": "Success", "data": { }, "timestamp": 1787775149371 }
 ```
 
-> ### ⚠️ Kritik 1 — zarf BtcTurk'ten tamamen farklı
+> ### ⚠️ Kritik 1: zarf BtcTurk'ten tamamen farklı
 >
 > | | BtcTurk | Binance TR |
 > |---|---|---|
-> | Başarı alanı | `success` (bool) | **yok** — `code == 0` ile anlaşılır |
+> | Başarı alanı | `success` (bool) | **yok**; `code == 0` ile anlaşılır |
 > | Mesaj | `message` | `msg` |
-> | Zaman | — | `timestamp` (zarf seviyesinde) |
+> | Zaman | yok | `timestamp` (zarf seviyesinde) |
 >
 > İki borsa için tek bir ortak zarf modeli kullanılamaz. Her adaptörün kendi zarfı ve
 > kendi hata çevirisi olmalıdır.
@@ -42,7 +42,7 @@
 
 ---
 
-## Public uçlar — canlı doğrulama
+## Public uçlar: canlı doğrulama
 
 | Uç | Durum | Not |
 |---|---|---|
@@ -50,20 +50,20 @@
 | `GET /open/v1/common/symbols` | ✅ Çalışıyor | 307 parite; `data.list` altında |
 | `GET /open/v1/market/depth` | ✅ Çalışıyor | `lastUpdateId` + `bids`/`asks` |
 | `GET /open/v1/market/agg-trades` | ✅ Çalışıyor | Toplulaştırılmış işlemler |
-| `GET /open/v1/market/trades` | ⚠️ **Boş dönüyor** | `code: 0` ama `list: []` — denenen tüm paritelerde |
+| `GET /open/v1/market/trades` | ⚠️ **Boş dönüyor** | `code: 0` ama `list: []`; denenen tüm paritelerde |
 | `GET /open/v1/market/klines` | ⚠️ **Boş dönüyor** | `code: 0` ama `list: []`; `interval=1h` kabul ediliyor, `60m` reddediliyor (kod 2803) |
 | `GET /open/v1/market/ticker` | ❌ 404 | Böyle bir uç yok |
 | `GET /api/v3/ticker/24hr` | ❌ **Anahtar gerektiriyor** | `code: 3701 Invalid API-key, IP, or permissions` |
 | `GET /api/v3/depth` · `/api/v3/trades` | ❌ **Anahtar gerektiriyor** | Aynı hata |
 
-> ### ⚠️ Kritik 2 — standart Binance uçları burada public DEĞİL
+> ### ⚠️ Kritik 2: standart Binance uçları burada public DEĞİL
 >
 > `/api/v3/*` yolları, global Binance'te herkese açık olan piyasa verisi uçlarıdır.
 > Binance TR'de bunlar **API anahtarı ister**. Global Binance için yazılmış kod bu
 > nedenle çalışmaz; spesifikasyonun "Binance TR ayrı adapter olmalı" kararı (ADR-005)
 > burada somutlaşıyor.
 
-> ### ⚠️ Kritik 3 — ticker verisi anahtarsız alınamıyor
+> ### ⚠️ Kritik 3: ticker verisi anahtarsız alınamıyor
 >
 > Ne `/open/v1/market/*` altında bir ticker ucu var, ne de `/api/v3/ticker/24hr`
 > anahtarsız çalışıyor. **Binance TR için "public ticker" mümkün görünmüyor.**
@@ -72,7 +72,7 @@
 > BtcTurk'te anahtarsız çalışan bir özellik, Binance TR'de anahtar gerektiriyor.
 > `Discover()` bu farkı bildirmelidir.
 
-> ### ⚠️ Kritik 4 — `trades` ve `klines` boş liste döndürüyor
+> ### ⚠️ Kritik 4: `trades` ve `klines` boş liste döndürüyor
 >
 > Her ikisi de `code: 0` (başarılı) ama veri yok. Denenen pariteler: `BTC_TRY`,
 > `USDT_TRY`, `BTC_USDT`. `startTime`/`endTime` eklemek de sonucu değiştirmiyor.
@@ -112,7 +112,7 @@
 
 > `type` alanı WebSocket akış adresini belirler (tip 1 / tip 3 farklı hostlar).
 >
-> Base/quote ayrı alanlarda gelir — BtcTurk'teki gibi, sembol adı ayrıştırılmaz.
+> Base ve quote ayrı alanlarda gelir. BtcTurk'te olduğu gibi sembol adı ayrıştırılmaz.
 >
 > Filtreler global Binance ile aynı yapıdadır.
 
@@ -125,7 +125,7 @@
             "asks": [[ "...", "..." ]] } }
 ```
 
-`lastUpdateId` — delta senkronizasyonu için sıra numarası.
+`lastUpdateId`: delta senkronizasyonu için sıra numarası.
 
 ### `market/agg-trades`
 

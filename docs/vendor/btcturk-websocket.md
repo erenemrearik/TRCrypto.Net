@@ -1,4 +1,4 @@
-# BtcTurk — WebSocket Protokolü
+# BtcTurk: WebSocket Protokolü
 
 > **Erişim tarihi:** 26 Ağustos 2026
 > Kaynak: `docs.btcturk.com/docs/websocket-feed/*` **ve canlı bağlantı gözlemi**
@@ -62,21 +62,21 @@ Sunucu onayı:
 | Kod | Model | Erişim | Durum |
 |---|---|---|---|
 | 100 | Result (onay/sonuç) | Public | ✅ Gözlemlendi |
-| 101 | Request | Public | — |
-| 114 | UserLoginResult | Private | — |
+| 101 | Request | Public | yok |
+| 114 | UserLoginResult | Private | yok |
 | 151 | Subscription | Public | ✅ Gözlemlendi |
-| 401 | TickerAll | Public | — |
+| 401 | TickerAll | Public | ✅ Gözlemlendi |
 | 402 | TickerPair | Public | ✅ Gözlemlendi |
-| 421 | TradeList | Public | ✅ Gözlemlendi — **dokümante edilmemiş** |
-| 422 | TradeSingle | Public | — |
-| 423 | UserTrade | Private | — |
+| 421 | TradeList | Public | ✅ Gözlemlendi, **dokümante edilmemiş** |
+| 422 | TradeSingle | Public | yok |
+| 423 | UserTrade | Private | yok |
 | 431 | OrderBookFull | Public | ✅ Gözlemlendi |
-| 432 | OrderBookDifference | Public | — |
-| 441 | UserOrderMatch | Private | — |
-| 451 | OrderInsert | Private | — |
-| 452 | OrderDelete | Private | — |
-| 453 | OrderUpdate | Private | — |
-| 991 | Sürüm bilgisi | Public | ✅ Gözlemlendi — **dokümante edilmemiş** |
+| 432 | OrderBookDifference | Public | yok |
+| 441 | UserOrderMatch | Private | yok |
+| 451 | OrderInsert | Private | yok |
+| 452 | OrderDelete | Private | yok |
+| 453 | OrderUpdate | Private | yok |
+| 991 | Sürüm bilgisi | Public | ✅ Gözlemlendi, **dokümante edilmemiş** |
 
 > ⚠️ Resmi model listesi `422 TradeSingle` içerir ama abone olunduğunda gelen kod
 > **421**'dir ve gövdesi bir **liste** taşır. İkisi de ele alınmalıdır.
@@ -85,7 +85,7 @@ Sunucu onayı:
 
 ## Gövde şemaları (canlı doğrulama)
 
-### 402 — Ticker
+### 402: Ticker
 
 Alan adları tek/iki harfe kısaltılmıştır:
 
@@ -115,7 +115,7 @@ Alan adları tek/iki harfe kısaltılmıştır:
 > ⚠️ Değerler **metin** olarak gelir; REST ticker ucu aynı verileri **sayı** olarak
 > döndürür.
 
-### 421 — Trade listesi
+### 421: Trade listesi
 
 ```json
 [421, {
@@ -130,10 +130,10 @@ Alan adları tek/iki harfe kısaltılmıştır:
 
 | Alan | Anlamı |
 |---|---|
-| `D` | Zaman damgası — **metin içinde milisaniye** |
+| `D` | Zaman damgası; **metin içinde milisaniye** |
 | `I` | İşlem kimliği |
 | `A` / `P` | Miktar / fiyat |
-| `S` | Yön — **sayısal** (0 / 1) |
+| `S` | Yön; **sayısal** (0 ya da 1) |
 
 > ⚠️ `S` sayısaldır; REST işlem ucu yönü `"buy"` / `"sell"` metniyle verir.
 >
@@ -148,7 +148,7 @@ Alan adları tek/iki harfe kısaltılmıştır:
 > Bu eşleme tahmine dayanmadığı için güvenle kullanılabilir; yine de borsa değiştirirse
 > sessizce yanlış yön üretir, bu nedenle bir regresyon testiyle sabitlenmiştir.
 
-### 431 — Order book (tam görüntü)
+### 431: Order book (tam görüntü)
 
 ```json
 [431, {
@@ -162,7 +162,7 @@ Alan adları tek/iki harfe kısaltılmıştır:
 
 | Alan | Anlamı |
 |---|---|
-| `CS` | **Sıra numarası** (change set) — delta bütünlüğü için |
+| `CS` | **Sıra numarası** (change set); delta bütünlüğü için |
 | `PS` | Parite sembolü |
 | `AO` / `BO` | Satış / alış kademeleri (`A` miktar, `P` fiyat) |
 
@@ -182,7 +182,7 @@ Giriş mesajı, resmi dokümantasyondaki biçimiyle:
 
 > ⚠️ İmza **REST'ten farklı üretiliyor gibi görünüyor**: dokümantasyon imzanın
 > `publicKey + nonce` üzerinden hesaplandığını söylüyor, REST ise `apiKey + stamp`
-> kullanıyor. Bu fark canlı bir hesapla doğrulanmadan uygulanmamalıdır — yanlış
+> kullanıyor. Bu fark canlı bir hesapla doğrulanmadan uygulanmamalıdır, çünkü yanlış
 > imza sessizce başarısız olur.
 
 **Emir iptalinin kesinleşmesi kanal 452 (`OrderDelete`) üzerinden duyurulur.**

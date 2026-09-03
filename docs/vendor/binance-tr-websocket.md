@@ -1,4 +1,4 @@
-# Binance TR — WebSocket Protokolü
+# Binance TR: WebSocket Protokolü
 
 > **Erişim tarihi:** 27 Ağustos 2026
 > Kaynak: `binance.tr/apidocs` **ve canlı bağlantı gözlemi**
@@ -13,7 +13,7 @@ okunur.
 
 ---
 
-## ⚠️ Kritik 5 — sembol formatı REST'ten farklı
+## ⚠️ Kritik 5: sembol formatı REST'ten farklı
 
 Aynı borsa içinde **üç** ayrı gösterim var:
 
@@ -29,7 +29,7 @@ sorun ancak "veri akmıyor" olarak fark edilir.
 
 ---
 
-## ⚠️ Kritik 6 — REST'te anahtar isteyen veri burada ücretsiz
+## ⚠️ Kritik 6: REST'te anahtar isteyen veri burada ücretsiz
 
 | Veri | REST | WebSocket |
 |---|---|---|
@@ -42,7 +42,7 @@ Ticker, tekil işlem ve mum verisi için REST yerine socket kullanılmalıdır.
 
 ---
 
-## ⚠️ Kritik 7 — alan adlari buyuk/kucuk harfe duyarli
+## ⚠️ Kritik 7: alan adlari buyuk/kucuk harfe duyarli
 
 Akis mesajlari tek harfli alanlar kullanir ve **harf buyuklugu anlam tasir**:
 
@@ -64,7 +64,7 @@ uçlar arasında farklı harf büyüklüğüyle geldiği için duyarsız eşleş
 
 Mesaj formatı global Binance ile aynıdır: tek bir JSON nesnesi, olay türü `e` alanında.
 
-### `@ticker` — 24 saatlik özet
+### `@ticker`: 24 saatlik özet
 
 ```json
 { "e": "24hrTicker", "E": 1787778712698, "s": "BTCTRY",
@@ -87,7 +87,7 @@ Mesaj formatı global Binance ile aynıdır: tek bir JSON nesnesi, olay türü `
 | `O` / `C` | İstatistik penceresi başı / sonu |
 | `F` / `L` / `n` | İlk / son işlem kimliği, işlem sayısı |
 
-### `@depth` — emir defteri farkı
+### `@depth`: emir defteri farkı
 
 ```json
 { "e": "depthUpdate", "E": 1787778715698, "s": "BTCTRY",
@@ -99,7 +99,7 @@ Mesaj formatı global Binance ile aynıdır: tek bir JSON nesnesi, olay türü `
 `U` ve `u` bu güncellemenin kapsadığı ilk ve son sıra numarasıdır. Miktar `0` olan bir
 kademe, o fiyat seviyesinin defterden **silindiği** anlamına gelir.
 
-### `@depth20` — tam görüntü
+### `@depth20`: tam görüntü
 
 ```json
 { "lastUpdateId": 5893367072,
@@ -109,7 +109,7 @@ kademe, o fiyat seviyesinin defterden **silindiği** anlamına gelir.
 
 Olay türü alanı **yoktur**; bu akış diğerlerinden farklı olarak yalın bir görüntü döndürür.
 
-### `@aggTrade` — toplu işlem
+### `@aggTrade`: toplu işlem
 
 ```json
 { "e": "aggTrade", "E": 1787778722442, "s": "BTCTRY",
@@ -118,7 +118,7 @@ Olay türü alanı **yoktur**; bu akış diğerlerinden farklı olarak yalın bi
   "m": true, "M": true }
 ```
 
-### `@trade` — tekil işlem
+### `@trade`: tekil işlem
 
 ```json
 { "e": "trade", "E": 1787778726638, "s": "BTCTRY",
@@ -128,7 +128,7 @@ Olay türü alanı **yoktur**; bu akış diğerlerinden farklı olarak yalın bi
 
 > REST'teki `market/trades` ucu boş liste döndürürken bu akış çalışıyor.
 
-### `@kline_<aralık>` — mum
+### `@kline_<aralık>`: mum
 
 ```json
 { "e": "kline", "E": 1787778770746, "s": "BTCTRY",
@@ -146,13 +146,13 @@ Olay türü alanı **yoktur**; bu akış diğerlerinden farklı olarak yalın bi
 | `i` | Aralık (`1m`, `5m` …) |
 | `o` `h` `l` `c` | Açılış, yüksek, düşük, kapanış |
 | `v` / `q` | Hacim (base / quote) |
-| `x` | **Mum kapandı mı** — false ise değerler değişmeye devam eder |
+| `x` | **Mum kapandı mı?** `false` ise değerler değişmeye devam eder |
 | `n` | İşlem sayısı · `f`/`L` ilk/son işlem kimliği |
 
 > ⚠️ Mesajlar mum aralığından daha seyrek gelebilir; ilk mesaj için bir dakikaya kadar
 > beklemek gerekebilir. Kısa süreli bir denemede "akış çalışmıyor" sonucuna varmak yanlış olur.
 
-### `@bookTicker` — en iyi alış/satış
+### `@bookTicker`: en iyi alış/satış
 
 ```json
 { "u": 5893367821, "s": "BTCTRY",

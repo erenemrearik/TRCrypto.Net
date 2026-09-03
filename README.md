@@ -5,7 +5,7 @@
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=CI&logo=github&style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/testler-185%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
+[![Tests](https://img.shields.io/badge/testler-212%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
 
@@ -55,11 +55,11 @@ TRCrypto her borsa için **iki yüzey** sunar:
   <td><img src="https://img.shields.io/badge/geliştiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.Paribu</code></td><td>—</td>
+  <td><code>TRCrypto.Paribu</code></td><td>henüz yok</td>
   <td><img src="https://img.shields.io/badge/planlandı-lightgrey?style=flat-square" alt="planlandı"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.Bitexen</code></td><td>—</td>
+  <td><code>TRCrypto.Bitexen</code></td><td>henüz yok</td>
   <td><img src="https://img.shields.io/badge/planlandı-lightgrey?style=flat-square" alt="planlandı"></td>
 </tr>
 <tr>
@@ -69,10 +69,10 @@ TRCrypto her borsa için **iki yüzey** sunar:
 </table>
 
 **BtcTurk'te çalışan:** piyasa verisi · mum verisi · bakiye · emir işlemleri · işlem
-geçmişi · gerçek zamanlı akışlar — hepsi hem native hem SharedApis üzerinden.
+geçmişi ve gerçek zamanlı akışlar. Tamamı hem native hem SharedApis üzerinden.
 
 **Binance TR:** pariteler, emir defteri, işlemler ve gerçek zamanlı akışlar (ticker dahil)
-— hem native hem SharedApis üzerinden.
+Tamamı hem native hem SharedApis üzerinden.
 
 **Henüz yok:** BtcTurk özel socket akışları, Binance TR kimlik doğrulama, Paribu, Bitexen.
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
@@ -124,7 +124,7 @@ var ticker = await tickers.GetSpotTickerAsync(new GetTickerRequest(symbol));
 ```
 
 > [!TIP]
-> İstemciler yeniden kullanılabilir ve iş parçacığı güvenlidir — her istek için yenisini
+> İstemciler yeniden kullanılabilir ve iş parçacığı güvenlidir. Her istek için yenisini
 > oluşturmayın.
 
 ---
@@ -138,7 +138,7 @@ API hataları istisna olarak fırlatılmaz, sonuç nesnesi olarak döner.
 > hatalarını HTTP 200 içinde `"success": false` olarak döndürür; kütüphane bunu başarısız
 > bir sonuca çevirir.
 
-Geçersiz girdiler ağa çıkılmadan reddedilir — eksik fiyat, negatif miktar, sınır aşımı.
+Eksik fiyat, negatif miktar ve sınır aşımı gibi geçersiz girdiler ağa çıkılmadan reddedilir.
 
 ---
 
@@ -146,7 +146,7 @@ Geçersiz girdiler ağa çıkılmadan reddedilir — eksik fiyat, negatif miktar
 
 | Konu | Dosya |
 |---|---|
-| **Dokümantasyon sitesi** — hepsi tek yerde, aranabilir | [https://erenemrearik.github.io/TRCrypto.Net/](https://erenemrearik.github.io/TRCrypto.Net/) |
+| **Dokümantasyon sitesi**, hepsi tek yerde ve aranabilir | [https://erenemrearik.github.io/TRCrypto.Net/](https://erenemrearik.github.io/TRCrypto.Net/) |
 | **Nerede kaldık, sonraki adım** | [docs/DURUM.md](docs/DURUM.md) |
 | API anahtarı alma ve bağlama | [docs/credentials/](docs/credentials/) |
 | Borsa endpoint envanterleri | [docs/vendor/](docs/vendor/) |
@@ -185,4 +185,4 @@ Ayrıntı: [docs/credentials/README.md](docs/credentials/README.md)
 
 ## Lisans
 
-MIT — bkz. [LICENSE](LICENSE).
+MIT. Ayrıntı için [LICENSE](LICENSE) dosyasına bakın.

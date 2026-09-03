@@ -29,7 +29,7 @@ Canlı testler PR akışında çalıştırılmaz: her PR için borsanın istek l
 derlemeyi borsanın erişilebilirliğine bağımlı kılmamak için. Amaçları regresyon yakalamak
 değil, **borsanın değiştiğini** fark etmektir.
 
-Kimlik bilgisi isteyen canlı testler, anahtar tanımlı değilse **atlanır** — anahtarı
+Kimlik bilgisi isteyen canlı testler, anahtar tanımlı değilse **atlanır.** Anahtarı
 olmayan bir katkıcı da her şeyi çalıştırabilir.
 
 ```bash
@@ -41,7 +41,7 @@ dotnet test -c Release --filter "FullyQualifiedName~IntegrationTests"    # yalni
 
 Dokümanlar `.md` dosyalarında yaşar; [dokümantasyon sitesi](https://erenemrearik.github.io/TRCrypto.Net/) onlardan üretilir
 ve `docs/index.html` olarak depoda tutulur. Bir doküman değiştirip siteyi yeniden
-üretmezseniz ikisi ayrışır — CI bunu yakalar ve derlemeyi durdurur.
+üretmezseniz ikisi ayrışır. CI bunu yakalar ve derlemeyi durdurur.
 
 ```bash
 node tools/site/build.mjs   # siteyi yeniden uret
@@ -60,7 +60,7 @@ Projenin şu anki durumu ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 **Gerçek API anahtarı asla commit edilmez.** Bu finansal bir kütüphanedir; sızan bir
 anahtar gerçek para kaybettirebilir.
 
-- Kimlik bilgileri `dotnet user-secrets` ile saklanır — ayrıntı:
+- Kimlik bilgileri `dotnet user-secrets` ile saklanır. Ayrıntı:
   [docs/credentials/README.md](docs/credentials/README.md)
 - `.gitignore` yaygın secret dosyalarını bloklar, ama tek savunma o değildir
 - Pre-commit kancası `gitleaks` ile hazırlanan değişiklikleri tarar
@@ -83,17 +83,17 @@ Bu projenin en katı kuralı şudur:
 
 Sıra:
 
-1. **Vendor freeze** — ucu `docs/vendor/<borsa>-capabilities.md` dosyasına kaydedin:
+1. **Vendor freeze.** Ucu `docs/vendor/<borsa>-capabilities.md` dosyasına kaydedin:
    method, path, parametreler, örnek yanıt, kaynak link, erişim tarihi.
    Doğrulayamıyorsanız "dondurulmamış" olarak işaretleyin ve **yazmayın**.
 
-2. **Fixture** — `tests/.../Fixtures/` altına gerçek bir yanıt koyun.
+2. **Fixture.** `tests/.../Fixtures/` altına gerçek bir yanıt koyun.
    **Canlı public API'den alınmış yanıt tercih edilir**; resmi örnekler eksik olabiliyor.
    (Bunun somut örnekleri için `docs/spec/` ekindeki D-7…D-12 bulgularına bakın.)
 
-3. **Test önce** — testi yazın, **başarısız olduğunu görün**, sonra kodu yazın.
+3. **Test önce.** Testi yazın, **başarısız olduğunu görün**, sonra kodu yazın.
 
-4. **Contract testi** — `tests/.../Endpoints/` altına şu formatta bir dosya ekleyin:
+4. **Contract testi.** `tests/.../Endpoints/` altına şu formatta bir dosya ekleyin:
    ```
    GET
    /api/v2/...
@@ -132,7 +132,7 @@ API hataları **istisna olarak fırlatılmaz**, sonuç nesnesi olarak döner.
 
 Bazı borsalar iş mantığı hatalarını HTTP 200 içinde döndürür (BtcTurk'te
 `"success": false`). Bu durum `MessageHandler` katmanında yakalanıp başarısız sonuca
-çevrilmelidir — aksi halde çağıran taraf sessizce boş veri işler.
+çevrilmelidir. Aksi halde çağıran taraf sessizce boş veri işler.
 
 Bilinmeyen hata kodları **yutulmaz**; ham kod ve mesaj çağırana taşınır.
 
@@ -142,7 +142,7 @@ Bilinmeyen hata kodları **yutulmaz**; ham kod ve mesaj çağırana taşınır.
 
 Emir verme/iptal gerçek para hareketi yaratır.
 
-- Otomatik yeniden deneme **yapılmaz** (ADR-009) — emir çift işlenebilir
+- Otomatik yeniden deneme **yapılmaz** (ADR-009), çünkü emir çift işlenebilir
 - Örneklerde piyasa emri değil, **limit emri** kullanılır
 - Çekim (withdrawal) desteği MVP kapsamı dışındadır ve rehberlerde önerilmez
 
@@ -163,7 +163,7 @@ dotnet test  -c Release   # hepsi yesil
 - Vendor dosyasına erişim tarihini yazın
 
 Yeni bir borsa adaptörü gibi büyük bir katkı planlıyorsanız, önce bir issue açıp
-konuşalım — böylece boşa emek harcanmaz.
+konuşalım. Böylece boşa emek harcanmaz.
 
 ---
 

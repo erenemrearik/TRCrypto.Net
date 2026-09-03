@@ -36,7 +36,7 @@ if (!result.Success)
 Console.WriteLine($"BTC/TRY: {result.Data.LastPrice:N0}");
 ```
 
-İstemci yeniden kullanılabilir ve iş parçacığı güvenlidir — her istek için yenisini
+İstemci yeniden kullanılabilir ve iş parçacığı güvenlidir. Her istek için yenisini
 oluşturmayın.
 
 ## Native API
@@ -91,7 +91,7 @@ ve açık abonelikleri kendiliğinden yeniden kurar.
 Emir defteri güncellemeleri bir **sıra numarası** taşır (`Sequence`); numarada atlama
 görürseniz defteri geçersiz sayıp yeni bir görüntü almalısınız.
 
-Handler'ları kısa tutun — ağır işi bir kuyruğa aktarın.
+Handler'ları kısa tutun ve ağır işi bir kuyruğa aktarın.
 
 > Kullanıcıya özel akışlar (emir/bakiye bildirimleri) henüz uygulanmadı.
 
@@ -114,13 +114,13 @@ await client.SpotApi.Trading.CancelOrderAsync(placed.Data.Id);
 > kesinleşme WebSocket üzerinden duyurulur. Emrin gerçekten iptal edildiğini varsaymak
 > yerine durumunu ayrıca sorgulayın.
 >
-> ⚠️ Emir oluşturma istekleri zaman aşımında **otomatik olarak yeniden denenmez** — emir
+> ⚠️ Emir oluşturma istekleri zaman aşımında **otomatik olarak yeniden denenmez.** Emir
 > borsada oluşmuş olabilir. Önce durumu doğrulayın.
 
 Geçersiz emirler ağa çıkılmadan reddedilir: eksik fiyat, negatif miktar, stop emrinde
 eksik tetikleme fiyatı.
 
-## Shared API — borsadan bağımsız
+## Shared API: borsadan bağımsız kullanım
 
 Aynı kodun farklı borsalarla çalışmasını sağlar. Native sembol formatı hiç görünmez:
 
@@ -211,7 +211,7 @@ Bakiye ve emir uçları API anahtarı gerektirir. Anahtar alma ve bağlama rehbe
 |---|---|---|
 | `/api/v2/server/exchangeinfo` | `GetExchangeInfoAsync` · `GetServerTimeAsync` | `ISpotSymbolRestClient` |
 | `/api/v2/ticker` | `GetTickersAsync` · `GetTickerAsync` | `ISpotTickerRestClient` |
-| `/api/v2/ticker/currency` | `GetTickersByQuoteAssetAsync` | — |
+| `/api/v2/ticker/currency` | `GetTickersByQuoteAssetAsync` | ✅ |
 | `/api/v2/orderbook` | `GetOrderBookAsync` | `IOrderBookRestClient` |
 | `/api/v2/trades` | `GetTradesAsync` | `IRecentTradeRestClient` |
 | Kline (graph-api) | `GetKlinesAsync` | `IKlineRestClient` |
@@ -223,6 +223,7 @@ Bakiye ve emir uçları API anahtarı gerektirir. Anahtar alma ve bağlama rehbe
 | `POST /api/v1/order` | `Trading.PlaceOrderAsync` | `ISpotOrderRestClient` |
 | `DELETE /api/v1/order` | `Trading.CancelOrderAsync` | `ISpotOrderRestClient` |
 | WebSocket: ticker · trade · orderbook | `SocketClient.SpotApi.SubscribeTo…` | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` |
+| WebSocket: tüm pariteler tek abonelikte | `SubscribeToAllTickerUpdatesAsync` | `ITickersSocketClient` |
 | Kullanıcı socket akışları | ⏳ | ⏳ |
 
 Resmi API belgeleri: [docs.btcturk.com](https://docs.btcturk.com/)
