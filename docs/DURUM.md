@@ -139,7 +139,7 @@ BtcTurk'tan üç önemli fark:
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/credentials/binance-tr.md` | Binance TR'de anahtar alma; imzalama şemasının BtcTurk'ten farkları |
-| `docs/vendor/` | Resmi kaynaklı endpoint envanteri, istek limitleri, kline ve işlem geçmişi |
+| `docs/vendor/` | Üç borsanın resmi kaynaklı uç envanteri, istek limitleri, kline ve işlem geçmişi |
 | `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-44) |
 
 ---
@@ -153,7 +153,8 @@ BtcTurk'tan üç önemli fark:
 | **Emir uçlarının canlı doğrulaması** | Gerçek emir vermeyi gerektirir; bilinçli olarak ertelendi. İmzalama ve okuma uçları canlı doğrulandı |
 | **Binance TR: private uçların canlı doğrulaması** | Şema resmi dokümantasyondan alındı, imzalama yayımlanmış test vektörüyle doğrulandı. Gerçek bir hesaba karşı denenmesi anahtar geldiğinde yapılacak; `AuthenticationProbeTests` bunu ilk çalıştırmada bildirir |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
-| **Paribu · Bitexen** | M5–M6 |
+| **Paribu adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Borsanın resmi API'si var; public ticker ve emir defteri canlı doğrulandı |
+| **Bitexen adaptörü** | Sırada |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
 ---

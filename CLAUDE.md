@@ -156,6 +156,10 @@ uygulamaya indirgenemezler.
 | REST ticker | Var | Yok, yalnızca WebSocket |
 | Zaman toleransı | Geniş | `recvWindow` varsayılan 5000 ms |
 
+Paribu bu tabloya üçüncü bir biçim ekler: `btc_tl`. Türk lirasını `TRY` değil **`TL`**
+olarak yazan tek borsadır, sembolleri küçük harflidir ve imza yükü zaman damgası, sorgu
+dizesi ve gövdenin birleşimidir. Ayrıntı: `docs/vendor/paribu-capabilities.md`.
+
 Son satır pratikte önemlidir: birkaç saniyelik saat kayması BtcTurk'te sorun çıkarmazken
 Binance TR'de tüm imzalı istekleri reddettirir. `ServerTimeIntegrationTests` bunu her
 çalıştırmada ölçer.
@@ -171,6 +175,10 @@ gerçek bir hesaba karşı doğrulandı.
 tamamlandı. Private uçlar canlı bir hesapla henüz denenmedi; anahtar geldiğinde
 `AuthenticationProbeTests` şemayı doğrulayacaktır.
 
-**Paribu ve Bitexen** planlandı, başlanmadı.
+**Paribu** için uç envanteri çıkarıldı ve `docs/vendor/paribu-capabilities.md` dosyasına
+yazıldı; kod henüz yazılmadı. Borsanın resmi bir API'si vardır, public ticker ve emir
+defteri anahtarsız çalışır ve canlı doğrulanmıştır.
+
+**Bitexen** planlandı, başlanmadı.
 
 NuGet'e henüz yayınlanmadı; ilk sürüm `0.1.0-preview` olarak planlanıyor.
