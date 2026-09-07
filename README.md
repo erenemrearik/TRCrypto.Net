@@ -51,8 +51,8 @@ TRCrypto her borsa için **iki yüzey** sunar:
 </tr>
 <tr>
   <td><code>TRCrypto.BinanceTR</code></td>
-  <td>Piyasa verisi · hesap · emirler · WebSocket · SharedApis</td>
-  <td><img src="https://img.shields.io/badge/geli%C5%9Ftiriliyor-E8A33D?style=flat-square" alt="geliştiriliyor"></td>
+  <td>Piyasa verisi · hesap · emirler · kullanıcı akışı · WebSocket · SharedApis</td>
+  <td><img src="https://img.shields.io/badge/tamamland%C4%B1-1B6340?style=flat-square" alt="tamamlandı"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td>
@@ -77,9 +77,9 @@ ticker sunmuyor.
 
 Her ikisinin tamamı hem native hem SharedApis üzerinden kullanılabilir.
 
-**Henüz yok.** Her iki borsada da kullanıcıya özel WebSocket akışları; Binance TR'de toplu
-emir iptali, OCO emri ve tek varlık bakiyesi; Paribu ve CoinTR adaptörleri. Binance TR
-private uçları yazıldı ancak canlı bir hesapta henüz kabul edilmedi.
+**Henüz yok.** BtcTurk'te kullanıcıya özel WebSocket akışları, Paribu ve CoinTR
+adaptörleri. Binance TR private uçları yazıldı ancak canlı bir hesapta henüz kabul
+edilmedi.
 
 Çekim ve yatırma uçları bilinçli olarak kapsam dışıdır (ADR-007).
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)

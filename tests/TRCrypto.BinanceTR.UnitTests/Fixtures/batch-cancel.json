@@ -1,0 +1,15 @@
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "succeedIds": [1, 2, 3],
+    "failedIds": [
+      {
+        "orderId": 4,
+        "code": 500,
+        "message": "The order has been cancelled or does not exist"
+      }
+    ]
+  },
+  "timestamp": 1571921637091
+}

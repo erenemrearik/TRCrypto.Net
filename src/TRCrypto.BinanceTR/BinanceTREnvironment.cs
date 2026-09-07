@@ -7,14 +7,19 @@ public class BinanceTREnvironment : TradeEnvironment
     /// <summary>REST API taban adresi.</summary>
     public string RestBaseAddress { get; }
 
-    /// <summary>WebSocket taban adresi.</summary>
+    /// <summary>Piyasa verisi WebSocket taban adresi.</summary>
     public string SocketBaseAddress { get; }
 
-    internal BinanceTREnvironment(string name, string restBaseAddress, string socketBaseAddress)
+    /// <summary>Kullanici akisi WebSocket adresi.</summary>
+    public string UserStreamAddress { get; }
+
+    internal BinanceTREnvironment(
+        string name, string restBaseAddress, string socketBaseAddress, string userStreamAddress)
         : base(name)
     {
         RestBaseAddress = restBaseAddress;
         SocketBaseAddress = socketBaseAddress;
+        UserStreamAddress = userStreamAddress;
     }
 
     /// <summary>Bagimlilik enjeksiyonu icin kurucu.</summary>
@@ -28,7 +33,8 @@ public class BinanceTREnvironment : TradeEnvironment
     public static BinanceTREnvironment Live { get; } = new(
         TradeEnvironmentNames.Live,
         BinanceTRApiAddresses.Default.RestClientAddress,
-        BinanceTRApiAddresses.Default.SocketClientAddress);
+        BinanceTRApiAddresses.Default.SocketClientAddress,
+        BinanceTRApiAddresses.Default.UserStreamClientAddress);
 
     /// <summary>Tanimli ortam adlari.</summary>
     public static string[] All => [Live.Name];
@@ -48,8 +54,19 @@ public class BinanceTREnvironment : TradeEnvironment
     /// <summary>Ozel bir ortam olusturur.</summary>
     /// <param name="name">Ortam adi.</param>
     /// <param name="restAddress">REST taban adresi.</param>
-    /// <param name="socketAddress">WebSocket taban adresi.</param>
+    /// <param name="socketAddress">Piyasa verisi WebSocket taban adresi.</param>
+    /// <param name="userStreamAddress">
+    /// Kullanici akisi WebSocket adresi. Verilmezse canli ortamin adresi kullanilir.
+    /// </param>
     /// <returns>Olusturulan ortam.</returns>
-    public static BinanceTREnvironment CreateCustom(string name, string restAddress, string socketAddress)
-        => new(name, restAddress, socketAddress);
+    public static BinanceTREnvironment CreateCustom(
+        string name,
+        string restAddress,
+        string socketAddress,
+        string? userStreamAddress = null)
+        => new(
+            name,
+            restAddress,
+            socketAddress,
+            userStreamAddress ?? BinanceTRApiAddresses.Default.UserStreamClientAddress);
 }

@@ -156,8 +156,11 @@ geldiğinde yapılacaktır.
 | GET | `/open/v1/orders/detail` | ✅ Uygulandı |
 | POST | `/open/v1/orders/cancel` | ✅ Uygulandı |
 | GET | `/open/v1/orders/trades` | ✅ Uygulandı |
-| POST | `/open/v1/orders/batch-cancel` | ⏳ Envanteri çıkarıldı |
-| POST | `/open/v1/user-listen-token` | ⏳ Envanteri çıkarıldı |
+| POST | `/open/v1/orders/batch-cancel` | ✅ Uygulandı |
+| POST | `/open/v1/orders/oco` | ✅ Uygulandı |
+| GET | `/open/v1/account/spot/asset` | ✅ Uygulandı |
+| POST | `/open/v1/user-listen-token` | ✅ Uygulandı |
+| POST · PUT · DELETE | `/open/v1/user-data-stream` | ❌ Kullanılmıyor, aşağıdaki nota bakın |
 
 `user-listen-token`, kullanıcı akışı için token üretir. Token kendiliğinden yenilenmez ve
 yaşam döngüsü yönetimi gerektirir.
@@ -244,3 +247,77 @@ tokenın kendiliğinden yenilenmediğini, lifecycle yönetimi gerektiğini belir
 
 - `binance.tr/apidocs`
 - Canlı uç denemeleri (26 Ağu 2026): `www.binance.tr` üzerinde `/open/v1/*` ve `/api/v3/*`
+
+---
+
+## Kullanıcı akışı
+
+Hesap ve emir güncellemeleri gerçek zamanlı olarak bu akıştan gelir.
+
+### Eski uçlar kullanılmıyor
+
+`POST`, `PUT` ve `DELETE /open/v1/user-data-stream` üçlüsü dokümantasyonda **deprecated**
+olarak işaretli ve 30 Nisan 2026'da kaldırılacağı yazıyor. Yolları hâlâ yanıt veriyor
+ancak yeni kod bunların üzerine kurulmaz; bu yüzden uygulanmadılar.
+
+Güncel yol `POST /open/v1/user-listen-token` ile bir token almak ve o tokenla ayrı bir
+WebSocket sunucusuna abone olmaktır.
+
+### Token
+
+`POST /open/v1/user-listen-token` isteğe bağlı `validity` (ms, en fazla 24 saat),
+`recvWindow` ve zorunlu `timestamp` alır.
+
+```json
+{ "token": "6xXxePXwZRjV…", "expirationTime": 1758792204196 }
+```
+
+> [!WARNING]
+> **Token kendiliğinden yenilenmez.** Süresi dolmadan yenisi alınıp yeniden abone
+> olunmalıdır. Yenilenmediğinde akış hata vermeden durur, yani sorun ancak "veri gelmiyor"
+> olarak fark edilir. Bitiş anı bu yüzden modelde taşınır.
+
+### Bağlantı
+
+Kullanıcı akışı **piyasa akışından ayrı bir sunucudadır**:
+
+| Akış | Adres |
+|---|---|
+| Piyasa verisi | `wss://stream-cloud.binance.tr` |
+| Kullanıcı akışı | `wss://ws-api.binance.tr/ws-api/v3` |
+
+Protokol de farklıdır. Piyasa tarafında akış adı bağlantı adresinin yoluna yazılır;
+burada bağlantı kurulduktan sonra yöntem adı taşıyan bir mesaj gönderilir:
+
+```json
+{
+  "id": "f3a8f7a29f2e54df796db582f3d",
+  "method": "userDataStream.subscribe.listenToken",
+  "params": { "listenToken": "6xXxePXwZRjV…" }
+}
+```
+
+Yanıt olay türü taşımaz:
+
+```json
+{ "subscriptionId": 1, "expirationTime": 1749094553955907 }
+```
+
+> Bu `expirationTime` **mikrosaniyedir**, token yanıtındaki ise milisaniye. Aynı adı
+> taşıyan iki alan aynı akışta iki farklı birim kullanıyor; milisaniye varsayan bir
+> çözümleyici tarihi binlerce yıl ileri okur.
+
+### Olaylar
+
+| Olay | `e` değeri | İçerik |
+|---|---|---|
+| Bakiye değişimi | `outboundAccountPosition` | Yalnızca **değişen** varlıklar; mesaj hesabın tamamını taşımaz |
+| Emir güncellemesi | `executionReport` | Emir oluşturma, gerçekleşme ve iptal |
+
+Emir güncellemesinde yön, tür ve durum **metin** olarak gelir (`BUY`, `LIMIT`,
+`PARTIALLY_FILLED`). REST tarafında aynı bilgiler **sayıdır** (D-42). Aynı enum iki tarafta
+farklı biçimde çözümlenmek zorundadır.
+
+Alan adları tek harflidir ve harf büyüklüğü anlam taşır: `s` parite, `S` yön; `l` son
+gerçekleşen miktar, `L` son gerçekleşen fiyat; `q` miktar, `Q` yoktur ama `Z` toplam ve
+`Y` son gerçekleşen tutardır.

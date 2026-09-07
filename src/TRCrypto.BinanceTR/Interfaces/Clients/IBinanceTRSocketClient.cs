@@ -8,4 +8,9 @@ public interface IBinanceTRSocketClient : ISocketClient
 {
     /// <summary>Spot WebSocket API.</summary>
     IBinanceTRSocketClientSpotApi SpotApi { get; }
+
+    /// <summary>
+    /// Kullanici akisi. Dinleme tokeni gerektirir.
+    /// </summary>
+    IBinanceTRSocketClientUserApi UserApi { get; }
 }

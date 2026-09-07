@@ -127,4 +127,59 @@ public interface IBinanceTRRestClientSpotApiTrading
         int? limit = null,
         long? receiveWindow = null,
         CancellationToken ct = default);
+
+    /// <summary>
+    /// Birden fazla emri tek istekte iptal eder.
+    /// </summary>
+    /// <remarks>
+    /// Sonuc butun halinde basarili sayilamaz: bazi emirler iptal edilirken bazilari
+    /// edilemez ve yanit ikisini ayri listelerde dondurur.
+    /// <para>
+    /// Parite ya da emir kimlikleri verilmelidir. Parite verildiginde o paritedeki tum
+    /// acik emirler iptal edilir.
+    /// </para>
+    /// </remarks>
+    /// <param name="symbol">Bu paritedeki tum acik emirleri iptal eder.</param>
+    /// <param name="orderIds">Iptal edilecek emir kimlikleri.</param>
+    /// <param name="receiveWindow">Istegin gecerli sayilacagi sure (ms).</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Iptal edilen ve edilemeyen emirler.</returns>
+    /// <exception cref="ArgumentException">Ikisi de verilmediyse firlatilir.</exception>
+    Task<HttpResult<BinanceTRBatchCancelResult>> CancelOrdersAsync(
+        string? symbol = null,
+        IEnumerable<long>? orderIds = null,
+        long? receiveWindow = null,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Birbirini iptal eden bir limit ve stop emri ciftini olusturur.
+    /// </summary>
+    /// <remarks>
+    /// Iki emirden biri gerceklestiginde digeri kendiliginden iptal edilir.
+    /// </remarks>
+    /// <param name="symbol">Native parite adi.</param>
+    /// <param name="side">Emrin yonu.</param>
+    /// <param name="quantity">Base varlik cinsinden miktar.</param>
+    /// <param name="price">Limit emrinin fiyati.</param>
+    /// <param name="stopPrice">Stop emrinin tetikleme fiyati.</param>
+    /// <param name="stopLimitPrice">Stop tetiklendiginde girilecek limit fiyati.</param>
+    /// <param name="listClientOrderId">Emir cifti icin cagiran tarafin verdigi kimlik.</param>
+    /// <param name="limitClientOrderId">Limit emri icin cagiran tarafin verdigi kimlik.</param>
+    /// <param name="stopClientOrderId">Stop emri icin cagiran tarafin verdigi kimlik.</param>
+    /// <param name="receiveWindow">Istegin gecerli sayilacagi sure (ms).</param>
+    /// <param name="ct">Iptal belirteci.</param>
+    /// <returns>Olusturulan emrin kimligi.</returns>
+    /// <exception cref="ArgumentException">Sembol bos ise firlatilir.</exception>
+    Task<HttpResult<BinanceTRPlacedOrder>> PlaceOcoOrderAsync(
+        string symbol,
+        OrderSide side,
+        decimal quantity,
+        decimal price,
+        decimal stopPrice,
+        decimal stopLimitPrice,
+        string? listClientOrderId = null,
+        string? limitClientOrderId = null,
+        string? stopClientOrderId = null,
+        long? receiveWindow = null,
+        CancellationToken ct = default);
 }

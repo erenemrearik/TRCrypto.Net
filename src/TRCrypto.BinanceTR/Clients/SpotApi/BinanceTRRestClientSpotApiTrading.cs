@@ -158,6 +158,76 @@ internal class BinanceTRRestClientSpotApiTrading : IBinanceTRRestClientSpotApiTr
             .SendAsync<BinanceTRUserTradeList>(request, parameters, ct)
             .ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<BinanceTRBatchCancelResult>> CancelOrdersAsync(
+        string? symbol = null,
+        IEnumerable<long>? orderIds = null,
+        long? receiveWindow = null,
+        CancellationToken ct = default)
+    {
+        var ids = orderIds?.ToArray();
+
+        // Ikisi de verilmezse borsa neyin iptal edilecegini bilemez. Bos bir istegin
+        // butun acik emirleri iptal etme ihtimali, aga cikmadan engellenmelidir.
+        if (string.IsNullOrWhiteSpace(symbol) && (ids == null || ids.Length == 0))
+        {
+            throw new ArgumentException(
+                "Parite ya da en az bir emir kimligi verilmelidir.",
+                nameof(symbol));
+        }
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Post, _baseClient.BaseAddress, "/open/v1/orders/batch-cancel",
+            BinanceTRExchange.RateLimiter.Rest, 1, true);
+
+        var parameters = new Parameters(BinanceTRExchange.ParameterSettings);
+        parameters.Add("symbol", symbol);
+        if (ids is { Length: > 0 })
+            parameters.Add("orderIds", "[" + string.Join(",", ids) + "]");
+        parameters.Add("recvWindow", receiveWindow);
+
+        return await _baseClient
+            .SendAsync<BinanceTRBatchCancelResult>(request, parameters, ct)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<HttpResult<BinanceTRPlacedOrder>> PlaceOcoOrderAsync(
+        string symbol,
+        OrderSide side,
+        decimal quantity,
+        decimal price,
+        decimal stopPrice,
+        decimal stopLimitPrice,
+        string? listClientOrderId = null,
+        string? limitClientOrderId = null,
+        string? stopClientOrderId = null,
+        long? receiveWindow = null,
+        CancellationToken ct = default)
+    {
+        ValidateSymbol(symbol);
+
+        var request = _definitions.GetOrCreate(
+            HttpMethod.Post, _baseClient.BaseAddress, "/open/v1/orders/oco",
+            BinanceTRExchange.RateLimiter.Rest, 1, true);
+
+        var parameters = new Parameters(BinanceTRExchange.ParameterSettings);
+        parameters.Add("symbol", symbol);
+        parameters.Add("side", side);
+        parameters.Add("quantity", quantity);
+        parameters.Add("price", price);
+        parameters.Add("stopPrice", stopPrice);
+        parameters.Add("stopLimitPrice", stopLimitPrice);
+        parameters.Add("listClientId", listClientOrderId);
+        parameters.Add("limitClientId", limitClientOrderId);
+        parameters.Add("stopClientId", stopClientOrderId);
+        parameters.Add("recvWindow", receiveWindow);
+
+        return await _baseClient
+            .SendAsync<BinanceTRPlacedOrder>(request, parameters, ct)
+            .ConfigureAwait(false);
+    }
     private static void ValidateSymbol(string symbol)
     {
         if (string.IsNullOrWhiteSpace(symbol))

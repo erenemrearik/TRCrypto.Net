@@ -57,8 +57,8 @@ TRCrypto offers **two surfaces** per exchange:
 </tr>
 <tr>
   <td><code>TRCrypto.BinanceTR</code></td>
-  <td>Market data · account · orders · WebSocket · SharedApis</td>
-  <td><img src="https://img.shields.io/badge/in%20progress-E8A33D?style=flat-square" alt="in progress"></td>
+  <td>Market data · account · orders · user stream · WebSocket · SharedApis</td>
+  <td><img src="https://img.shields.io/badge/complete-1B6340?style=flat-square" alt="complete"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.Paribu</code></td><td>Endpoints inventoried</td>
@@ -83,8 +83,7 @@ data over REST without a key.
 
 Both are usable through the native and the shared surface.
 
-**Not there yet.** User specific WebSocket streams on both exchanges; batch order
-cancellation, OCO orders and single asset balance on Binance TR; the Paribu and CoinTR
+**Not there yet.** User specific WebSocket streams on BtcTurk, and the Paribu and CoinTR
 adapters. Binance TR's private endpoints are written but have not yet been accepted by a
 live account.
 

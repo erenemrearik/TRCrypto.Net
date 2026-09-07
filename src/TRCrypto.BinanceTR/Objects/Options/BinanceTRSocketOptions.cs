@@ -17,13 +17,17 @@ public class BinanceTRSocketOptions : SocketExchangeOptions<BinanceTREnvironment
         Default?.Set(this);
     }
 
-    /// <summary>Spot API secenekleri.</summary>
+    /// <summary>Spot piyasa akisi secenekleri.</summary>
     public SocketApiOptions SpotOptions { get; private set; } = new();
+
+    /// <summary>Kullanici akisi secenekleri.</summary>
+    public SocketApiOptions UserOptions { get; private set; } = new();
 
     internal BinanceTRSocketOptions Set(BinanceTRSocketOptions targetOptions)
     {
         targetOptions = base.Set(targetOptions);
         targetOptions.SpotOptions = SpotOptions.Set(targetOptions.SpotOptions);
+        targetOptions.UserOptions = UserOptions.Set(targetOptions.UserOptions);
         return targetOptions;
     }
 }

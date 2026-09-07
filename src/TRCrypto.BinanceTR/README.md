@@ -116,6 +116,12 @@ Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 | `/open/v1/orders/detail` | `Trading.GetOrderAsync` | ✅ |
 | `/open/v1/orders/cancel` | `Trading.CancelOrderAsync` | ✅ |
 | `/open/v1/orders/trades` | `Trading.GetUserTradesAsync` | ✅ |
+| `/open/v1/orders/batch-cancel` | `Trading.CancelOrdersAsync` | ✅ |
+| `/open/v1/orders/oco` | `Trading.PlaceOcoOrderAsync` | ✅ |
+| `/open/v1/account/spot/asset` | `Account.GetAssetAsync` | ✅ |
+| `/open/v1/user-listen-token` | `Account.GetListenTokenAsync` | ✅ |
+| Kullanıcı akışı: bakiye | `UserApi.SubscribeToAccountUpdatesAsync` | ✅ |
+| Kullanıcı akışı: emirler | `UserApi.SubscribeToOrderUpdatesAsync` | ✅ |
 | WS ticker | `SubscribeToTickerUpdatesAsync` | ✅ |
 | WS tekil işlem | `SubscribeToTradeUpdatesAsync` | ✅ |
 | WS toplu işlem | `SubscribeToAggregatedTradeUpdatesAsync` | ✅ |
@@ -125,6 +131,8 @@ Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 | SharedApis (bakiye ve emir) | `IBalanceRestClient` · `ISpotOrderRestClient` | ✅ |
 | SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |
 | SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` · `IKlineSocketClient` | ✅ |
+| SharedApis (kullanıcı akışı) | `IBalanceSocketClient` · `ISpotOrderSocketClient` | ✅ |
+| Yatırma ve çekme | yok | Kapsam dışı (ADR-007) |
 
 ## Bağımlılık enjeksiyonu
 

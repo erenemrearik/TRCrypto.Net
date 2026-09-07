@@ -88,4 +88,31 @@ public class SharedApiTests
         Assert.Equal(5, shared.GetOrderBookOptions.MinLimit);
         Assert.Equal(1000, shared.GetOrderBookOptions.MaxLimit);
     }
+
+    [Fact]
+    public void Kullanici_akisi_shared_arayuzleri_uygulanir()
+    {
+        var shared = CreateSocketClient().UserApi.SharedClient;
+
+        Assert.IsAssignableFrom<IBalanceSocketClient>(shared);
+        Assert.IsAssignableFrom<ISpotOrderSocketClient>(shared);
+    }
+
+    [Fact]
+    public async Task Dinleme_tokeni_verilmezse_abonelik_kurulmaz()
+    {
+        // Kimlik bilgisi once denetlenir; token kontrolune ulasmak icin istemcinin
+        // kimlik bilgisi tanimli olmalidir. Degerler gercekci gorunumlu ve SAHTEDIR.
+        var client = new BinanceTRSocketClient(options =>
+            options.ApiCredentials = new BinanceTRCredentials("anahtar", "gizli"));
+        var shared = (IBalanceSocketClient)client.UserApi.SharedClient;
+
+        // Token olmadan baglanmayi denemek, sunucunun sessizce hicbir sey gondermemesiyle
+        // sonuclanirdi. Eksiklik aga cikmadan ve acik bir mesajla bildirilir.
+        var result = await shared.SubscribeToBalanceUpdatesAsync(
+            new SubscribeBalancesRequest(), _ => { });
+
+        Assert.False(result.Success);
+        Assert.Contains("token", result.Error!.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
 }

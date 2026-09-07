@@ -14,6 +14,9 @@ public class BinanceTRSocketClient
     /// <inheritdoc />
     public IBinanceTRSocketClientSpotApi SpotApi { get; }
 
+    /// <inheritdoc />
+    public IBinanceTRSocketClientUserApi UserApi { get; }
+
     /// <summary>Verilen seceneklerle yeni bir istemci olusturur.</summary>
     /// <param name="optionsDelegate">Secenek yapilandirma temsilcisi.</param>
     public BinanceTRSocketClient(Action<BinanceTRSocketOptions>? optionsDelegate = null)
@@ -31,6 +34,7 @@ public class BinanceTRSocketClient
         Initialize(options.Value);
 
         SpotApi = AddApiClient(new BinanceTRSocketClientSpotApi(loggerFactory, options.Value));
+        UserApi = AddApiClient(new BinanceTRSocketClientUserApi(loggerFactory, options.Value));
     }
 
     /// <summary>Yeni istemciler icin varsayilan secenekleri belirler.</summary>
@@ -44,5 +48,6 @@ public class BinanceTRSocketClient
     public override void SetApiCredentials(BinanceTRCredentials credentials)
     {
         SpotApi.SetApiCredentials(credentials);
+        UserApi.SetApiCredentials(credentials);
     }
 }

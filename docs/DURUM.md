@@ -12,10 +12,13 @@ BtcTurk **tamamlandı.** REST, WebSocket, kimlik doğrulama ve shared yüzey ça
 yalnızca kullanıcıya özel socket akışları eksik ve bunlar hesapta emir hareketi
 gerektiriyor.
 
-**Binance TR'nin spot alım satım yüzeyi hazır** ama borsanın tamamı değil. Piyasa verisi,
-WebSocket, imzalama, hesap ve emir uçları çalışıyor. Dokümante edilmiş 24 uçtan 10'u
-uygulandı; 6'sı çekim ve yatırma olduğu için kapsam dışı (ADR-007), 1'i borsa boş
-döndürdüğü için atlandı, geriye **7 uç** kaldı. Ayrıntı aşağıda.
+**Binance TR tamamlandı.** Piyasa verisi, WebSocket, imzalama, hesap ve emir uçları ile
+kullanıcı akışı hazır. Dokümante edilmiş 24 uçtan 14'ü uygulandı; kalan 10'un 6'sı çekim
+ve yatırma olduğu için kapsam dışı (ADR-007), 3'ü kaldırılmak üzere deprecated edilmiş
+eski kullanıcı akışı uçları, 1'i de borsa boş döndürdüğü için atlandı.
+
+Kalan tek iş, private uçları gerçek bir hesapta çalıştırmak. Anahtar tanınıyor ancak imza
+henüz kabul edilmiyor (D-45, D-46).
 
 Sıradaki iki platform **Paribu** ve **CoinTR**; ikisinin de uç envanteri çıkarıldı.
 
@@ -161,10 +164,7 @@ BtcTurk'tan üç önemli fark:
 | **Binance TR: private uçların canlı doğrulaması** | Anahtar bağlandı ve **borsa tarafından tanındığı doğrulandı**: dönen kod `3702`, `3701` değil. İmzalı istek henüz kabul edilmiyor; sekiz farklı şema denendi ve hepsi aynı kodu aldı. Kalan en olası neden, secret ile anahtarın aynı çiftten gelmemesidir (D-45, D-46) |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Borsanın resmi API'si var; public ticker ve emir defteri canlı doğrulandı |
-| **Binance TR: toplu emir iptali** | `POST /open/v1/orders/batch-cancel` yazılmadı |
-| **Binance TR: OCO emri** | `POST /open/v1/orders/oco` yazılmadı |
-| **Binance TR: tek varlık bakiyesi** | `GET /open/v1/account/spot/asset` yazılmadı; hesap ucu tüm varlıkları zaten döndürüyor |
-| **Binance TR: kullanıcı akışı** | `user-data-stream` ve `user-listen-token` uçları ile private WebSocket yazılmadı. BtcTurk'te de aynı boşluk var |
+| **BtcTurk: kullanıcıya özel socket akışları** | Giriş çalışıyor ama mesaj gövdeleri hesapta hareket olmadan gelmiyor. Binance TR'de bu boşluk kapandı |
 | **CoinTR adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Altı public uç canlı doğrulandı; imzalama şeması iki aşamalı ve henüz denenmedi |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
@@ -176,7 +176,7 @@ Son çalıştırma (27 Ağu 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  212/212 birim · 13 canli API · 2 atlandi (anahtar yok)
+dotnet test  -c Release   →  223/223 birim · 13 canli API · 2 atlandi
                              birim testler her PR'da, canli testler haftalik iste
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  379 parite, native == shared
@@ -254,7 +254,7 @@ Workflow hazır; `NUGET_API_KEY` ve environment onayı eksik.
 | Sıra | Platform | Durum |
 |---|---|---|
 | 1 | BtcTurk | ✅ Tamamlandı |
-| 2 | Binance TR | Spot alım satım yüzeyi hazır; 7 uç ve canlı doğrulama kaldı |
+| 2 | Binance TR | ✅ Tamamlandı; canlı hesap doğrulaması bekliyor |
 | 3 | Paribu | Uç envanteri çıkarıldı |
 | 4 | CoinTR | Uç envanteri çıkarıldı |
 

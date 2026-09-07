@@ -25,6 +25,12 @@ internal class BinanceTRSocketMessageHandler : JsonSocketMessageHandler
     /// <summary>Olay turu tasimayan goruntu mesajlari icin kullanilan kimlik.</summary>
     internal const string SnapshotIdentifier = "snapshot";
 
+    /// <summary>Kullanici akisi abonelik onayi icin kullanilan kimlik.</summary>
+    /// <remarks>
+    /// Onay mesaji olay turu tasimaz; abonelik numarasi alaniyla taninir.
+    /// </remarks>
+    internal const string SubscriptionIdentifier = "subscription";
+
     public override JsonSerializerOptions Options { get; } = BinanceTRJsonOptions.Default;
 
     /// <inheritdoc />
@@ -43,6 +49,13 @@ internal class BinanceTRSocketMessageHandler : JsonSocketMessageHandler
         {
             Fields = [new PropertyFieldReference("lastUpdateId")],
             StaticIdentifier = SnapshotIdentifier
+        },
+
+        // Kullanici akisinda abonelik onayi da olay turu tasimaz.
+        new MessageTypeDefinition
+        {
+            Fields = [new PropertyFieldReference("subscriptionId")],
+            StaticIdentifier = SubscriptionIdentifier
         }
     ];
 }
