@@ -162,6 +162,19 @@ geldiğinde yapılacaktır.
 `user-listen-token`, kullanıcı akışı için token üretir. Token kendiliğinden yenilenmez ve
 yaşam döngüsü yönetimi gerektirir.
 
+### Kimlik doğrulama hata kodları
+
+Anlamları dokümantasyonda yazmıyor; 7 Eylül 2026'da kontrollü denemeyle ölçüldü.
+
+| Kod | Anlamı |
+|---|---|
+| `3700` | Anahtar hiç gönderilmemiş |
+| `3701` | Anahtar tanınmıyor, IP listede değil ya da izin eksik |
+| `3702` | **Anahtar geçerli**, imza eşleşmiyor |
+
+`3702` anahtarın geçerliliğini kanıtlar: geçersiz bir anahtar `3701` üretir. Ancak bu kod
+doğru secret ile yanlış secret arasında ayrım yapmaz; ikisi de aynı kodu döndürür.
+
 ### İmza
 
 Sorgu dizesi ile istek gövdesi parametre sırasına göre birleştirilir, secret ile

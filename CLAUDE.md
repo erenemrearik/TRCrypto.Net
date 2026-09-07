@@ -23,8 +23,8 @@ Yalnızca resmi dokümantasyondan ya da canlı denemeden doğrulanmış uçlar y
 Doğrulanamayan bir uç, tahmin edilerek yazılmak yerine `docs/vendor/` altında
 "dondurulmamış" olarak işaretlenir.
 
-Borsaların dokümantasyonu eksik ve zaman zaman yanlıştır. Şimdiye kadar 44 sapma tespit
-edildi ve `docs/spec/` ekinde D-1 ile D-44 arasında numaralanarak belgelendi. Bir davranışı
+Borsaların dokümantasyonu eksik ve zaman zaman yanlıştır. Şimdiye kadar 46 sapma tespit
+edildi ve `docs/spec/` ekinde D-1 ile D-46 arasında numaralanarak belgelendi. Bir davranışı
 doğrulamadan koda yazmak, bu listenin uzamasına değil, sessiz hatalara yol açar.
 
 ### 2. Sessiz başarısızlıklar en tehlikelisidir
@@ -108,7 +108,7 @@ examples/TRCrypto.Examples.Console/
 docs/DURUM.md                  Nerede kaldık, ne kaldı
 docs/credentials/              Borsa başına API anahtarı rehberi
 docs/vendor/                   Doğrulanmış uç envanteri
-docs/spec/                     Teknik spesifikasyon ve D-1..D-44 doğrulama ekleri
+docs/spec/                     Teknik spesifikasyon ve D-1..D-46 doğrulama ekleri
 docs/index.html                Üretilen dokümantasyon sitesi
 tools/site/                    Siteyi üreten betikler
 tools/audit/                   Doküman ve kod tutarlılık denetimi

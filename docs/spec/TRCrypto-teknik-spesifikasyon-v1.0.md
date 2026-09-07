@@ -1305,3 +1305,55 @@ adı da okur.
 Emir kayıtlarında `createTime` sayı olarak, işlem kayıtlarında `time` metin olarak gelir.
 İkisi de milisaniyedir. Varsayılan çözümleyici her iki durumda da hata verir; kütüphanenin
 zaman dönüştürücüsü iki biçimi de okur.
+
+---
+
+## E.11 Canlı Hesap Doğrulaması: Binance TR Kimlik Kodları
+
+### D-45. Reddedilen imzalı isteğin nedeni üç ayrı kodla bildirilir
+
+Binance TR imzalı bir isteği reddederken tek bir hata kullanmıyor. Üç kod var ve
+anlamları dokümantasyonda yazmıyor. 7 Eylül 2026'da kontrollü denemeyle ölçüldü:
+bilerek geçersiz bir anahtarla, geçerli anahtar ve geçersiz secret ile, anahtarsız ve
+imzasız olarak aynı istek gönderilip dönen kodlar karşılaştırıldı.
+
+| Gönderilen | Dönen kod | Mesaj |
+|---|---|---|
+| Anahtar yok | `3700` | Invalid API-key |
+| Geçersiz anahtar, geçersiz secret | `3701` | Invalid API-key, IP, or permissions for action |
+| Geçerli anahtar, geçersiz secret | `3702` | Invalid signature |
+| Geçerli anahtar, geçerli secret, yanlış imza şeması | `3702` | Invalid signature |
+
+Ayrım pratikte önemlidir çünkü üç kod tamamen farklı işlere yol açar:
+
+- `3700` ve `3701` anahtarla ilgilidir. Anahtarın kendisi, IP kısıtlaması ya da izinler
+  kontrol edilmelidir.
+- `3702` anahtarın **geçerli olduğunu kanıtlar.** Geçersiz bir anahtar bu kodu hiç
+  üretmez. Sorun yalnızca imzadadır.
+
+Bu, hata ayıklamayı büyük ölçüde daraltır. Kod `3702` ise IP listesini, izinleri ve
+anahtarın doğruluğunu araştırmak zaman kaybıdır.
+
+### D-46. `3702` doğru secret ile yanlış secret arasında ayrım yapmaz
+
+Kontrollü denemenin ikinci sonucu: geçerli anahtar ile **rastgele üretilmiş** bir secret,
+geçerli anahtar ile **gerçek** secret ile aynı `3702` kodunu döndürüyor.
+
+Bunun anlamı şudur: `3702` alındığında imzalama şemasının yanlış olduğu sonucuna
+atlanmamalıdır. Aynı kod, şema doğruyken secret'ın anahtarla eşleşmediği durumda da
+gelir. İkisini ayırmanın API üzerinden bir yolu yoktur.
+
+Şema sekiz farklı biçimde denendi ve hepsi `3702` aldı: parametre sırası değiştirilerek,
+yalnızca `timestamp` ile, imza Base64 kodlanarak, secret Base64 çözülerek, imza başlığa
+konarak, yol imzaya dahil edilerek ve onaltılık büyük harfle. Sekiz denemenin de aynı
+sonucu vermesi, sorunun şemada değil anahtar ve secret çiftinin uyumunda olduğuna işaret
+eder.
+
+Resmi dokümantasyon uygulanan şemayı doğruluyor: `totalParams` sorgu dizesi ile gövdenin
+birleşimidir, HMAC-SHA256 secret ile hesaplanır, imza sorgu dizesine eklenir ve
+büyük küçük harfe duyarlı değildir. Parametre sırası serbesttir.
+
+**Sonuç:** kütüphanenin imzalama kodu, yayımlanmış test vektörüyle doğrulanmış haliyle
+bırakıldı. Canlı kabul, aynı çiftten gelen bir anahtar ve secret ile tekrar denenecek.
+`AuthenticationProbeTests` içindeki `Anahtar_borsa_tarafindan_taniniyor` testi anahtar
+tarafını ayrı ölçer ve şu an **geçiyor.**

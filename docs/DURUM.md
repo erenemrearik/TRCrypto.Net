@@ -145,7 +145,7 @@ BtcTurk'tan üç önemli fark:
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/credentials/binance-tr.md` | Binance TR'de anahtar alma; imzalama şemasının BtcTurk'ten farkları |
 | `docs/vendor/` | Üç borsanın resmi kaynaklı uç envanteri, istek limitleri, kline ve işlem geçmişi |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-44) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-46) |
 
 ---
 
@@ -156,7 +156,7 @@ BtcTurk'tan üç önemli fark:
 | **Kullanıcıya özel socket akışları** | Giriş çalışıyor, ama mesaj gövdeleri (423/441/451/452/453) hesapta **hareket olmadan gelmiyor** ve hiçbir yerde belgelenmemiş. Modelleri yazmak için gerçek emir hareketi gerekiyor |
 | **`tax` alanının shared karşılığı** | BtcTurk işlem başına vergi bildiriyor; `SharedUserTrade` bunu temsil edemiyor. Native modelde korunur, shared yüzeyde yalnızca komisyon aktarılır |
 | **Emir uçlarının canlı doğrulaması** | Gerçek emir vermeyi gerektirir; bilinçli olarak ertelendi. İmzalama ve okuma uçları canlı doğrulandı |
-| **Binance TR: private uçların canlı doğrulaması** | Şema resmi dokümantasyondan alındı, imzalama yayımlanmış test vektörüyle doğrulandı. Gerçek bir hesaba karşı denenmesi anahtar geldiğinde yapılacak; `AuthenticationProbeTests` bunu ilk çalıştırmada bildirir |
+| **Binance TR: private uçların canlı doğrulaması** | Anahtar bağlandı ve **borsa tarafından tanındığı doğrulandı**: dönen kod `3702`, `3701` değil. İmzalı istek henüz kabul edilmiyor; sekiz farklı şema denendi ve hepsi aynı kodu aldı. Kalan en olası neden, secret ile anahtarın aynı çiftten gelmemesidir (D-45, D-46) |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Borsanın resmi API'si var; public ticker ve emir defteri canlı doğrulandı |
 | **CoinTR adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Altı public uç canlı doğrulandı; imzalama şeması iki aşamalı ve henüz denenmedi |
@@ -222,8 +222,9 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 **1. Binance TR private uçlarının canlı doğrulaması**
 
-Anahtar hazır. `AuthenticationProbeTests` imzanın kabul edilip edilmediğini ilk
-çalıştırmada bildirir; kabul edilirse hesap ve emir uçları gerçek yanıtlarla doğrulanır.
+Anahtar bağlandı ve tanındığı doğrulandı. İmza henüz kabul edilmiyor; anahtar ile
+secret'ın aynı çiftten geldiği teyit edilip tekrar denenecek. Kabul edildiğinde hesap ve
+emir uçları gerçek yanıtlarla doğrulanır.
 
 **2. Paribu adaptörü (M5)**
 

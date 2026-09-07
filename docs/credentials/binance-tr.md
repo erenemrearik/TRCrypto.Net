@@ -149,6 +149,11 @@ var serverTime = await rest.SpotApi.ExchangeData.GetServerTimeAsync();
 Console.WriteLine($"Fark: {(DateTime.UtcNow - serverTime.Data).TotalMilliseconds:N0} ms");
 ```
 
+> [!TIP]
+> Saat kaymasıyla imza hatasını ayırmak için isteği bir de en geniş pencereyle (60000 ms)
+> gönderin. Yalnızca geniş pencereyle geçiyorsa sorun saattedir; ikisinde de aynı kod
+> geliyorsa saat değil imza sorunludur. `AuthenticationProbeTests` bu ayrımı otomatik yapar.
+
 Windows'ta düzeltme: **Ayarlar → Saat ve dil → Tarih ve saat → Şimdi eşitle**.
 Etki alanına bağlı makinelerde saat etki alanı denetleyicisinden gelir; kayma
 sürüyorsa çözüm sistem yöneticisindedir.
@@ -159,9 +164,11 @@ sürüyorsa çözüm sistem yöneticisindedir.
 
 | Belirti | Neden / çözüm |
 |---|---|
+| `3700 Invalid API-key` | Anahtar hiç gönderilmemiş |
 | `3701 Invalid API-key, IP, or permissions` | Üç ayrı nedeni tek mesajda toplar: anahtar yanlış, IP listede değil veya izin işaretli değil. **`/api/v3/*` yollarında ise anahtarınız değil, yol yanlıştır**; aşağıdaki nota bakın |
+| `3702 Invalid signature` | **Anahtarınız geçerli.** Geçersiz bir anahtar bu kodu üretmez, `3701` üretir. Sorun yalnızca imzadadır; IP ve izinleri araştırmak zaman kaybıdır |
 | Zaman damgası / `recvWindow` hatası | Sistem saati kaymış (bölüm 6) |
-| İmza geçersiz | Secret'ı Base64 çözmeye çalışmış olabilirsiniz; Binance TR'de çözülmez (bölüm 5) |
+| İmza geçersiz (`3702`) | En sık neden, secret'ın anahtarla **aynı çiftten gelmemesidir.** İki değer birlikte üretilir; birini yeniden oluşturup diğerini eski bırakırsanız bu kodu alırsınız. Ayrıca secret'ı Base64 çözmeye çalışmış olabilirsiniz; Binance TR'de çözülmez (bölüm 5) |
 | `1106 Incorrect Page number` | Emir defteri kademe sayısı desteklenmiyor; yalnızca 5, 10, 20, 50, 100, 500, 1000 kabul edilir. Mesaj sorunun limit olduğunu söylemez |
 | İşlem/mum listesi boş ama `code: 0` | Borsa bu REST uçlarını boş döndürüyor; veri WebSocket üzerinden gelir |
 | HTTP 429 / 418 | İstek limiti aşıldı; 418 IP yasağıdır ve süresi tekrarla uzar |
