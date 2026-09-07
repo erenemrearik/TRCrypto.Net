@@ -42,6 +42,19 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
   - **Borsadan bağımsız yüzey.** REST tarafında sembol, emir defteri, işlem, bakiye ve
     emir arayüzleri; WebSocket tarafında ticker, işlem, emir defteri ve mum arayüzleri
   - `services.AddTRCryptoBinanceTR(...)`
+- **`TRCrypto.CoinTR`.** CoinTR herkese açık piyasa verisi:
+  - `GetServerTimeAsync` · `GetSymbolsAsync`
+  - `GetTickersAsync` · `GetOrderBookAsync` · `GetTradesAsync` · `GetKlinesAsync`
+  - **WebSocket.** Ticker, emir defteri (1, 5 ve 15 kademe) ve işlem akışları
+  - **Borsadan bağımsız yüzey.** REST tarafında sembol, ticker, emir defteri, işlem ve
+    mum arayüzleri; WebSocket tarafında ticker, işlem ve emir defteri arayüzleri
+  - **Kimlik doğrulama.** Üç parçalı kimlik bilgisi ve HMAC-SHA256 imzalama
+    (`ACCESS-KEY` / `ACCESS-PASSPHRASE` / `ACCESS-SIGN` / `ACCESS-TIMESTAMP`);
+    private uçlar canlı doğrulanana kadar yayımlanmadı
+  - `services.AddTRCryptoCoinTR(...)`
+- **Piyasa panosu örneği.** Üç borsanın Türk lirası paritelerini yan yana gösteren canlı
+  ekran (`examples/TRCrypto.Examples.Dashboard`). Üçü de tek bir `ITickerSocketClient`
+  ile dinlenir; abone olan kodda borsaya göre dallanma yoktur
 - **Bağımlılık enjeksiyonu.** Tek çağrı hem REST hem WebSocket istemcisini kaydeder;
   socket istemcisi tekil olarak paylaşılır
 - **Belgeler.** Borsa başına API anahtarı rehberi (`docs/credentials/`), resmi kaynaklı
@@ -61,11 +74,14 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
   hesap doğrulaması anahtar geldiğinde yapılacak
 - **Binance TR:** REST ticker yok, çünkü borsa bu veriyi anahtarsız sunmuyor. Ticker
   yalnızca WebSocket üzerinden alınabilir
-- Paribu ve CoinTR adaptörleri için uç envanteri çıkarıldı, kod yazılmadı
+- **CoinTR:** private uçlar (bakiye, emir, işlem geçmişi) yayımlanmadı. Resmi
+  dokümantasyondaki imzalama tarifi çalışmıyor; kütüphanedeki şema çalışan bir
+  entegrasyondan doğrulandı ama gerçek bir hesapta denenmedi
+- Paribu adaptörü için uç envanteri çıkarıldı, kod yazılmadı
 
 ### Notlar
 
-Geliştirme sırasında her iki borsanın API'sinde de, resmi dokümantasyonda yer almayan
+Geliştirme sırasında üç borsanın API'sinde de, resmi dokümantasyonda yer almayan
 davranışlar tespit edildi; tümü `docs/spec/` ekinde (D-1…D-46) belgelendi. Öne çıkanlar:
 
 - **BtcTurk:** `code` alanı uçlar arasında farklı tiplerde (sayı / metin) dönüyor
@@ -75,3 +91,5 @@ davranışlar tespit edildi; tümü `docs/spec/` ekinde (D-1…D-46) belgelendi.
   REST'te, `btctry` abonelikte, `BTCTRY` akış gövdesinde)
 - İki borsa zıt serileştirme ayarı gerektiriyor: BtcTurk'te alan eşleşmesi harf
   büyüklüğüne duyarsız, Binance TR'de duyarlı olmalı
+- **CoinTR:** değişim oranı yüzde değil kesir olarak geliyor (`-0.00912` yüzde 0,912
+  düşüş demektir) ve bütün sayısal değerler metin olarak gönderiliyor

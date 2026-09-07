@@ -3,6 +3,7 @@ using TRCrypto.BinanceTR.Clients;
 using TRCrypto.BtcTurk;
 using TRCrypto.BtcTurk.Clients;
 using TRCrypto.BtcTurk.Enums;
+using TRCrypto.CoinTR.Clients;
 
 // TRCrypto.BtcTurk - canli public API dogrulamasi.
 // Bu ornek kimlik bilgisi GEREKTIRMEZ; yalnizca herkese acik piyasa verisi kullanir.
@@ -211,16 +212,19 @@ if (tickerSub.Success)
 await socket.SpotApi.UnsubscribeAllAsync();
 Console.WriteLine("  tum abonelikler kapatildi");
 
-// ─── 11) Iki borsa, tek kod ──────────────────────────────────────────────────
+// ─── 11) Uc borsa, tek kod ───────────────────────────────────────────────────
 // Projenin varlik nedeni: cagiran kod hangi borsayla konustugunu bilmez.
-// Her borsa kendi sembol bicimini uretir (BTCTRY / BTC_TRY) ve kendi zarfini acar;
-// asagidaki kodda bunlarin hicbiri gorunmez.
-Console.WriteLine($"\n[11] Iki borsa, tek kod");
+// Her borsa kendi sembol bicimini uretir (BTCTRY / BTC_TRY / BTCTRY) ve kendi zarfini
+// acar; asagidaki kodda bunlarin hicbiri gorunmez.
+Console.WriteLine($"\n[11] Uc borsa, tek kod");
+
+using var cointrRest = new CoinTRRestClient();
 
 var restBorsalar = new (string Ad, IOrderBookRestClient Istemci)[]
 {
     ("BtcTurk  ", client.SpotApi.SharedClient),
-    ("BinanceTR", new BinanceTRRestClient().SpotApi.SharedClient)
+    ("BinanceTR", new BinanceTRRestClient().SpotApi.SharedClient),
+    ("CoinTR   ", cointrRest.SpotApi.SharedClient)
 };
 
 foreach (var (ad, restIstemci) in restBorsalar)
@@ -236,15 +240,18 @@ foreach (var (ad, restIstemci) in restBorsalar)
 // yaniltici hale getirirdi.
 using var binanceRest = new BinanceTRRestClient();
 Console.WriteLine($"  REST ticker        : BtcTurk={client.SpotApi.SharedClient is ISpotTickerRestClient}, " +
-                  $"BinanceTR={binanceRest.SpotApi.SharedClient is ISpotTickerRestClient}");
+                  $"BinanceTR={binanceRest.SpotApi.SharedClient is ISpotTickerRestClient}, " +
+                  $"CoinTR={cointrRest.SpotApi.SharedClient is ISpotTickerRestClient}");
 Console.WriteLine("  (Binance TR ticker verisini yalnizca WebSocket uzerinden sunuyor)");
 
-// Ayni sey socket tarafinda da gecerli: tek bir SharedSymbol, iki borsa.
+// Ayni sey socket tarafinda da gecerli: tek bir SharedSymbol, uc borsa.
 using var binanceSocket = new BinanceTRSocketClient();
+using var cointrSocket = new CoinTRSocketClient();
 var socketBorsalar = new (string Ad, ITickerSocketClient Socket)[]
 {
     ("BtcTurk  ", socket.SpotApi.SharedClient),
-    ("BinanceTR", binanceSocket.SpotApi.SharedClient)
+    ("BinanceTR", binanceSocket.SpotApi.SharedClient),
+    ("CoinTR   ", cointrSocket.SpotApi.SharedClient)
 };
 
 var fiyatlar = new decimal?[socketBorsalar.Length];
@@ -266,10 +273,13 @@ await Task.Delay(8000);
 for (var i = 0; i < socketBorsalar.Length; i++)
     Console.WriteLine($"  {socketBorsalar[i].Ad} canli   : {fiyatlar[i]?.ToString("N0") ?? "veri gelmedi"} TRY");
 
-if (fiyatlar[0] is { } btcTurkFiyat && fiyatlar[1] is { } binanceFiyat)
+// Fark, o an fiyat bildiren borsalar arasindaki en yuksek ile en dusuk arasidir.
+var bildirilen = fiyatlar.Where(x => x.HasValue).Select(x => x!.Value).ToArray();
+if (bildirilen.Length >= 2)
 {
-    var fark = Math.Abs(btcTurkFiyat - binanceFiyat);
-    Console.WriteLine($"  Fark               : {fark:N0} TRY ({fark / btcTurkFiyat:P3})");
+    var enDusuk = bildirilen.Min();
+    var fark = bildirilen.Max() - enDusuk;
+    Console.WriteLine($"  Fark               : {fark:N0} TRY ({fark / enDusuk:P3})");
 }
 
 foreach (var abonelik in abonelikler)

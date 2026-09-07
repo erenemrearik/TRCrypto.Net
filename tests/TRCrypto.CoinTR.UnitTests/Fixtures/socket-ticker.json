@@ -1,0 +1,21 @@
+{
+  "action": "snapshot",
+  "arg": { "instType": "SPOT", "channel": "ticker", "instId": "BTCTRY" },
+  "data": [
+    {
+      "instId": "BTCTRY",
+      "lastPr": "3830046",
+      "open24h": "3810376",
+      "high24h": "3901118",
+      "low24h": "3800024",
+      "change24h": "-0.00912",
+      "bidPr": "3829767",
+      "askPr": "3830901",
+      "bidSz": "0.05552",
+      "askSz": "0.04752",
+      "baseVolume": "13.72871",
+      "quoteVolume": "52468521.90"
+    }
+  ],
+  "ts": 1788787397722
+}

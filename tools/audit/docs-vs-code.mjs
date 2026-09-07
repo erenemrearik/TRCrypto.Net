@@ -37,6 +37,7 @@ function sourceFiles(dir) {
 const adapters = [
   { name: 'BtcTurk', src: 'src/TRCrypto.BtcTurk', readme: 'src/TRCrypto.BtcTurk/README.md' },
   { name: 'BinanceTR', src: 'src/TRCrypto.BinanceTR', readme: 'src/TRCrypto.BinanceTR/README.md' },
+  { name: 'CoinTR', src: 'src/TRCrypto.CoinTR', readme: 'src/TRCrypto.CoinTR/README.md' },
 ];
 
 // ── 1. Kodda gecen uc yollari paket README'sinde ve vendor envanterinde var mi? ──
@@ -120,7 +121,10 @@ const testCount = (project) => {
   return facts;
 };
 
-const unitTotal = testCount('TRCrypto.BtcTurk.UnitTests') + testCount('TRCrypto.BinanceTR.UnitTests');
+const unitTotal =
+  testCount('TRCrypto.BtcTurk.UnitTests') +
+  testCount('TRCrypto.BinanceTR.UnitTests') +
+  testCount('TRCrypto.CoinTR.UnitTests');
 
 // Test sayisi yalnizca durum belgesinde yazili. README'de rozet olarak tutulmuyordu:
 // elle guncellenen bir sayi her test eklendiginde bayatliyor ve derleme rozeti zaten
@@ -168,7 +172,13 @@ const targetFrameworks = read('src/Directory.Build.props').match(/<TargetFramewo
 
 if (targetFrameworks) {
   const frameworks = targetFrameworks.split(';').map((s) => s.trim()).filter(Boolean);
-  for (const file of ['README.md', 'CLAUDE.md', 'src/TRCrypto.BtcTurk/README.md', 'src/TRCrypto.BinanceTR/README.md']) {
+  for (const file of [
+    'README.md',
+    'CLAUDE.md',
+    'src/TRCrypto.BtcTurk/README.md',
+    'src/TRCrypto.BinanceTR/README.md',
+    'src/TRCrypto.CoinTR/README.md',
+  ]) {
     const text = read(file);
     for (const framework of frameworks) {
       if (!text.includes(framework)) {
@@ -243,12 +253,14 @@ if (targetFrameworks) {
   const exempt = [
     'tests/TRCrypto.BtcTurk.UnitTests/AuthenticationTests.cs',
     'tests/TRCrypto.BinanceTR.UnitTests/AuthenticationTests.cs',
+    'tests/TRCrypto.CoinTR.UnitTests/AuthenticationTests.cs',
     'tests/TRCrypto.BtcTurk.UnitTests/CredentialsSecurityTests.cs',
   ];
 
   const fixtureDirs = [
     'tests/TRCrypto.BtcTurk.UnitTests/Fixtures',
     'tests/TRCrypto.BinanceTR.UnitTests/Fixtures',
+    'tests/TRCrypto.CoinTR.UnitTests/Fixtures',
   ];
 
   for (const dir of fixtureDirs) {

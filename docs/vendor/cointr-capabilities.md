@@ -2,21 +2,25 @@
 
 > **Kaynak:** [cointr-ex.github.io/openapis](https://cointr-ex.github.io/openapis/) ·
 > [cointr.com/api-doc](https://www.cointr.com/api-doc/common/intro)
-> **Erişim tarihi:** 7 Eylül 2026
+> **Erişim tarihi:** 8 Eylül 2026
 >
 > Bu dosya kopyalanmış bir doküman değildir; kaynağı belirtilmiş bir envanterdir. Yalnızca
 > resmi dokümantasyondan ya da canlı denemeden doğrulanan uçlar yazılır.
+>
+> **Uygulama durumu:** aşağıdaki altı public uç ve üç WebSocket kanalı
+> `src/TRCrypto.CoinTR` içinde uygulandı ve canlı doğrulandı. Private uçlar, imzalama
+> gerçek bir hesapta kabul edilene kadar yayımlanmayacaktır.
 
 ## Genel
 
 | Alan | Değer |
 |---|---|
 | REST base URL | `https://api.cointr.pro` |
-| WebSocket base URL | `wss://stream.cointr.pro/ws` |
+| WebSocket base URL | `wss://ws.cointr.pro/v2/ws/public` |
 | Sembol biçimi | `BTCTRY`, **birleşik ve büyük harf** |
 | Quote varlık | `TRY` |
 | Parite sayısı | 309 (7 Eylül 2026) |
-| Kimlik doğrulama | `X-COINTR-APIKEY` ve `X-COINTR-SIGN` başlıkları |
+| Kimlik doğrulama | `ACCESS-KEY`, `ACCESS-PASSPHRASE`, `ACCESS-SIGN`, `ACCESS-TIMESTAMP` |
 | Zaman damgası | Unix **milisaniye** |
 
 ## Kritik 1: başarı kodu metindir, sayı değil
@@ -46,32 +50,105 @@ Bu, projedeki dördüncü farklı zarf biçimidir:
 uçlar arasında sayı ve metin olarak değiştiği zaten belgelenmişti (D-7); CoinTR bunu her
 uçta metin yaparak tutarlı davranıyor, ama diğerlerinden farklı bir tutarlılıkla.
 
-## Kritik 2: imza iki aşamalı ve 30 saniyelik pencereye bağlı
+## Kritik 2: kimlik doğrulama şeması dokümantasyondan farklı
 
-Diğer üç borsa secret ile doğrudan tek bir HMAC hesaplar. CoinTR iki aşama kullanır:
+`cointr-ex.github.io` üzerindeki açıklama, imzanın iki aşamada üretildiğini ve HMAC
+anahtarının 30 saniyelik zaman diliminden türetildiğini söylüyor. Başlıklar için de
+`X-COINTR-APIKEY` ve `X-COINTR-SIGN` veriyor.
 
-1. `key1 = HMAC-SHA256(apiSecret, floor(currentTimeMs / 30000))`
-2. `signature = HMAC-SHA256(key1, queryString + body)`
+**Çalışan şema bu değil.** Aşağıdaki şema üretimde kullanılan bir entegrasyondan
+doğrulanmıştır.
 
-Birinci aşamanın mesajı **30 saniyelik zaman dilimidir.** Bu, imzanın kendiliğinden 30
-saniyede bir değişmesi ve dilim sınırında yenilenmesi gerektiği anlamına gelir. Sabit bir
-imzayı önbelleğe almak, dilim değiştiğinde isteklerin sessizce reddedilmesine yol açar.
+### Başlıklar
 
-Şema resmi dokümantasyondan alınmıştır ve **canlı bir hesapla doğrulanmamıştır.** Kod
-yazılmadan önce doğrulanacaktır.
+| Başlık | Değer |
+|---|---|
+| `ACCESS-KEY` | API anahtarı |
+| `ACCESS-PASSPHRASE` | **Parola.** Anahtar oluşturulurken belirlenir |
+| `ACCESS-SIGN` | `HMAC-SHA256` sonucunun **Base64** hali |
+| `ACCESS-TIMESTAMP` | Unix **milisaniye** |
+| `locale` | `en-US` |
+
+> [!IMPORTANT]
+> Kimlik bilgisi **üç parçalıdır.** Diğer üç borsa anahtar ve secret ile yetinir; burada
+> ayrıca bir parola vardır ve eksikse istek reddedilir. Dokümantasyondan okunan şemada bu
+> alan hiç geçmiyordu.
+
+### İmza
+
+```
+preHash = timestamp + METHOD + path + query + body
+imza    = Base64(HMAC-SHA256(secret, preHash))
+```
+
+| Parça | Kural |
+|---|---|
+| `timestamp` | `ACCESS-TIMESTAMP` başlığındaki değerin aynısı, milisaniye |
+| `METHOD` | Büyük harf: `GET`, `POST` |
+| `path` | `/api/v2` öneki dahil tam yol |
+| `query` | Baştaki `?` **dahil**; sorgu yoksa boş metin |
+| `body` | Ham JSON gövde; `GET` için boş metin |
+
+Yol imzaya **dahildir**. Bu, dört borsa arasında yalnızca burada geçerlidir.
 
 ### Dört borsanın imzalama şeması
 
 | | BtcTurk | Binance TR | Paribu | CoinTR |
 |---|---|---|---|---|
-| Anahtar başlığı | `X-PCK` | `X-MBX-APIKEY` | `Authorization` | `X-COINTR-APIKEY` |
-| İmza yeri | `X-Signature` başlığı | `signature` parametresi | `X-Signature` başlığı | `X-COINTR-SIGN` başlığı |
-| İmzalanan | `anahtar + damga` | sorgu ve gövde | `damga + sorgu + gövde` | `sorgu + gövde` |
-| Anahtar türetme | doğrudan secret | doğrudan secret | doğrudan secret | **secret ve 30 sn dilimi** |
+| Kimlik parçası | 2 | 2 | 2 | **3** (parola ile) |
+| Anahtar başlığı | `X-PCK` | `X-MBX-APIKEY` | `Authorization` | `ACCESS-KEY` |
+| İmza yeri | `X-Signature` | `signature` parametresi | `X-Signature` | `ACCESS-SIGN` |
+| İmzalanan | `anahtar + damga` | sorgu ve gövde | `damga + sorgu + gövde` | `damga + metot + yol + sorgu + gövde` |
+| Yol imzada mı | hayır | hayır | hayır | **evet** |
 | Secret | Base64, çözülür | ham metin | ham metin | ham metin |
-| İmza kodlaması | Base64 | onaltılık | Base64 | dokümantasyonda belirtilmemiş, doğrulanacak |
+| İmza kodlaması | Base64 | onaltılık | Base64 | Base64 |
 
-Dördü de HMAC-SHA256 kullanır ve hiçbirinde imzalanan değer aynı değildir.
+Dördü de HMAC-SHA256 kullanır ve hiçbirinde imzalanan değer aynı değildir. Ortak bir
+yardımcı sınıf yazma denemesi, hangi borsada yanlış imza üretildiğini gizlemekten başka
+bir işe yaramaz.
+
+### Bu şema neden tanıdık
+
+Zarfın `code: "00000"` biçimi, `ACCESS-*` başlıkları ve parola alanı Bitget'in
+konvansiyonlarıdır. CoinTR bu altyapıyı kullanıyor. Bitget için yazılmış bir istemcinin
+davranışı burada iyi bir tahmin kaynağıdır, ancak yine de kaynak olarak resmi
+dokümantasyon ve canlı ölçüm esas alınır.
+
+## WebSocket (canlı doğrulandı)
+
+| Alan | Değer |
+|---|---|
+| Adres | `wss://ws.cointr.pro/v2/ws/public` |
+| Abonelik | `{"op":"subscribe","args":[{"instType":"SPOT","channel":"ticker","instId":"BTCTRY"}]}` |
+| Onay | `{"event":"subscribe","arg":{...}}` |
+| Veri | `{"action":"snapshot"\|"update","arg":{...},"data":[...]}` |
+| Canlılık | Sunucu düz metin `pong` çerçevesi gönderir; JSON değildir |
+
+Kanallar: `ticker`, `books`, `books1`, `books5`, `books15`, `trade`, `candle<aralık>`.
+
+`books` farklı gönderir, `books5` ve `books15` tam görüntü gönderir. İlk mesajın
+`action` alanı `snapshot`, sonrakiler `update` olur.
+
+Ticker gövdesi:
+
+```json
+{
+  "instId": "BTCTRY",
+  "lastPr": "3830046",
+  "open24h": "3810376", "high24h": "3901118", "low24h": "3800024",
+  "change24h": "-0.00912",
+  "bidPr": "3829767", "askPr": "3830901",
+  "bidSz": "0.05552", "askSz": "0.04752",
+  "baseVolume": "13.72871", "quoteVolume": "52468521.90"
+}
+```
+
+> `change24h` **kesirdir**, yüzde değil: `-0.00912` yüzde 0,912 düşüş demektir. REST
+> ticker ucu da aynı biçimi kullanır. Doğrudan aktarmak değeri yüz kat küçük gösterir.
+
+Düz metin `pong` çerçevesi JSON çözümleyicisini düşürür; mesaj işleyicisi bunu JSON
+olarak ayrıştırmaya çalışmadan önce elemelidir.
+
 
 ## Public uçlar (canlı doğrulandı)
 
@@ -193,7 +270,7 @@ dokümantasyonla karşılaştırılacaktır.**
 | Hesap ve bakiye | İmza şeması doğrulanmadan denenmeyecek |
 | Emir oluşturma, iptal, sorgulama | Aynı |
 | İşlem geçmişi | Aynı |
-| WebSocket akışları | `wss://stream.cointr.pro/ws`, protokol doğrulanmadı |
+| Vadeli işlem akışları | Kapsam dışı; TRCrypto yalnızca spot sunar |
 | Vadeli işlemler | Kapsam dışı; TRCrypto yalnızca spot sunar |
 | İstek limitleri | Belgelenmedi |
 

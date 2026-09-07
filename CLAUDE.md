@@ -102,10 +102,11 @@ borsaların dokümantasyonunun anlatmadığı şeyleri anlatmalarıdır.
 ```
 src/TRCrypto.BtcTurk/          BtcTurk adaptörü
 src/TRCrypto.BinanceTR/        Binance TR adaptörü
+src/TRCrypto.CoinTR/           CoinTR adaptörü
 tests/*.UnitTests/             Ağa çıkmayan testler
 tests/*.IntegrationTests/      Canlı API testleri
 examples/TRCrypto.Examples.Console/    Uctan uca canli dogrulama
-examples/TRCrypto.Examples.Dashboard/  Canli piyasa panosu
+examples/TRCrypto.Examples.Dashboard/  Uc borsali canli piyasa panosu
 docs/DURUM.md                  Nerede kaldık, ne kaldı
 docs/credentials/              Borsa başına API anahtarı rehberi
 docs/vendor/                   Doğrulanmış uç envanteri
@@ -147,18 +148,22 @@ Doküman değiştirip siteyi yeniden üretmezseniz CI derlemeyi durdurur.
 Bu farklar ADR-003'ün ("her borsa bağımsız adaptör") gerekçesidir. Tek bir ortak
 uygulamaya indirgenemezler.
 
-| | BtcTurk | Binance TR |
-|---|---|---|
-| Sembol biçimi | `BTCTRY` | REST'te `BTC_TRY`, abonelikte `btctry`, akışta `BTCTRY` |
-| Başarı göstergesi | `success` alanı | `code == 0` |
-| Hata mesajı alanı | `message` | `msg`, emir oluşturmada `message` |
-| Secret | Base64, çözülerek kullanılır | Ham metin, çözülmez |
-| İmza kodlaması | Base64 | Onaltılık |
-| İmza başlıkları | `X-PCK`, `X-Stamp`, `X-Signature` | `X-MBX-APIKEY` ve `signature` parametresi |
-| Alan eşleşmesi | Harf büyüklüğüne **duyarsız** olmalı | Harf büyüklüğüne **duyarlı** olmalı |
-| Emir durumu | Metin | Sayı |
-| REST ticker | Var | Yok, yalnızca WebSocket |
-| Zaman toleransı | Geniş | `recvWindow` varsayılan 5000 ms |
+| | BtcTurk | Binance TR | CoinTR |
+|---|---|---|---|
+| Sembol biçimi | `BTCTRY` | REST'te `BTC_TRY`, abonelikte `btctry`, akışta `BTCTRY` | `BTCTRY` |
+| Başarı göstergesi | `success` alanı | `code == 0` | `code == "00000"`, metin |
+| Hata mesajı alanı | `message` | `msg`, emir oluşturmada `message` | `msg` |
+| Kimlik bilgisi | anahtar + secret | anahtar + secret | anahtar + secret + **parola** |
+| Secret | Base64, çözülerek kullanılır | Ham metin, çözülmez | Ham metin, çözülmez |
+| İmzalanan değer | anahtar + zaman damgası | sorgu dizesi | zaman damgası + metot + **yol** + sorgu + gövde |
+| İmza kodlaması | Base64 | Onaltılık | Base64 |
+| İmza başlıkları | `X-PCK`, `X-Stamp`, `X-Signature` | `X-MBX-APIKEY` ve `signature` parametresi | `ACCESS-KEY`, `ACCESS-PASSPHRASE`, `ACCESS-SIGN`, `ACCESS-TIMESTAMP` |
+| Alan eşleşmesi | Harf büyüklüğüne **duyarsız** olmalı | Harf büyüklüğüne **duyarlı** olmalı | Harf büyüklüğüne **duyarlı** olmalı |
+| Emir durumu | Metin | Sayı | Metin |
+| REST ticker | Var | Yok, yalnızca WebSocket | Var |
+| Değişim oranı | Yüzde | Yüzde | **Kesir**, yüzde değil |
+| Sayısal değerler | Karışık | Karışık | **Hepsi metin** |
+| Zaman toleransı | Geniş | `recvWindow` varsayılan 5000 ms | Belgelenmedi |
 
 Paribu bu tabloya üçüncü bir biçim ekler: `btc_tl`. Türk lirasını `TRY` değil **`TL`**
 olarak yazan tek borsadır, sembolleri küçük harflidir ve imza yükü zaman damgası, sorgu
@@ -184,15 +189,16 @@ Private uçlar canlı bir hesapta henüz kabul edilmedi. Anahtar tanınıyor (`3
 değil) ancak imza eşleşmiyor; en olası neden secret'ın anahtarla aynı çiftten gelmemesi
 (D-45, D-46).
 
+**CoinTR** herkese açık yüzeyi tamamlandı: altı REST ucu, üç WebSocket kanalı ve
+paylaşılan okuma yüzeyi, hepsi canlı doğrulandı. Private uçlar yayımlanmadı; resmi
+dokümantasyondaki imzalama tarifi çalışmıyor, kütüphanedeki şema çalışan bir
+entegrasyondan doğrulandı ama gerçek bir hesapta denenmedi.
+
 **Paribu** için uç envanteri çıkarıldı ve `docs/vendor/paribu-capabilities.md` dosyasına
 yazıldı; kod henüz yazılmadı. Borsanın resmi bir API'si vardır, public ticker ve emir
 defteri anahtarsız çalışır ve canlı doğrulanmıştır.
 
-**CoinTR** için de uç envanteri çıkarıldı (`docs/vendor/cointr-capabilities.md`). Altı
-public uç anahtarsız çalışıyor ve canlı doğrulandı; imzalaması iki aşamalıdır ve henüz
-denenmemiştir.
-
-Platform sırası: BtcTurk, Binance TR, Paribu, CoinTR. Önceki planda yer alan Bitexen ve
+Platform sırası: BtcTurk, Binance TR, CoinTR, Paribu. Önceki planda yer alan Bitexen ve
 ICRYPEX şimdilik kapsam dışıdır.
 
 NuGet'e henüz yayınlanmadı; ilk sürüm `0.1.0-preview` olarak planlanıyor.

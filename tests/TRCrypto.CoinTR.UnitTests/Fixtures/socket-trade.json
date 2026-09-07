@@ -1,0 +1,14 @@
+{
+  "action": "update",
+  "arg": { "instType": "SPOT", "channel": "trade", "instId": "BTCTRY" },
+  "data": [
+    {
+      "tradeId": "1480847216137556071",
+      "price": "3847741",
+      "size": "0.00009",
+      "side": "sell",
+      "ts": "1788787409815"
+    }
+  ],
+  "ts": 1788787409815
+}

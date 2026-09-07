@@ -61,11 +61,12 @@ TRCrypto offers **two surfaces** per exchange:
   <td><img src="https://img.shields.io/badge/complete-1B6340?style=flat-square" alt="complete"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.Paribu</code></td><td>Endpoints inventoried</td>
-  <td><img src="https://img.shields.io/badge/queued-1F3E8C?style=flat-square" alt="queued"></td>
+  <td><code>TRCrypto.CoinTR</code></td>
+  <td>Market data · klines · WebSocket · SharedApis</td>
+  <td><img src="https://img.shields.io/badge/public%20surface-1B6340?style=flat-square" alt="public surface"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.CoinTR</code></td><td>Endpoints inventoried</td>
+  <td><code>TRCrypto.Paribu</code></td><td>Endpoints inventoried</td>
   <td><img src="https://img.shields.io/badge/queued-1F3E8C?style=flat-square" alt="queued"></td>
 </tr>
 <tr>
@@ -81,11 +82,15 @@ streams. The read endpoints are verified against a real account.
 streams. Ticker arrives only over WebSocket, because the exchange does not serve ticker
 data over REST without a key.
 
-Both are usable through the native and the shared surface.
+**CoinTR:** symbols, ticker, order book, trades, klines and real time streams. All of it
+works without a key and is verified live.
 
-**Not there yet.** User specific WebSocket streams on BtcTurk, and the Paribu and CoinTR
-adapters. Binance TR's private endpoints are written but have not yet been accepted by a
-live account.
+All three are usable through the native and the shared surface.
+
+**Not there yet.** User specific WebSocket streams on BtcTurk, and the Paribu adapter.
+Binance TR's private endpoints are written but have not yet been accepted by a live
+account. CoinTR's private endpoints stay unpublished until the signing scheme is verified
+against a real account.
 
 Deposit and withdrawal endpoints are deliberately out of scope (ADR-007).
 Detail: [docs/DURUM.md](docs/DURUM.md)
@@ -175,7 +180,7 @@ rejected before the request reaches the network.
 ```bash
 dotnet build -c Release
 dotnet test  -c Release
-dotnet run --project examples/TRCrypto.Examples.Console     # live check against two exchanges
+dotnet run --project examples/TRCrypto.Examples.Console     # live check against the exchanges
 dotnet run --project examples/TRCrypto.Examples.Dashboard   # live market board, localhost:5180
 ```
 

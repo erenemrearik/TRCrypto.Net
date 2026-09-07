@@ -3,6 +3,7 @@ using CryptoExchange.Net.Objects.Sockets;
 using CryptoExchange.Net.SharedApis;
 using TRCrypto.BinanceTR.Clients;
 using TRCrypto.BtcTurk.Clients;
+using TRCrypto.CoinTR.Clients;
 
 namespace TRCrypto.Examples.Dashboard;
 
@@ -33,6 +34,7 @@ internal sealed class MarketBoard : IAsyncDisposable
 
     private BtcTurkSocketClient? _btcTurk;
     private BinanceTRSocketClient? _binanceTR;
+    private CoinTRSocketClient? _coinTR;
 
     public MarketBoard(ILogger<MarketBoard> logger)
     {
@@ -46,24 +48,27 @@ internal sealed class MarketBoard : IAsyncDisposable
     public static IReadOnlyList<string> Assets => _assets;
 
     /// <summary>Panoda gosterilen borsalar.</summary>
-    public static IReadOnlyList<string> Venues => ["BtcTurk", "Binance TR"];
+    public static IReadOnlyList<string> Venues => ["BtcTurk", "Binance TR", "CoinTR"];
 
     /// <summary>
-    /// Iki borsadaki butun paritelere abone olur.
+    /// Uc borsadaki butun paritelere abone olur.
     /// </summary>
     /// <remarks>
-    /// Abonelik dongusu borsaya gore dallanmaz: her ikisi de ayni
-    /// <see cref="ITickerSocketClient"/> arayuzu uzerinden dinlenir.
+    /// Abonelik dongusu borsaya gore dallanmaz: ucu de ayni
+    /// <see cref="ITickerSocketClient"/> arayuzu uzerinden dinlenir. Borsa eklemek bu
+    /// listeye bir satir yazmaktan ibarettir; asagidaki kodun geri kalani degismez.
     /// </remarks>
     public async Task StartAsync(CancellationToken ct)
     {
         _btcTurk = new BtcTurkSocketClient();
         _binanceTR = new BinanceTRSocketClient();
+        _coinTR = new CoinTRSocketClient();
 
         var venues = new (string Name, ITickerSocketClient Client)[]
         {
             ("BtcTurk", _btcTurk.SpotApi.SharedClient),
             ("Binance TR", _binanceTR.SpotApi.SharedClient),
+            ("CoinTR", _coinTR.SpotApi.SharedClient),
         };
 
         // Her borsanin ayni SharedSymbol icin urettigi native ad. Abone olan kod bunu
@@ -71,6 +76,7 @@ internal sealed class MarketBoard : IAsyncDisposable
         // kilar. Akis govdesindeki ad iki borsada da ayni geldigi icin yetmiyor.
         _nativeNames["BtcTurk"] = _btcTurk.SpotApi.FormatSymbol;
         _nativeNames["Binance TR"] = _binanceTR.SpotApi.FormatSymbol;
+        _nativeNames["CoinTR"] = _coinTR.SpotApi.FormatSymbol;
 
         foreach (var (venue, client) in venues)
         {
@@ -172,6 +178,7 @@ internal sealed class MarketBoard : IAsyncDisposable
 
         _btcTurk?.Dispose();
         _binanceTR?.Dispose();
+        _coinTR?.Dispose();
     }
 
     private sealed record Quote(

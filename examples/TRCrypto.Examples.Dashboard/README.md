@@ -1,6 +1,6 @@
 # Piyasa Panosu
 
-İki borsanın Türk lirası paritelerini yan yana gösteren canlı bir ekran.
+Üç borsanın Türk lirası paritelerini yan yana gösteren canlı bir ekran.
 
 ```bash
 dotnet run --project examples/TRCrypto.Examples.Dashboard
@@ -19,7 +19,7 @@ hiçbir şey doğrulamaz.
 Ekranın iki işi var.
 
 **Tezi görünür kılmak.** Her fiyatın altında o borsanın native sembol adı yazıyor:
-`BTCTRY` ve `BTC_TRY`. Abone olan kodda bu adların hiçbiri geçmiyor; iki borsa da tek bir
+`BTCTRY` ve `BTC_TRY`. Abone olan kodda bu adların hiçbiri geçmiyor; üç borsa da tek bir
 `ITickerSocketClient` ile ve tek bir `SharedSymbol` ile dinleniyor.
 
 **Birim testlerinin göremediğini göstermek.** Uzun süre çalışan, çok abonelikli bir ekran
@@ -37,7 +37,7 @@ göndermiyordu. İkisi de "abonelik başarılı" diyordu.
 | Bölüm | Ne gösterir |
 |---|---|
 | Tahta | Varlık başına bir satır, borsa başına fiyat ve 24 saatlik değişim |
-| Fark sütunu | İki borsanın son fiyatı arasındaki mutlak ve yüzde fark |
+| Fark sütunu | O an fiyat bildiren borsalar arasındaki en yüksek ile en düşük fiyat arası |
 | Native ad | Her borsanın aynı `SharedSymbol` için ürettiği sembol |
 | Bağlantı sağlığı | Abonelik sayısı, gelen mesaj, son mesajın yaşı, kopma sayısı |
 

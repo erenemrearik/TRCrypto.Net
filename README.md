@@ -55,11 +55,12 @@ TRCrypto her borsa için **iki yüzey** sunar:
   <td><img src="https://img.shields.io/badge/tamamland%C4%B1-1B6340?style=flat-square" alt="tamamlandı"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td>
-  <td><img src="https://img.shields.io/badge/s%C4%B1rada-1F3E8C?style=flat-square" alt="sırada"></td>
+  <td><code>TRCrypto.CoinTR</code></td>
+  <td>Piyasa verisi · mum · WebSocket · SharedApis</td>
+  <td><img src="https://img.shields.io/badge/herkese%20a%C3%A7%C4%B1k%20y%C3%BCzey-1B6340?style=flat-square" alt="herkese açık yüzey"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.CoinTR</code></td><td>Uç envanteri çıkarıldı</td>
+  <td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td>
   <td><img src="https://img.shields.io/badge/s%C4%B1rada-1F3E8C?style=flat-square" alt="sırada"></td>
 </tr>
 <tr>
@@ -75,11 +76,14 @@ zamanlı akışlar. Okuma uçları gerçek bir hesaba karşı doğrulandı.
 akışlar. Ticker yalnızca WebSocket üzerinden gelir, çünkü borsa REST tarafında anahtarsız
 ticker sunmuyor.
 
-Her ikisinin tamamı hem native hem SharedApis üzerinden kullanılabilir.
+**CoinTR:** pariteler, ticker, emir defteri, işlemler, mum verisi ve gerçek zamanlı
+akışlar. Hepsi anahtarsız çalışır ve canlı doğrulandı.
 
-**Henüz yok.** BtcTurk'te kullanıcıya özel WebSocket akışları, Paribu ve CoinTR
-adaptörleri. Binance TR private uçları yazıldı ancak canlı bir hesapta henüz kabul
-edilmedi.
+Üçünün de sunduğu yüzeyler hem native hem SharedApis üzerinden kullanılabilir.
+
+**Henüz yok.** BtcTurk'te kullanıcıya özel WebSocket akışları, Paribu adaptörü. Binance
+TR private uçları yazıldı ancak canlı bir hesapta henüz kabul edilmedi. CoinTR'nin
+private uçları, imzalama gerçek bir hesapta doğrulanana kadar yayımlanmayacak.
 
 Çekim ve yatırma uçları bilinçli olarak kapsam dışıdır (ADR-007).
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
@@ -169,7 +173,7 @@ Eksik fiyat, negatif miktar ve sınır aşımı gibi geçersiz girdiler ağa ç�
 ```bash
 dotnet build -c Release
 dotnet test  -c Release
-dotnet run --project examples/TRCrypto.Examples.Console     # iki borsaya karsi canli dogrulama
+dotnet run --project examples/TRCrypto.Examples.Console     # borsalara karsi canli dogrulama
 dotnet run --project examples/TRCrypto.Examples.Dashboard   # canli piyasa panosu, localhost:5180
 ```
 

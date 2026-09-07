@@ -1,0 +1,41 @@
+{
+  "code": "00000",
+  "msg": "success",
+  "requestTime": 1788787397722,
+  "data": [
+    {
+      "symbol": "BTCTRY",
+      "baseCoin": "BTC",
+      "quoteCoin": "TRY",
+      "minTradeAmount": "0",
+      "maxTradeAmount": "10000000000",
+      "takerFeeRate": "0.001",
+      "makerFeeRate": "0.001",
+      "pricePrecision": "2",
+      "quantityPrecision": "5",
+      "quotePrecision": "6",
+      "status": "online",
+      "minTradeUSDT": "1",
+      "buyLimitPriceRatio": "0.02",
+      "sellLimitPriceRatio": "0.02",
+      "areaSymbol": "no"
+    },
+    {
+      "symbol": "OPTRY",
+      "baseCoin": "OP",
+      "quoteCoin": "TRY",
+      "minTradeAmount": "0",
+      "maxTradeAmount": "10000000000",
+      "takerFeeRate": "0.001",
+      "makerFeeRate": "0.001",
+      "pricePrecision": "2",
+      "quantityPrecision": "2",
+      "quotePrecision": "6",
+      "status": "offline",
+      "minTradeUSDT": "1",
+      "buyLimitPriceRatio": "0.02",
+      "sellLimitPriceRatio": "0.02",
+      "areaSymbol": "no"
+    }
+  ]
+}

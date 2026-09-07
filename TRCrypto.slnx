@@ -6,11 +6,13 @@
   <Folder Name="/src/">
     <Project Path="src/TRCrypto.BinanceTR/TRCrypto.BinanceTR.csproj" />
     <Project Path="src/TRCrypto.BtcTurk/TRCrypto.BtcTurk.csproj" />
+    <Project Path="src/TRCrypto.CoinTR/TRCrypto.CoinTR.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/TRCrypto.BinanceTR.IntegrationTests/TRCrypto.BinanceTR.IntegrationTests.csproj" />
     <Project Path="tests/TRCrypto.BinanceTR.UnitTests/TRCrypto.BinanceTR.UnitTests.csproj" />
     <Project Path="tests/TRCrypto.BtcTurk.IntegrationTests/TRCrypto.BtcTurk.IntegrationTests.csproj" />
     <Project Path="tests/TRCrypto.BtcTurk.UnitTests/TRCrypto.BtcTurk.UnitTests.csproj" />
+    <Project Path="tests/TRCrypto.CoinTR.UnitTests/TRCrypto.CoinTR.UnitTests.csproj" />
   </Folder>
 </Solution>

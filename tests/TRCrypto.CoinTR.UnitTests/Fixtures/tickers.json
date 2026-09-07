@@ -1,0 +1,25 @@
+{
+  "code": "00000",
+  "msg": "success",
+  "requestTime": 1788787397722,
+  "data": [
+    {
+      "open": "3857566",
+      "symbol": "BTCTRY",
+      "high24h": "3901118",
+      "low24h": "3813063",
+      "lastPr": "3846834",
+      "quoteVolume": "53409991.10738",
+      "baseVolume": "13.86216",
+      "usdtVolume": "1105202.659684778281",
+      "ts": "1788787397722",
+      "bidPr": "3846177",
+      "askPr": "3847875",
+      "bidSz": "0.04892",
+      "askSz": "0.06114",
+      "openUtc": "3883216",
+      "changeUtc24h": "-0.00937",
+      "change24h": "-0.00205"
+    }
+  ]
+}

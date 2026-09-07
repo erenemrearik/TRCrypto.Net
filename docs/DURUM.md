@@ -1,6 +1,6 @@
 # Proje Durumu
 
-> **Son güncelleme:** 7 Eylül 2026
+> **Son güncelleme:** 8 Eylül 2026
 > Bu dosya, projeye ara verip döndüğünüzde ya da yeni biri katıldığında okunacak
 > tek sayfalık özettir. Ayrıntı için ilgili belgelere bakın.
 
@@ -20,7 +20,14 @@ eski kullanıcı akışı uçları, 1'i de borsa boş döndürdüğü için atla
 Kalan tek iş, private uçları gerçek bir hesapta çalıştırmak. Anahtar tanınıyor ancak imza
 henüz kabul edilmiyor (D-45, D-46).
 
-Sıradaki iki platform **Paribu** ve **CoinTR**; ikisinin de uç envanteri çıkarıldı.
+**CoinTR'nin herkese açık yüzeyi tamamlandı.** Altı REST ucu, üç WebSocket kanalı ve
+paylaşılan okuma yüzeyi canlı doğrulandı. Private uçlar, imzalama gerçek bir hesapta
+denenene kadar yayımlanmayacak.
+
+Piyasa panosu artık üç borsayı yan yana gösteriyor ve üçü de tek bir
+`ITickerSocketClient` ile dinleniyor.
+
+Sıradaki platform **Paribu**; uç envanteri çıkarıldı, kod yazılmadı.
 
 ---
 
@@ -142,6 +149,39 @@ BtcTurk'tan üç önemli fark:
 2. **Sembol alt çizgili.** `BTC_TRY` kullanılır, BtcTurk ise `BTCTRY` yazar
 3. **Ticker REST'te anahtarsız alınamıyor.** `/api/v3/*` burada public değil, ama socket'te çalışıyor
 
+### M5. CoinTR (herkese açık yüzey) ✅
+
+Envanter kod yazılmadan önce dondurulmuştu; ayrıntı ve dört borsanın imzalama
+karşılaştırması: [vendor/cointr-capabilities.md](vendor/cointr-capabilities.md)
+
+| Uç | Metod |
+|---|---|
+| `/api/v2/public/time` | `GetServerTimeAsync` |
+| `/api/v2/spot/public/symbols` | `GetSymbolsAsync` |
+| `/api/v2/spot/market/tickers` | `GetTickersAsync` |
+| `/api/v2/spot/market/orderbook` | `GetOrderBookAsync` |
+| `/api/v2/spot/market/fills` | `GetTradesAsync` |
+| `/api/v2/spot/market/candles` | `GetKlinesAsync` |
+
+**WebSocket** (`socket.SpotApi`): ticker · books1/books5/books15 · trade
+
+**Bağımlılık enjeksiyonu:** `services.AddTRCryptoCoinTR(...)` çağrısı REST ve WebSocket
+istemcilerini birlikte kaydeder.
+
+**Shared yüzey:** REST tarafında `ISpotSymbolRestClient` · `ISpotTickerRestClient` ·
+`IOrderBookRestClient` · `IRecentTradeRestClient` · `IKlineRestClient`; socket tarafında
+`ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient`.
+
+Bu borsanın diğerlerinden dört farkı var:
+
+1. **Kimlik bilgisi üç parçalı.** Anahtar ve secret'a ek olarak bir parola her istekte
+   `ACCESS-PASSPHRASE` başlığında gider
+2. **Yol imzaya dahil.** Dört borsa arasında imzalanan değere istek yolunu katan tek
+   borsa budur; yol atlandığında imza sessizce geçersiz olur
+3. **Değişim oranı kesir.** `change24h` alanı `-0.00912` gönderir ve bu yüzde 0,912
+   düşüş demektir; doğrudan aktarmak değeri yüz kat küçük gösterir
+4. **Bütün sayısal değerler metin.** Ondalık basamak sayısı ve komisyon oranı dahil
+
 ### Belgeler ✅
 
 | Dosya | İçerik |
@@ -149,6 +189,7 @@ BtcTurk'tan üç önemli fark:
 | `docs/credentials/README.md` | Genel güvenlik: saklama, least-privilege, sızıntı durumu |
 | `docs/credentials/btcturk.md` | BtcTurk'te adım adım API anahtarı alma ve bağlama |
 | `docs/credentials/binance-tr.md` | Binance TR'de anahtar alma; imzalama şemasının BtcTurk'ten farkları |
+| `docs/credentials/cointr.md` | CoinTR'de anahtar alma; üç parçalı kimlik bilgisi ve dört borsanın imza karşılaştırması |
 | `docs/vendor/` | Üç borsanın resmi kaynaklı uç envanteri, istek limitleri, kline ve işlem geçmişi |
 | `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-46) |
 
@@ -165,21 +206,21 @@ BtcTurk'tan üç önemli fark:
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Borsanın resmi API'si var; public ticker ve emir defteri canlı doğrulandı |
 | **BtcTurk: kullanıcıya özel socket akışları** | Giriş çalışıyor ama mesaj gövdeleri hesapta hareket olmadan gelmiyor. Binance TR'de bu boşluk kapandı |
-| **CoinTR adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Altı public uç canlı doğrulandı; imzalama şeması iki aşamalı ve henüz denenmedi |
+| **CoinTR: private uçlar** | İmzalama sağlayıcısı yazıldı ama canlı bir hesapla denenmedi. Yayımlanmamış bir yüzeyi bildirmek `Discover()` çıktısını yanıltıcı hale getirirdi; uçlar anahtar bağlandığında açılacak |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
 ---
 
 ## Doğrulama durumu
 
-Son çalıştırma (27 Ağu 2026):
+Son çalıştırma (8 Eylül 2026):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  223/223 birim · 13 canli API · 2 atlandi
+dotnet test  -c Release   →  277/277 birim · 13 canli API · 2 atlandi
                              birim testler her PR'da, canli testler haftalik iste
 dotnet pack  -c Release   →  .nupkg + .snupkg
-canlı API                 →  379 parite, native == shared
+canlı API                 →  BtcTurk, Binance TR ve CoinTR; native == shared
 ```
 
 Örnek uygulama canlı public API'ye karşı uçtan uca doğrulama yapar
@@ -232,19 +273,19 @@ Anahtar bağlandı ve tanındığı doğrulandı. İmza henüz kabul edilmiyor; 
 secret'ın aynı çiftten geldiği teyit edilip tekrar denenecek. Kabul edildiğinde hesap ve
 emir uçları gerçek yanıtlarla doğrulanır.
 
-**2. Paribu adaptörü (M5)**
+**2. Paribu adaptörü (M6)**
 
-Uç envanteri hazır. Convention'lar iki borsada oturdu; aynı sıra izlenir:
+Uç envanteri hazır. Convention'lar üç borsada oturdu; aynı sıra izlenir:
 public REST, kimlik doğrulama, private REST, WebSocket, shared yüzey.
 
-**3. CoinTR adaptörü (M6)**
+**3. CoinTR private uçları**
 
-Uç envanteri hazır. İmzalama şeması diğer üçünden farklı olduğu için kod yazılmadan önce
-canlı doğrulanacak.
+Herkese açık yüzey tamamlandı. Bakiye, emir ve işlem geçmişi uçları imzalama gerçek bir
+hesapta kabul edildiğinde açılacak.
 
 **4. Toplu paket ve ön sürüm**
 
-İki borsa tamamlandığına göre `TRCrypto.Clients` ve NuGet `v0.1.0-preview` yayınlanabilir.
+Üç borsa hazır olduğuna göre `TRCrypto.Clients` ve NuGet `v0.1.0-preview` yayınlanabilir.
 Workflow hazır; `NUGET_API_KEY` ve environment onayı eksik.
 
 ---
@@ -255,10 +296,10 @@ Workflow hazır; `NUGET_API_KEY` ve environment onayı eksik.
 |---|---|---|
 | 1 | BtcTurk | ✅ Tamamlandı |
 | 2 | Binance TR | ✅ Tamamlandı; canlı hesap doğrulaması bekliyor |
-| 3 | Paribu | Uç envanteri çıkarıldı |
-| 4 | CoinTR | Uç envanteri çıkarıldı |
+| 3 | CoinTR | ✅ Herkese açık yüzey tamamlandı; private uçlar imza doğrulamasını bekliyor |
+| 4 | Paribu | Uç envanteri çıkarıldı |
 
-Liste 7 Eylül 2026'da güncellendi. Önceki planda yer alan Bitexen ve ICRYPEX şimdilik
+Liste 8 Eylül 2026'da güncellendi. Önceki planda yer alan Bitexen ve ICRYPEX şimdilik
 kapsam dışıdır; ileride yeniden değerlendirilebilir.
 
 ---

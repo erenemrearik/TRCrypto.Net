@@ -36,6 +36,7 @@
 
   --cobalt:  #1F3E8C;
   --turkuaz: #10707B;
+  --patlican: #5B3A7E;
 
   /* Anlam renkleri: vurgu renginden ayri tutulur. */
   --up:        #1B6340;
@@ -63,6 +64,7 @@
 
     --cobalt:  #97AEF4;
     --turkuaz: #58C2CB;
+    --patlican: #BFA3E6;
 
     --up:        #4FC98D;
     --up-soft:   #102C1F;
@@ -86,6 +88,7 @@
 
   --cobalt:  #97AEF4;
   --turkuaz: #58C2CB;
+  --patlican: #BFA3E6;
 
   --up:        #4FC98D;
   --up-soft:   #102C1F;
@@ -222,6 +225,7 @@ thead th {
 thead th:first-child { text-align: left; }
 thead th.venue { color: var(--cobalt); }
 thead th.venue.b { color: var(--turkuaz); }
+thead th.venue.c { color: var(--patlican); }
 thead th.gap { border-left: 1px solid var(--line); }
 
 tbody td {
@@ -291,6 +295,7 @@ td.asset { text-align: left; }
 .venue-name b { font-size: 13.5px; font-weight: 700; }
 .venue-name .a { color: var(--cobalt); }
 .venue-name .b { color: var(--turkuaz); }
+.venue-name .c { color: var(--patlican); }
 
 .tag {
   font-family: var(--font-data);
@@ -364,7 +369,7 @@ td.asset { text-align: left; }
   <section class="board">
     <div class="board-head">
       <h1>Türk lirası pariteleri</h1>
-      <p>Her hücre borsadan bağımsız yüzeyden gelir. Aradaki fark iki borsanın son fiyatı arasındadır.</p>
+      <p>Her hücre borsadan bağımsız yüzeyden gelir. Fark sütunu, o an fiyat bildiren borsalar arasındaki en yüksek ile en düşük arasını gösterir.</p>
     </div>
 
     <div class="scroll">
@@ -376,11 +381,13 @@ td.asset { text-align: left; }
             <th scope="col" class="venue">24s değişim</th>
             <th scope="col" class="venue b gap">Binance TR</th>
             <th scope="col" class="venue b">24s değişim</th>
+            <th scope="col" class="venue c gap">CoinTR</th>
+            <th scope="col" class="venue c">24s değişim</th>
             <th scope="col" class="gap">Fark</th>
           </tr>
         </thead>
         <tbody id="rows">
-          <tr><td colspan="6" class="empty" style="padding: 22px 14px">Akış bekleniyor…</td></tr>
+          <tr><td colspan="8" class="empty" style="padding: 22px 14px">Akış bekleniyor…</td></tr>
         </tbody>
       </table>
     </div>
@@ -400,7 +407,7 @@ td.asset { text-align: left; }
         kütüphanenin kodundan geçmiş oluyor.
       </p>
       <p class="note" style="margin-bottom: 0">
-        İki borsa da tek bir <code>ITickerSocketClient</code> ile dinleniyor. Fiyatların
+        Üç borsa da tek bir <code>ITickerSocketClient</code> ile dinleniyor. Fiyatların
         altındaki native sembol adları farklı (<code>BTCTRY</code> ve <code>BTC_TRY</code>),
         ama abone olan kod bunların hiçbirini görmüyor.
       </p>
@@ -466,25 +473,35 @@ function changeCell(entry) {
     (up ? '+' : '') + percent.format(entry.changePercentage) + '%</span></td>';
 }
 
-function spreadCell(a, b) {
-  if (a.price === null || b.price === null || a.price === undefined || b.price === undefined) {
+// Fark, o an fiyat bildiren borsalar arasindaki en yuksek ile en dusuk arasidir.
+// Bir borsa henuz veri gondermediyse hesaba katilmaz; iki borsadan az veri varsa
+// karsilastirilacak bir sey yoktur.
+function spreadCell(cells) {
+  const prices = cells
+    .map(c => c.price)
+    .filter(p => p !== null && p !== undefined);
+
+  if (prices.length < 2) {
     return '<td class="gap"><span class="empty">yok</span></td>';
   }
-  const diff = Math.abs(a.price - b.price);
-  const ratio = diff / Math.min(a.price, b.price) * 100;
+
+  const low = Math.min(...prices);
+  const diff = Math.max(...prices) - low;
   return '<td class="gap"><span class="spread">' + money(diff) +
-    '<small>%' + percent.format(ratio) + '</small></span></td>';
+    '<small>%' + percent.format(diff / low * 100) + '</small></span></td>';
 }
 
 function render(snapshot) {
   rowsEl.innerHTML = snapshot.rows.map(row => {
-    const [a, b] = row.cells;
+    const venueCells = row.cells
+      .map((entry, i) => cell(entry, row.asset, i, i > 0) + changeCell(entry))
+      .join('');
+
     return '<tr>' +
       '<td class="asset"><span class="asset-name">' + row.asset + '</span> ' +
       '<span class="asset-quote">/ TRY</span></td>' +
-      cell(a, row.asset, 0, false) + changeCell(a) +
-      cell(b, row.asset, 1, true) + changeCell(b) +
-      spreadCell(a, b) +
+      venueCells +
+      spreadCell(row.cells) +
       '</tr>';
   }).join('');
 
@@ -494,7 +511,7 @@ function render(snapshot) {
     const label = age === null ? 'veri yok' : age > 15000 ? 'gecikmeli' : 'canlı';
 
     return '<div class="venue-card">' +
-      '<div class="venue-name"><b class="' + (i === 0 ? 'a' : 'b') + '">' + v.venue + '</b>' +
+      '<div class="venue-name"><b class="' + ['a', 'b', 'c'][i % 3] + '">' + v.venue + '</b>' +
       '<span class="tag" data-state="' + (state === 'live' ? '' : state) + '">' + label + '</span></div>' +
       '<div class="metrics">' +
       '<div class="metric"><span>abonelik</span><b>' + v.subscriptions + '</b></div>' +
