@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRCrypto Piyasa Panosu</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%231F3E8C' d='M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z'/%3E%3Cpath fill='%2310707B' d='M32 21.5 42.5 32 32 42.5 21.5 32z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────────────────────
+   TRCrypto piyasa panosu
+
+   Palet dokumantasyon sitesiyle aynidir: Iznik cinisinden kobalt ve turkuaz.
+   Yukselis ve dusus renkleri vurgu renginden AYRIDIR; onlar anlam tasir, kimlik
+   degil.
+
+   Govde yuzu serif degil: bu okunan bir belge degil, izlenen bir ekran. Sayilar
+   IBM Plex Mono ile ve tabular rakamlarla dizilir ki sutunlar hizali kalsin.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  color-scheme: light;
+
+  --ground:    #FCFCFA;
+  --surface:   #FFFFFF;
+  --surface-2: #F3F5F9;
+  --ink:       #141A29;
+  --ink-2:     #3F4860;
+  --ink-3:     #6B7590;
+  --line:      #DEE2EC;
+  --line-soft: #EBEEF4;
+
+  --cobalt:  #1F3E8C;
+  --turkuaz: #10707B;
+
+  /* Anlam renkleri: vurgu renginden ayri tutulur. */
+  --up:        #1B6340;
+  --up-soft:   #E3F2E9;
+  --down:      #A9361F;
+  --down-soft: #FAEAE6;
+  --warn:      #8A5D06;
+
+  --font-ui: 'Archivo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ground:    #0B0F18;
+    --surface:   #111725;
+    --surface-2: #171F31;
+    --ink:       #E5EAF5;
+    --ink-2:     #AAB4CB;
+    --ink-3:     #7B86A2;
+    --line:      #222C43;
+    --line-soft: #192133;
+
+    --cobalt:  #97AEF4;
+    --turkuaz: #58C2CB;
+
+    --up:        #4FC98D;
+    --up-soft:   #102C1F;
+    --down:      #ED8471;
+    --down-soft: #331A15;
+    --warn:      #DCA745;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ground:    #0B0F18;
+  --surface:   #111725;
+  --surface-2: #171F31;
+  --ink:       #E5EAF5;
+  --ink-2:     #AAB4CB;
+  --ink-3:     #7B86A2;
+  --line:      #222C43;
+  --line-soft: #192133;
+
+  --cobalt:  #97AEF4;
+  --turkuaz: #58C2CB;
+
+  --up:        #4FC98D;
+  --up-soft:   #102C1F;
+  --down:      #ED8471;
+  --down-soft: #331A15;
+  --warn:      #DCA745;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; border-radius: 3px; }
+
+/* ── Ust cubuk ────────────────────────────────────────────────────────────── */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 54px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+.brand svg { width: 20px; height: 20px; flex: none; }
+.brand .tr { color: var(--cobalt); }
+.brand .sub {
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.bar-spacer { flex: 1; }
+
+.stat { display: flex; flex-direction: column; gap: 1px; }
+.stat dt {
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.stat dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--up-soft);
+  color: var(--up);
+  font-family: var(--font-data);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.live .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.live[data-state="down"] { background: var(--down-soft); color: var(--down); }
+.live[data-state="wait"] { background: var(--surface-2); color: var(--ink-3); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .live[data-state="up"] .dot { animation: pulse 2s ease-in-out infinite; }
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* ── Duzen ────────────────────────────────────────────────────────────────── */
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 288px;
+  gap: 18px;
+  padding: 18px 20px 28px;
+  align-items: start;
+  max-width: 1500px;
+}
+
+/* ── Tahta ────────────────────────────────────────────────────────────────── */
+
+.board {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.board-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.board-head h1 { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.board-head p { margin: 0; font-size: 12.5px; color: var(--ink-3); }
+
+.scroll { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+
+thead th {
+  padding: 9px 14px;
+  text-align: right;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+thead th:first-child { text-align: left; }
+thead th.venue { color: var(--cobalt); }
+thead th.venue.b { color: var(--turkuaz); }
+thead th.gap { border-left: 1px solid var(--line); }
+
+tbody td {
+  padding: 11px 14px;
+  text-align: right;
+  border-bottom: 1px solid var(--line-soft);
+  font-family: var(--font-data);
+  font-size: 14px;
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody td.gap { border-left: 1px solid var(--line); }
+
+td.asset { text-align: left; }
+.asset-name { font-family: var(--font-ui); font-weight: 700; font-size: 14.5px; }
+.asset-quote { font-family: var(--font-data); font-size: 10.5px; color: var(--ink-3); }
+
+.price { font-weight: 600; font-size: 15px; }
+.price.stale { color: var(--ink-3); }
+.native {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+}
+
+.chg { font-weight: 500; }
+.chg.up { color: var(--up); }
+.chg.down { color: var(--down); }
+
+.spread { font-weight: 600; }
+.spread small { display: block; margin-top: 2px; font-size: 10px; font-weight: 400; color: var(--ink-3); }
+
+.empty { color: var(--ink-3); font-size: 12.5px; }
+
+/* Fiyat degistiginde kisa bir vurgu. Yon bilgisi renkte tasinir. */
+@media (prefers-reduced-motion: no-preference) {
+  td.tick-up { animation: flashUp .55s ease-out; }
+  td.tick-down { animation: flashDown .55s ease-out; }
+}
+@keyframes flashUp { from { background: var(--up-soft); } to { background: transparent; } }
+@keyframes flashDown { from { background: var(--down-soft); } to { background: transparent; } }
+
+/* ── Yan panel ────────────────────────────────────────────────────────────── */
+
+.rail { display: flex; flex-direction: column; gap: 14px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.panel h2 {
+  margin: 0 0 11px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.venue-card + .venue-card { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-soft); }
+.venue-name { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.venue-name b { font-size: 13.5px; font-weight: 700; }
+.venue-name .a { color: var(--cobalt); }
+.venue-name .b { color: var(--turkuaz); }
+
+.tag {
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--up-soft);
+  color: var(--up);
+}
+.tag[data-state="stale"] { background: var(--surface-2); color: var(--warn); }
+.tag[data-state="down"] { background: var(--down-soft); color: var(--down); }
+
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 12px; margin-top: 9px; }
+.metric { display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-data); font-size: 11.5px; }
+.metric span { color: var(--ink-3); }
+.metric b { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.note { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+.note code {
+  font-family: var(--font-data);
+  font-size: 11.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+}
+.note strong { color: var(--ink); }
+
+.err {
+  margin-top: 8px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--down);
+  word-break: break-word;
+}
+
+@media (max-width: 1080px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .bar { flex-wrap: wrap; height: auto; padding: 10px 16px; gap: 14px; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <path fill="currentColor" style="color: var(--cobalt)" d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+      <path fill="currentColor" style="color: var(--turkuaz)" d="M32 21.5 42.5 32 32 42.5 21.5 32z"/>
+    </svg>
+    <span><span class="tr">TR</span>Crypto</span>
+    <span class="sub">piyasa panosu</span>
+  </div>
+
+  <span class="bar-spacer"></span>
+
+  <dl class="stat"><dt>Mesaj</dt><dd id="totalMessages">0</dd></dl>
+  <dl class="stat"><dt>Mesaj / sn</dt><dd id="messageRate">0</dd></dl>
+  <dl class="stat"><dt>Çalışma</dt><dd id="uptime">0sn</dd></dl>
+
+  <span class="live" id="liveState" data-state="wait">
+    <span class="dot"></span><span id="liveText">bağlanıyor</span>
+  </span>
+</header>
+
+<div class="shell">
+  <section class="board">
+    <div class="board-head">
+      <h1>Türk lirası pariteleri</h1>
+      <p>Her hücre borsadan bağımsız yüzeyden gelir. Aradaki fark iki borsanın son fiyatı arasındadır.</p>
+    </div>
+
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Varlık</th>
+            <th scope="col" class="venue">BtcTurk</th>
+            <th scope="col" class="venue">24s değişim</th>
+            <th scope="col" class="venue b gap">Binance TR</th>
+            <th scope="col" class="venue b">24s değişim</th>
+            <th scope="col" class="gap">Fark</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="6" class="empty" style="padding: 22px 14px">Akış bekleniyor…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="rail">
+    <div class="panel">
+      <h2>Bağlantı sağlığı</h2>
+      <div id="venues"><p class="empty">Bekleniyor…</p></div>
+    </div>
+
+    <div class="panel">
+      <h2>Bu ekran ne gösteriyor</h2>
+      <p class="note">
+        Veri tarayıcıdan borsalara <strong>doğrudan gitmiyor.</strong> Önce sunucuda
+        TRCrypto.Net üzerinden akıyor, sonra buraya itiliyor. Böylece gördüğünüz her rakam
+        kütüphanenin kodundan geçmiş oluyor.
+      </p>
+      <p class="note" style="margin-bottom: 0">
+        İki borsa da tek bir <code>ITickerSocketClient</code> ile dinleniyor. Fiyatların
+        altındaki native sembol adları farklı (<code>BTCTRY</code> ve <code>BTC_TRY</code>),
+        ama abone olan kod bunların hiçbirini görmüyor.
+      </p>
+    </div>
+  </aside>
+</div>
+
+<script>
+const rowsEl = document.getElementById('rows');
+const venuesEl = document.getElementById('venues');
+const liveEl = document.getElementById('liveState');
+const liveTextEl = document.getElementById('liveText');
+
+const previous = new Map();
+let lastTotal = 0;
+let lastRateAt = 0;
+
+const lira = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 });
+const liraSmall = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 });
+const percent = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/** Fiyatı büyüklüğüne göre biçimlendirir; kuruş mertebesindeki değerler yuvarlanmaz. */
+function money(value) {
+  if (value === null || value === undefined) return null;
+  return value >= 100 ? lira.format(value) : liraSmall.format(value);
+}
+
+function setLive(state, text) {
+  liveEl.dataset.state = state;
+  liveTextEl.textContent = text;
+}
+
+function cell(entry, asset, venueIndex, gap) {
+  const key = asset + '/' + venueIndex;
+  const price = money(entry.price);
+  const classes = ['price'];
+  if (entry.ageMs !== null && entry.ageMs > 15000) classes.push('stale');
+
+  let tick = '';
+  const before = previous.get(key);
+  if (before !== undefined && entry.price !== null && entry.price !== before) {
+    tick = entry.price > before ? ' tick-up' : ' tick-down';
+  }
+  if (entry.price !== null) previous.set(key, entry.price);
+
+  const native = entry.nativeSymbol
+    ? '<span class="native">' + entry.nativeSymbol + '</span>'
+    : '';
+
+  return '<td class="' + (gap ? 'gap' : '') + tick + '">' +
+    (price === null
+      ? '<span class="empty">bekleniyor</span>'
+      : '<span class="' + classes.join(' ') + '">' + price + '</span>' + native) +
+    '</td>';
+}
+
+function changeCell(entry) {
+  if (entry.changePercentage === null || entry.changePercentage === undefined) {
+    return '<td><span class="empty">yok</span></td>';
+  }
+  const up = entry.changePercentage >= 0;
+  return '<td><span class="chg ' + (up ? 'up' : 'down') + '">' +
+    (up ? '+' : '') + percent.format(entry.changePercentage) + '%</span></td>';
+}
+
+function spreadCell(a, b) {
+  if (a.price === null || b.price === null || a.price === undefined || b.price === undefined) {
+    return '<td class="gap"><span class="empty">yok</span></td>';
+  }
+  const diff = Math.abs(a.price - b.price);
+  const ratio = diff / Math.min(a.price, b.price) * 100;
+  return '<td class="gap"><span class="spread">' + money(diff) +
+    '<small>%' + percent.format(ratio) + '</small></span></td>';
+}
+
+function render(snapshot) {
+  rowsEl.innerHTML = snapshot.rows.map(row => {
+    const [a, b] = row.cells;
+    return '<tr>' +
+      '<td class="asset"><span class="asset-name">' + row.asset + '</span> ' +
+      '<span class="asset-quote">/ TRY</span></td>' +
+      cell(a, row.asset, 0, false) + changeCell(a) +
+      cell(b, row.asset, 1, true) + changeCell(b) +
+      spreadCell(a, b) +
+      '</tr>';
+  }).join('');
+
+  venuesEl.innerHTML = snapshot.venues.map((v, i) => {
+    const age = v.lastMessageAgeMs;
+    const state = age === null ? 'down' : age > 15000 ? 'stale' : 'live';
+    const label = age === null ? 'veri yok' : age > 15000 ? 'gecikmeli' : 'canlı';
+
+    return '<div class="venue-card">' +
+      '<div class="venue-name"><b class="' + (i === 0 ? 'a' : 'b') + '">' + v.venue + '</b>' +
+      '<span class="tag" data-state="' + (state === 'live' ? '' : state) + '">' + label + '</span></div>' +
+      '<div class="metrics">' +
+      '<div class="metric"><span>abonelik</span><b>' + v.subscriptions + '</b></div>' +
+      '<div class="metric"><span>mesaj</span><b>' + v.messages.toLocaleString('tr-TR') + '</b></div>' +
+      '<div class="metric"><span>son mesaj</span><b>' +
+      (age === null ? 'yok' : (age / 1000).toFixed(1) + ' sn') + '</b></div>' +
+      '<div class="metric"><span>kopma</span><b>' + v.disconnects + '</b></div>' +
+      '</div>' +
+      (v.lastError ? '<div class="err">' + v.lastError + '</div>' : '') +
+      '</div>';
+  }).join('');
+
+  const total = snapshot.venues.reduce((sum, v) => sum + v.messages, 0);
+  document.getElementById('totalMessages').textContent = total.toLocaleString('tr-TR');
+  document.getElementById('uptime').textContent =
+    snapshot.uptimeSeconds < 60
+      ? snapshot.uptimeSeconds + 'sn'
+      : Math.floor(snapshot.uptimeSeconds / 60) + 'dk ' + (snapshot.uptimeSeconds % 60) + 'sn';
+
+  const now = performance.now();
+  if (lastRateAt) {
+    const rate = (total - lastTotal) / ((now - lastRateAt) / 1000);
+    document.getElementById('messageRate').textContent = rate.toFixed(1);
+  }
+  lastTotal = total;
+  lastRateAt = now;
+
+  const anyLive = snapshot.venues.some(v => v.lastMessageAgeMs !== null && v.lastMessageAgeMs < 15000);
+  setLive(anyLive ? 'up' : 'down', anyLive ? 'canlı' : 'veri yok');
+}
+
+function connect() {
+  const socket = new WebSocket(
+    (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/stream');
+
+  socket.addEventListener('message', event => render(JSON.parse(event.data)));
+
+  socket.addEventListener('close', () => {
+    setLive('down', 'bağlantı koptu');
+    // Sunucu yeniden basladiginda sayfayi elle yenilemek gerekmesin.
+    setTimeout(connect, 2000);
+  });
+
+  socket.addEventListener('error', () => setLive('down', 'bağlantı hatası'));
+}
+
+connect();
+</script>
+
+</body>
+</html>

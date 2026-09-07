@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+
+    <!--
+      CA1848 kaynak uretecli LoggerMessage kullanmayi ister. Kutuphane icindeki sicak
+      yollar icin dogru bir kural, ama bu ornekte gunluk saniyede birkac satirdir ve
+      dogrudan cagri ornegi okunur kilar. CA1873 ayni satirlar icin ayni gerekceyle.
+    -->
+    <NoWarn>$(NoWarn);CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TRCrypto.BinanceTR\TRCrypto.BinanceTR.csproj" />
+    <ProjectReference Include="..\..\src\TRCrypto.BtcTurk\TRCrypto.BtcTurk.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/examples/">
     <Project Path="examples/TRCrypto.Examples.Console/TRCrypto.Examples.Console.csproj" />
+    <Project Path="examples/TRCrypto.Examples.Dashboard/TRCrypto.Examples.Dashboard.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/TRCrypto.BinanceTR/TRCrypto.BinanceTR.csproj" />

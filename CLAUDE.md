@@ -104,7 +104,8 @@ src/TRCrypto.BtcTurk/          BtcTurk adaptörü
 src/TRCrypto.BinanceTR/        Binance TR adaptörü
 tests/*.UnitTests/             Ağa çıkmayan testler
 tests/*.IntegrationTests/      Canlı API testleri
-examples/TRCrypto.Examples.Console/
+examples/TRCrypto.Examples.Console/    Uctan uca canli dogrulama
+examples/TRCrypto.Examples.Dashboard/  Canli piyasa panosu
 docs/DURUM.md                  Nerede kaldık, ne kaldı
 docs/credentials/              Borsa başına API anahtarı rehberi
 docs/vendor/                   Doğrulanmış uç envanteri

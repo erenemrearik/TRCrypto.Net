@@ -175,7 +175,8 @@ rejected before the request reaches the network.
 ```bash
 dotnet build -c Release
 dotnet test  -c Release
-dotnet run --project examples/TRCrypto.Examples.Console   # live check against two exchanges
+dotnet run --project examples/TRCrypto.Examples.Console     # live check against two exchanges
+dotnet run --project examples/TRCrypto.Examples.Dashboard   # live market board, localhost:5180
 ```
 
 ### Secret protection

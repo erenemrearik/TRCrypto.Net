@@ -169,7 +169,8 @@ Eksik fiyat, negatif miktar ve sınır aşımı gibi geçersiz girdiler ağa ç�
 ```bash
 dotnet build -c Release
 dotnet test  -c Release
-dotnet run --project examples/TRCrypto.Examples.Console   # iki borsaya karsi canli dogrulama
+dotnet run --project examples/TRCrypto.Examples.Console     # iki borsaya karsi canli dogrulama
+dotnet run --project examples/TRCrypto.Examples.Dashboard   # canli piyasa panosu, localhost:5180
 ```
 
 ### Secret koruması
