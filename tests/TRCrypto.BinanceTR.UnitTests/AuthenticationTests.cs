@@ -24,7 +24,13 @@ namespace TRCrypto.BinanceTR.UnitTests;
 /// </remarks>
 public class AuthenticationTests
 {
-    private const string SampleKey = "vmPUZE6mv9SD5VNHk4HlWFsOr6aKE2zvsw0MuIgwCIPy6utIco14y7Ju91duEh8A";
+    // Anahtar yalnizca baslikta tasinir, imza hesabina girmez; bu yuzden acikca sahte
+    // bir deger kullanilir ve secret tarayicisini gereksiz yere tetiklemez.
+    private const string SampleKey = "ornek-api-anahtari-gercek-degil";
+
+    // Secret ise imzanin girdisidir ve DEGISTIRILEMEZ: asagidaki test, Binance'in
+    // yayimladigi imza vektorunu birebir dogrular. Deger o dokumandaki ornektir ve
+    // hicbir hesaba ait degildir.
     private const string SampleSecret = "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j";
 
     private static BinanceTRAuthenticationProvider Provider()

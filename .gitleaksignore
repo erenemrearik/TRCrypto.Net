@@ -1,0 +1,15 @@
+# Incelenmis ve kabul edilmis bulgular.
+#
+# Buraya yalnizca GERCEK OLMADIGI KANITLANMIS bulgular yazilir. Her satirin yaninda
+# neyin neden kabul edildigi durur; gerekcesiz bir satir, tarayiciyi susturmaktan
+# baska bir ise yaramaz.
+
+# Binance TR'nin resmi dokumantasyonundaki ornek dinleme tokeni. Bir fixture dosyasina
+# oldugu gibi kopyalanmisti; sonraki commit'te acikca sahte bir degerle degistirildi,
+# ama commit gecmiste kaldi.
+#
+# Bu deger hicbir hesaba ait degildir ve olamaz: token almak imzali bir istek gerektirir
+# ve bu depoda imza hicbir zaman borsa tarafindan kabul edilmedi (D-45, D-46). Deger
+# ayrica kullanicinin kimlik bilgilerinden bicim olarak da farklidir; 70 karakterdir ve
+# "+" icerir, kimlik bilgileri ise 64 karakter ve tamamen alfanumeriktir.
+96e2de4a24b73a46e6919acfea75d16940a796a5:tests/TRCrypto.BinanceTR.UnitTests/Fixtures/listen-token.json:generic-api-key:5

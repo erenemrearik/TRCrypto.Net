@@ -43,3 +43,20 @@ jobs:
           dotnet test -c Release --no-build --verbosity normal
           --filter "FullyQualifiedName~IntegrationTests"
           --logger "console;verbosity=detailed"
+
+  secret-history:
+    name: Gecmisin tamaminda secret taramasi
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Push tetikleyicisi yalnizca son commit'i tarar. Gecmise bir sey girdiyse orada
+      # kalir ve bir daha bakilmaz; bu is tum gecmisi haftada bir bastan tarar.
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: false

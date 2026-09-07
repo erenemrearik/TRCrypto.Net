@@ -1,16 +1,31 @@
 # gitleaks yapilandirmasi
-# Varsayilan kural setini genisletir.
+#
+# Varsayilan kural setini genisletir. Muafiyetler bilerek dardir: genis bir muafiyet,
+# gercek bir sizintinin fark edilmemesine yol acar ve tarayiciyi degersizlestirir.
+#
+# Test dosyalarindaki kimlik bilgileri okunabilir metnin base64'udur
+# (`dGVzdC1zZWNyZXQ…` -> `test-secret-key-for-unit-tests`), yani cozuldugunde sahte
+# olduklari goruluyor. Tarayici bunu bilemez ve yalnizca entropiye bakar.
 
 [extend]
 useDefault = true
 
+# Asagidaki iki dosya, hesaplanmis HMAC ciktilarini ve imzalama test vektorlerini
+# sabit deger olarak tutar. Bunlar kimlik bilgisi degil, BEKLENEN SONUCLARDIR:
+# imzalama kodu degistiginde testin kirmizi donmesini saglarlar ve degistirilemezler.
+#
+# Muafiyet dosya bazindadir; testlerin tamami muaf tutulmaz.
 [[rules]]
-id = "trcrypto-test-fixtures"
-description = "Birim testlerindeki sahte kimlik bilgileri"
-regex = '''bu-kural-hicbir-seye-eslesmez-yer-tutucudur'''
+id = "generic-api-key"
 
-# Testlerde gercek bir secret'in loglanmadigini dogrulamak icin gercekci gorunumlu
-# SAHTE degerler kullanilir. Bunlar hicbir hesaba ait degildir.
+  [rules.allowlist]
+  description = "Imzalama test vektorleri ve beklenen HMAC ciktilari"
+  paths = [
+      '''tests/TRCrypto\.BtcTurk\.UnitTests/AuthenticationTests\.cs''',
+      '''tests/TRCrypto\.BinanceTR\.UnitTests/AuthenticationTests\.cs''',
+  ]
+
+# Gercekci gorunumlu SAHTE degerler kullanan dosyalar ve ornek sablonlar.
 [allowlist]
 description = "Test fixture'lari ve ornek sablonlar"
 paths = [

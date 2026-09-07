@@ -218,6 +218,61 @@ if (targetFrameworks) {
   }
 }
 
+// ── 9. Fixture'lar secret taramasini tetikleyecek mi? ──
+
+// Bir fixture'a dokumantasyondan kopyalanan yuksek entropili bir deger, gercek olmasa
+// bile secret tarayicisini kirmiziya dondurur ve derlemeyi durdurur. Bunu tarayiciyi
+// bekleyerek ogrenmek pahalidir; burada yazarken yakalanir.
+//
+// Olcut gitleaks'in generic-api-key kuralinin sezgisine yakindir: uzun ve yuksek
+// entropili dize. Imzalama test vektorleri bilincli olarak muaf tutulmustur; onlar
+// beklenen HMAC ciktilaridir ve `.gitleaks.toml` icinde de ayni gerekceyle muaftir.
+{
+  const shannon = (value) => {
+    const counts = new Map();
+    for (const char of value) counts.set(char, (counts.get(char) ?? 0) + 1);
+
+    let bits = 0;
+    for (const count of counts.values()) {
+      const p = count / value.length;
+      bits -= p * Math.log2(p);
+    }
+    return bits;
+  };
+
+  const exempt = [
+    'tests/TRCrypto.BtcTurk.UnitTests/AuthenticationTests.cs',
+    'tests/TRCrypto.BinanceTR.UnitTests/AuthenticationTests.cs',
+    'tests/TRCrypto.BtcTurk.UnitTests/CredentialsSecurityTests.cs',
+  ];
+
+  const fixtureDirs = [
+    'tests/TRCrypto.BtcTurk.UnitTests/Fixtures',
+    'tests/TRCrypto.BinanceTR.UnitTests/Fixtures',
+  ];
+
+  for (const dir of fixtureDirs) {
+    if (!existsSync(resolve(root, dir))) continue;
+
+    for (const name of readdirSync(resolve(root, dir))) {
+      const file = join(dir, name).replace(/\\/g, '/');
+      if (exempt.includes(file)) continue;
+
+      for (const match of read(file).matchAll(/[A-Za-z0-9+/=_-]{32,}/g)) {
+        const value = match[0];
+        if (/^\d+$/.test(value)) continue;
+        if (shannon(value) <= 4.4) continue;
+
+        note(
+          'Fixture',
+          `${file} icinde ${value.length} karakterlik yuksek entropili deger var; ` +
+          'secret tarayicisi bunu kimlik bilgisi sanir. Acikca sahte bir deger kullanin.'
+        );
+      }
+    }
+  }
+}
+
 // ── Rapor ──
 
 if (!findings.length) {

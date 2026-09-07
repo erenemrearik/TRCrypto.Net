@@ -60,7 +60,7 @@ public class PrivateStreamTests
     {
         var token = ParseData<BinanceTRListenToken>("listen-token.json");
 
-        Assert.StartsWith("6xXxePXwZRjV", token.Token);
+        Assert.Equal("ornek-dinleme-tokeni-gercek-degil", token.Token);
         Assert.NotEqual(default, token.ExpirationTime);
     }
 
