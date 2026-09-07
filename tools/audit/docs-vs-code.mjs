@@ -122,16 +122,16 @@ const testCount = (project) => {
 
 const unitTotal = testCount('TRCrypto.BtcTurk.UnitTests') + testCount('TRCrypto.BinanceTR.UnitTests');
 
-const claimedCounts = [
-  ['README.md', read('README.md').match(/testler-(\d+)%20/)?.[1]],
-  ['docs/DURUM.md', read('docs/DURUM.md').match(/(\d+)\/\d+ birim/)?.[1]],
-];
+// Test sayisi yalnizca durum belgesinde yazili. README'de rozet olarak tutulmuyordu:
+// elle guncellenen bir sayi her test eklendiginde bayatliyor ve derleme rozeti zaten
+// yesil mi kirmizi mi oldugunu soyluyor.
+{
+  const claimed = read('docs/DURUM.md').match(/(\d+)\/\d+ birim/)?.[1];
 
-for (const [file, claimed] of claimedCounts) {
   if (!claimed) {
-    note('Testler', `${file} icinde birim test sayisi bulunamadi`);
+    note('Testler', 'docs/DURUM.md icinde birim test sayisi bulunamadi');
   } else if (Number(claimed) !== unitTotal) {
-    note('Testler', `${file} ${claimed} birim testi bildiriyor, kodda ${unitTotal} var`);
+    note('Testler', `docs/DURUM.md ${claimed} birim testi bildiriyor, kodda ${unitTotal} var`);
   }
 }
 
@@ -178,6 +178,44 @@ if (targetFrameworks) {
   }
 } else {
   note('Platform', 'TargetFrameworks tanimi bulunamadi');
+}
+
+// ── 8. Cok dilli README ayrismis mi? ──
+
+// Ceviriler elle tutuluyor ve kaynak degisince sessizce geride kaliyor. Cevirinin
+// dogrulugu makineyle olculemez, ama YAPISAL ayrisma olculur: bolum sayisi, rozet sayisi
+// ve kod bloklarinin sayisi iki dosyada da ayni olmalidir. Birine bolum eklendiginde ya da
+// rozet degistiginde bu sayilar tutmaz ve okuyucu eksik bir ceviriyle bas basa kalir.
+{
+  const pairs = [['README.md', 'README.en.md']];
+
+  const sections = (t) => (t.match(/^#{1,3} /gm) ?? []).length;
+  const badges = (t) => (t.match(/\[!\[[^\]]*\]\(https:\/\/img\.shields\.io/g) ?? []).length;
+  const fences = (t) => (t.match(/^```\w*/gm) ?? []).length;
+
+  for (const [source, translation] of pairs) {
+    const original = read(source);
+    const translated = read(translation);
+
+    const checks = [
+      ['bolum', sections],
+      ['rozet', badges],
+      ['kod blogu', fences],
+    ];
+
+    for (const [label, count] of checks) {
+      if (count(original) !== count(translated)) {
+        note(
+          'Ceviri',
+          `${label} sayisi ayristi: ${source} ${count(original)}, ${translation} ${count(translated)}`
+        );
+      }
+    }
+
+    // Dil secici her iki dosyada da bulunmali; yoksa okuyucu digerine gecemez.
+    if (!original.includes(translation)) note('Ceviri', `${source} dil secici tasimiyor`);
+    if (!translated.includes(source)) note('Ceviri', `${translation} dil secici tasimiyor`);
+  }
 }
 
 // ── Rapor ──

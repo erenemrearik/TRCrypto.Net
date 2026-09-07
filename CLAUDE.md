@@ -174,9 +174,14 @@ Binance TR'de tüm imzalı istekleri reddettirir. `ServerTimeIntegrationTests` b
 **BtcTurk** REST, WebSocket, kimlik doğrulama ve shared yüzey tamamlandı; okuma uçları
 gerçek bir hesaba karşı doğrulandı.
 
-**Binance TR** public piyasa verisi, WebSocket, imzalama ve private REST yüzeyi
-tamamlandı. Private uçların gerçek bir hesaba karşı çalıştırılması sıradaki iştir;
-`AuthenticationProbeTests` imzanın kabul edilip edilmediğini bildirir.
+**Binance TR**'nin spot alım satım yüzeyi hazır: piyasa verisi, WebSocket, imzalama,
+hesap ve emir uçları. Dokümante edilmiş 24 uçtan 10'u uygulandı. 6 çekim ve yatırma ucu
+ADR-007 gereği kapsam dışı, 1 uç borsa boş döndürdüğü için atlandı; kalan 7 uç toplu emir
+iptali, OCO emri, tek varlık bakiyesi ve kullanıcı akışıdır.
+
+Private uçlar canlı bir hesapta henüz kabul edilmedi. Anahtar tanınıyor (`3702`, `3701`
+değil) ancak imza eşleşmiyor; en olası neden secret'ın anahtarla aynı çiftten gelmemesi
+(D-45, D-46).
 
 **Paribu** için uç envanteri çıkarıldı ve `docs/vendor/paribu-capabilities.md` dosyasına
 yazıldı; kod henüz yazılmadı. Borsanın resmi bir API'si vardır, public ticker ve emir

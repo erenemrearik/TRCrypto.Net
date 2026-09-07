@@ -6,17 +6,15 @@
 
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
 
-[![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=CI&logo=github&style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/testler-212%20geçiyor-brightgreen?style=flat-square&logo=xunit&logoColor=white)](tests/)
-[![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
+[![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=derleme&style=flat-square&logo=github&logoColor=white)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/badge/nuget-yay%C4%B1nlanmad%C4%B1-9E9E9E?style=flat-square&logo=nuget&logoColor=white)](#durum)
+[![.NET](https://img.shields.io/badge/.net-8%20%7C%209%20%7C%2010%20%7C%20standard%202.0%20%7C%202.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
+[![Lisans](https://img.shields.io/badge/lisans-MIT-1F3E8C?style=flat-square)](LICENSE)
+[![Dokümantasyon](https://img.shields.io/badge/dok%C3%BCmantasyon-site-10707B?style=flat-square)](https://erenemrearik.github.io/TRCrypto.Net/)
 
-[![CryptoExchange.Net](https://img.shields.io/badge/CryptoExchange.Net-12.5.0-orange?style=flat-square)](https://github.com/JKorf/CryptoExchange.Net)
-[![Durum](https://img.shields.io/badge/durum-geliştirme%20aşamasında-yellow?style=flat-square)](docs/DURUM.md)
-[![NuGet](https://img.shields.io/badge/NuGet-henüz%20yayınlanmadı-lightgrey?style=flat-square&logo=nuget)](#durum)
-[![Dokümantasyon](https://img.shields.io/badge/dok%C3%BCmantasyon-site-1F3E8C?style=flat-square&logo=readthedocs&logoColor=white)](https://erenemrearik.github.io/TRCrypto.Net/)
+**Türkçe** · [English](README.en.md)
 
-[JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) üzerine kuruludur.
+[JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 12.5.0 üzerine kuruludur.
 
 </div>
 
@@ -49,24 +47,24 @@ TRCrypto her borsa için **iki yüzey** sunar:
 <tr>
   <td><code>TRCrypto.BtcTurk</code></td>
   <td>Piyasa verisi · mum · hesap · emirler · WebSocket · SharedApis</td>
-  <td><img src="https://img.shields.io/badge/tamamland%C4%B1-brightgreen?style=flat-square" alt="tamamlandı"></td>
+  <td><img src="https://img.shields.io/badge/tamamland%C4%B1-1B6340?style=flat-square" alt="tamamlandı"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.BinanceTR</code></td>
   <td>Piyasa verisi · hesap · emirler · WebSocket · SharedApis</td>
-  <td><img src="https://img.shields.io/badge/geli%C5%9Ftiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
+  <td><img src="https://img.shields.io/badge/geli%C5%9Ftiriliyor-E8A33D?style=flat-square" alt="geliştiriliyor"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td>
-  <td><img src="https://img.shields.io/badge/s%C4%B1rada-blue?style=flat-square" alt="sırada"></td>
+  <td><img src="https://img.shields.io/badge/s%C4%B1rada-1F3E8C?style=flat-square" alt="sırada"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.CoinTR</code></td><td>Uç envanteri çıkarıldı</td>
-  <td><img src="https://img.shields.io/badge/s%C4%B1rada-blue?style=flat-square" alt="sırada"></td>
+  <td><img src="https://img.shields.io/badge/s%C4%B1rada-1F3E8C?style=flat-square" alt="sırada"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.Clients</code></td><td>Toplu paket</td>
-  <td><img src="https://img.shields.io/badge/planland%C4%B1-lightgrey?style=flat-square" alt="planlandı"></td>
+  <td><img src="https://img.shields.io/badge/planland%C4%B1-9E9E9E?style=flat-square" alt="planlandı"></td>
 </tr>
 </table>
 
@@ -79,8 +77,11 @@ ticker sunmuyor.
 
 Her ikisinin tamamı hem native hem SharedApis üzerinden kullanılabilir.
 
-**Henüz yok:** BtcTurk kullanıcıya özel socket akışları, Binance TR private uçların canlı
-hesap doğrulaması, Paribu ve CoinTR adaptörleri.
+**Henüz yok.** Her iki borsada da kullanıcıya özel WebSocket akışları; Binance TR'de toplu
+emir iptali, OCO emri ve tek varlık bakiyesi; Paribu ve CoinTR adaptörleri. Binance TR
+private uçları yazıldı ancak canlı bir hesapta henüz kabul edilmedi.
+
+Çekim ve yatırma uçları bilinçli olarak kapsam dışıdır (ADR-007).
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
 
 ---

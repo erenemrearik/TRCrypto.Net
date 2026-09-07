@@ -12,8 +12,10 @@ BtcTurk **tamamlandı.** REST, WebSocket, kimlik doğrulama ve shared yüzey ça
 yalnızca kullanıcıya özel socket akışları eksik ve bunlar hesapta emir hareketi
 gerektiriyor.
 
-**Binance TR de tamamlandı.** Public piyasa verisi, WebSocket, imzalama ve private REST
-yüzeyi hazır. Kalan tek iş, private uçları gerçek bir hesaba karşı çalıştırmak.
+**Binance TR'nin spot alım satım yüzeyi hazır** ama borsanın tamamı değil. Piyasa verisi,
+WebSocket, imzalama, hesap ve emir uçları çalışıyor. Dokümante edilmiş 24 uçtan 10'u
+uygulandı; 6'sı çekim ve yatırma olduğu için kapsam dışı (ADR-007), 1'i borsa boş
+döndürdüğü için atlandı, geriye **7 uç** kaldı. Ayrıntı aşağıda.
 
 Sıradaki iki platform **Paribu** ve **CoinTR**; ikisinin de uç envanteri çıkarıldı.
 
@@ -159,6 +161,10 @@ BtcTurk'tan üç önemli fark:
 | **Binance TR: private uçların canlı doğrulaması** | Anahtar bağlandı ve **borsa tarafından tanındığı doğrulandı**: dönen kod `3702`, `3701` değil. İmzalı istek henüz kabul edilmiyor; sekiz farklı şema denendi ve hepsi aynı kodu aldı. Kalan en olası neden, secret ile anahtarın aynı çiftten gelmemesidir (D-45, D-46) |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Borsanın resmi API'si var; public ticker ve emir defteri canlı doğrulandı |
+| **Binance TR: toplu emir iptali** | `POST /open/v1/orders/batch-cancel` yazılmadı |
+| **Binance TR: OCO emri** | `POST /open/v1/orders/oco` yazılmadı |
+| **Binance TR: tek varlık bakiyesi** | `GET /open/v1/account/spot/asset` yazılmadı; hesap ucu tüm varlıkları zaten döndürüyor |
+| **Binance TR: kullanıcı akışı** | `user-data-stream` ve `user-listen-token` uçları ile private WebSocket yazılmadı. BtcTurk'te de aynı boşluk var |
 | **CoinTR adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Altı public uç canlı doğrulandı; imzalama şeması iki aşamalı ve henüz denenmedi |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
@@ -248,7 +254,7 @@ Workflow hazır; `NUGET_API_KEY` ve environment onayı eksik.
 | Sıra | Platform | Durum |
 |---|---|---|
 | 1 | BtcTurk | ✅ Tamamlandı |
-| 2 | Binance TR | ✅ Tamamlandı, canlı hesap doğrulaması bekliyor |
+| 2 | Binance TR | Spot alım satım yüzeyi hazır; 7 uç ve canlı doğrulama kaldı |
 | 3 | Paribu | Uç envanteri çıkarıldı |
 | 4 | CoinTR | Uç envanteri çıkarıldı |
 
