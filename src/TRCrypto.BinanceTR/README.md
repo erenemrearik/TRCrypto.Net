@@ -117,8 +117,10 @@ Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 | `/open/v1/orders/cancel` | `Trading.CancelOrderAsync` | ✅ |
 | `/open/v1/orders/trades` | `Trading.GetUserTradesAsync` | ✅ |
 | WS ticker | `SubscribeToTickerUpdatesAsync` | ✅ |
-| WS trade · aggTrade | `SubscribeToTradeUpdatesAsync` vb. | ✅ |
-| WS emir defteri | `SubscribeToOrderBookUpdatesAsync` | ✅ |
+| WS tekil işlem | `SubscribeToTradeUpdatesAsync` | ✅ |
+| WS toplu işlem | `SubscribeToAggregatedTradeUpdatesAsync` | ✅ |
+| WS emir defteri (fark) | `SubscribeToOrderBookUpdatesAsync` | ✅ |
+| WS emir defteri (kademeli) | `SubscribeToPartialOrderBookUpdatesAsync` | ✅ |
 | WS kline | `SubscribeToKlineUpdatesAsync` | ✅ |
 | SharedApis (bakiye ve emir) | `IBalanceRestClient` · `ISpotOrderRestClient` | ✅ |
 | SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |

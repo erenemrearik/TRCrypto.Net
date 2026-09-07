@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/logo.svg" alt="" width="88" height="88">
+
 # TRCrypto.Net
 
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
@@ -20,7 +22,7 @@
 
 > [!IMPORTANT]
 > **Bu proje resmi değildir.** Bağımsız bir çalışmadır; BtcTurk, Binance TR, Paribu,
-> Bitexen veya JKorf ile resmi bir bağlantısı yoktur. Borsaların API'lerinde yapacağı
+> CoinTR veya JKorf ile resmi bir bağlantısı yoktur. Borsaların API'lerinde yapacağı
 > değişikliklerden veya hizmet kesintilerinden sorumlu değildir.
 
 ---
@@ -46,35 +48,39 @@ TRCrypto her borsa için **iki yüzey** sunar:
 <tr><th>Paket</th><th>Kapsam</th><th>Durum</th></tr>
 <tr>
   <td><code>TRCrypto.BtcTurk</code></td>
-  <td>REST + WebSocket + SharedApis</td>
-  <td><img src="https://img.shields.io/badge/geliştiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
+  <td>Piyasa verisi · mum · hesap · emirler · WebSocket · SharedApis</td>
+  <td><img src="https://img.shields.io/badge/tamamland%C4%B1-brightgreen?style=flat-square" alt="tamamlandı"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.BinanceTR</code></td>
-  <td>Public piyasa verisi (REST + WebSocket)</td>
-  <td><img src="https://img.shields.io/badge/geliştiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
+  <td>Piyasa verisi · hesap · emirler · WebSocket · SharedApis</td>
+  <td><img src="https://img.shields.io/badge/geli%C5%9Ftiriliyor-yellow?style=flat-square" alt="geliştiriliyor"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.Paribu</code></td><td>henüz yok</td>
-  <td><img src="https://img.shields.io/badge/planlandı-lightgrey?style=flat-square" alt="planlandı"></td>
+  <td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td>
+  <td><img src="https://img.shields.io/badge/s%C4%B1rada-blue?style=flat-square" alt="sırada"></td>
 </tr>
 <tr>
-  <td><code>TRCrypto.Bitexen</code></td><td>henüz yok</td>
-  <td><img src="https://img.shields.io/badge/planlandı-lightgrey?style=flat-square" alt="planlandı"></td>
+  <td><code>TRCrypto.CoinTR</code></td><td>Uç envanteri çıkarıldı</td>
+  <td><img src="https://img.shields.io/badge/s%C4%B1rada-blue?style=flat-square" alt="sırada"></td>
 </tr>
 <tr>
   <td><code>TRCrypto.Clients</code></td><td>Toplu paket</td>
-  <td><img src="https://img.shields.io/badge/planlandı-lightgrey?style=flat-square" alt="planlandı"></td>
+  <td><img src="https://img.shields.io/badge/planland%C4%B1-lightgrey?style=flat-square" alt="planlandı"></td>
 </tr>
 </table>
 
-**BtcTurk'te çalışan:** piyasa verisi · mum verisi · bakiye · emir işlemleri · işlem
-geçmişi ve gerçek zamanlı akışlar. Tamamı hem native hem SharedApis üzerinden.
+**BtcTurk:** piyasa verisi, mum verisi, bakiye, emir işlemleri, işlem geçmişi ve gerçek
+zamanlı akışlar. Okuma uçları gerçek bir hesaba karşı doğrulandı.
 
-**Binance TR:** pariteler, emir defteri, işlemler ve gerçek zamanlı akışlar (ticker dahil)
-Tamamı hem native hem SharedApis üzerinden.
+**Binance TR:** pariteler, emir defteri, işlemler, hesap ve emir uçları ile gerçek zamanlı
+akışlar. Ticker yalnızca WebSocket üzerinden gelir, çünkü borsa REST tarafında anahtarsız
+ticker sunmuyor.
 
-**Henüz yok:** BtcTurk özel socket akışları, Binance TR kimlik doğrulama, Paribu, Bitexen.
+Her ikisinin tamamı hem native hem SharedApis üzerinden kullanılabilir.
+
+**Henüz yok:** BtcTurk kullanıcıya özel socket akışları, Binance TR private uçların canlı
+hesap doğrulaması, Paribu ve CoinTR adaptörleri.
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
 
 ---

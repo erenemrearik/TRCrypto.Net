@@ -1,4 +1,5 @@
 <title>TRCrypto.Net Kılavuzu</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -155,6 +156,13 @@ a:hover { color: var(--cobalt-ink); text-decoration-color: currentColor; }
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
+}
+.brand-mark {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  align-self: center;
+  color: var(--cobalt);
 }
 .brand .tr { color: var(--cobalt); }
 .brand .tag {
@@ -795,6 +803,10 @@ a:hover { color: var(--cobalt-ink); text-decoration-color: currentColor; }
     </svg>
   </button>
   <a class="brand" href="#/giris">
+    <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <path fill="currentColor" d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+      <path fill="var(--turkuaz)" d="M32 21.5 42.5 32 32 42.5 21.5 32z"/>
+    </svg>
     <span><span class="tr">TR</span>Crypto.Net</span>
     <span class="tag">kılavuz</span>
   </a>
@@ -1145,11 +1157,11 @@ function homePage() {
 </div>
 
 <dl class="metrics">
-  <div class="metric"><dt>Borsa</dt><dd>2<span>/ 4 planlı</span></dd></div>
-  <div class="metric"><dt>Birim test</dt><dd>185</dd></div>
+  <div class="metric"><dt>Platform</dt><dd>2<span>/ 4 planlı</span></dd></div>
+  <div class="metric"><dt>Birim test</dt><dd>212</dd></div>
   <div class="metric"><dt>Canlı test</dt><dd>13</dd></div>
   <div class="metric"><dt>Hedef platform</dt><dd>5</dd></div>
-  <div class="metric"><dt>Doğrulama bulgusu</dt><dd>39</dd></div>
+  <div class="metric"><dt>Doğrulama bulgusu</dt><dd>44</dd></div>
 </dl>
 
 <h2 id="tez">Aynı kod, iki borsa</h2>
@@ -1200,16 +1212,16 @@ foreach (var borsa in borsalar)
     <tbody>
       <tr>
         <td><code>TRCrypto.BtcTurk</code></td>
-        <td>REST · WebSocket · SharedApis · kimlik doğrulama</td>
-        <td><span class="pill ok">geliştiriliyor</span></td>
+        <td>Piyasa verisi · mum · hesap · emirler · WebSocket · SharedApis</td>
+        <td><span class="pill ok">tamamlandı</span></td>
       </tr>
       <tr>
         <td><code>TRCrypto.BinanceTR</code></td>
-        <td>Piyasa verisi, hesap ve emirler · REST · WebSocket · SharedApis</td>
-        <td><span class="pill ok">geliştiriliyor</span></td>
+        <td>Piyasa verisi · hesap · emirler · WebSocket · SharedApis</td>
+        <td><span class="pill ok">tamamlandı</span></td>
       </tr>
-      <tr><td><code>TRCrypto.Paribu</code></td><td>henüz yok</td><td><span class="pill wait">planlandı</span></td></tr>
-      <tr><td><code>TRCrypto.Bitexen</code></td><td>henüz yok</td><td><span class="pill wait">planlandı</span></td></tr>
+      <tr><td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td><td><span class="pill wait">sırada</span></td></tr>
+      <tr><td><code>TRCrypto.CoinTR</code></td><td>Uç envanteri çıkarıldı</td><td><span class="pill wait">sırada</span></td></tr>
     </tbody>
   </table>
 </div>
@@ -1218,7 +1230,7 @@ foreach (var borsa in borsalar)
   <span class="callout-label">Önemli</span>
   <p>
     <strong>Bu proje resmi değildir.</strong> Bağımsız bir çalışmadır; BtcTurk, Binance TR,
-    Paribu, Bitexen veya JKorf ile resmi bir bağlantısı yoktur. Borsaların API'lerinde
+    Paribu, CoinTR veya JKorf ile resmi bir bağlantısı yoktur. Borsaların API'lerinde
     yapacağı değişikliklerden veya hizmet kesintilerinden sorumlu değildir.
   </p>
   <p>Henüz NuGet'e yayınlanmadı; ilk sürüm <code>0.1.0-preview</code> olarak planlanıyor.</p>

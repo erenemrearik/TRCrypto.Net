@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" width="320" height="64"
+     role="img" aria-labelledby="trcrypto-wordmark-title">
+  <title id="trcrypto-wordmark-title">TRCrypto.Net</title>
+
+  <!--
+    Yatay kilit: isaret ve isim. Isim, sitenin baslik yuzu olan Archivo ile yazilir;
+    yuzun bulunmadigi ortamlarda sistem grotesk yuzune duser.
+
+    "TR" kobalt, geri kalani murekkep rengi. Ayrim, projenin ne oldugunu tek bakista
+    soyler: Turkiye icin bir .NET kutuphanesi.
+  -->
+
+  <path fill="#1F3E8C" d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+  <path fill="#10707B" d="M32 21.5 42.5 32 32 42.5 21.5 32z"/>
+
+  <text x="76" y="41"
+        font-family="Archivo, 'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="27" font-weight="700" letter-spacing="-0.6">
+    <tspan fill="#1F3E8C">TR</tspan><tspan fill="#141A29">Crypto.Net</tspan>
+  </text>
+</svg>

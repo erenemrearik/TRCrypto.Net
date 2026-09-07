@@ -70,6 +70,12 @@ jobs:
       - name: Isleyiciyi dogrula
         run: node tools/site/check.mjs
 
+      # Dokumanlar kodun yaninda elle guncelleniyor ve ikisi sessizce ayrisabiliyor.
+      # Bu adim iki tarafi karsilastirir: kodda olup dokumanda olmayan uclar, dokumanda
+      # anlatilip kodda bulunmayan yontemler, bildirilip uygulanmamis shared arayuzler.
+      - name: Dokumanlar kodla tutarli mi
+        run: node tools/audit/docs-vs-code.mjs
+
       - name: Site guncel mi
         run: |
           if ! git diff --quiet -- docs/index.html; then

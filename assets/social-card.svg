@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640"
+     role="img" aria-labelledby="trcrypto-social-title">
+  <title id="trcrypto-social-title">TRCrypto.Net, Türkiye kripto platformları için .NET client ekosistemi</title>
+
+  <!--
+    GitHub sosyal onizleme karti. 1280x640, deponun ayarlar sayfasindan yuklenir.
+    Ayni gorsel dokumantasyon sitesinde de kullanilir.
+
+    Arka planda soluk bir Iznik dokusu var: ayni sekiz kollu yildiz, dusuk kontrastla
+    tekrarlaniyor. On planda yalnizca isim, tek cumlelik tez ve dort platform var;
+    kart kucultuldugunde okunmasi gereken sey bunlar.
+
+    Onay isareti metin degil, cizilmis bir yoldur. Metin olarak yazildiginda yuzde
+    karsiligi bulunmayip radikal isaretine dusuyordu.
+  -->
+
+  <defs>
+    <pattern id="tile" width="176" height="176" patternUnits="userSpaceOnUse">
+      <path fill="#1F3E8C" fill-opacity="0.05" transform="translate(56 56)"
+            d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+    </pattern>
+
+    <!-- Tamamlanmis platform rozeti icin onay isareti -->
+    <path id="tick" d="M0 5.4 4.2 9.6 11.4 1.2" fill="none" stroke="#1B6340"
+          stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </defs>
+
+  <rect width="1280" height="640" fill="#FCFCFA"/>
+  <rect width="1280" height="640" fill="url(#tile)"/>
+  <rect width="1280" height="7" fill="#1F3E8C"/>
+
+  <g transform="translate(96 132) scale(1.85)">
+    <path fill="#1F3E8C" d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+    <path fill="#10707B" d="M32 21.5 42.5 32 32 42.5 21.5 32z"/>
+  </g>
+
+  <text x="96" y="358"
+        font-family="Archivo, 'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="88" font-weight="700" letter-spacing="-2.8">
+    <tspan fill="#1F3E8C">TR</tspan><tspan fill="#141A29">Crypto.Net</tspan>
+  </text>
+
+  <text x="99" y="410"
+        font-family="Archivo, 'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="29" font-weight="500" fill="#3F4860">
+    Türkiye kripto platformları için .NET client ekosistemi
+  </text>
+
+  <text x="99" y="468"
+        font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="20" font-weight="500" fill="#10707B" letter-spacing="2.2">
+    TEK KOD, HER PLATFORM
+  </text>
+
+  <g font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace" font-size="20" font-weight="500">
+    <g transform="translate(96 530)">
+      <rect width="196" height="44" rx="22" fill="#D6EDDF"/>
+      <use href="#tick" x="24" y="16"/>
+      <text x="52" y="29" fill="#155238">BtcTurk</text>
+    </g>
+    <g transform="translate(312 530)">
+      <rect width="230" height="44" rx="22" fill="#D6EDDF"/>
+      <use href="#tick" x="24" y="16"/>
+      <text x="52" y="29" fill="#155238">Binance TR</text>
+    </g>
+    <g transform="translate(562 530)">
+      <rect width="166" height="44" rx="22" fill="#EDEFF5"/>
+      <text x="28" y="29" fill="#5B657F">Paribu</text>
+    </g>
+    <g transform="translate(748 530)">
+      <rect width="166" height="44" rx="22" fill="#EDEFF5"/>
+      <text x="28" y="29" fill="#5B657F">CoinTR</text>
+    </g>
+  </g>
+
+  <text x="1184" y="78" text-anchor="end"
+        font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="19" fill="#6B7590" letter-spacing="0.4">
+    CryptoExchange.Net 12.5.0 · MIT
+  </text>
+</svg>

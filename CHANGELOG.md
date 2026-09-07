@@ -61,7 +61,7 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
   hesap doğrulaması anahtar geldiğinde yapılacak
 - **Binance TR:** REST ticker yok, çünkü borsa bu veriyi anahtarsız sunmuyor. Ticker
   yalnızca WebSocket üzerinden alınabilir
-- Paribu ve Bitexen adaptörleri planlandı, başlanmadı
+- Paribu ve CoinTR adaptörleri için uç envanteri çıkarıldı, kod yazılmadı
 
 ### Notlar
 

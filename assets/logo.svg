@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"
+     role="img" aria-labelledby="trcrypto-logo-title">
+  <title id="trcrypto-logo-title">TRCrypto.Net</title>
+
+  <!--
+    Sekiz kollu yildiz (rub el hizb): ayni boyutta iki karenin biri 45 derece
+    dondurulerek ust uste konmasiyla olusur. Iznik cinisinin temel motifidir ve
+    kutuphanenin yaptigi isi de anlatir: tek bir merkez, sekiz yone acilan ayni yapi.
+
+    Kontur, iki karenin birlesimi olarak tek parcada cizilir. Ust uste iki dortgen
+    kullanmak ekranda ayni gorunur ama tek renkli surumde ortadaki delik acilamaz.
+
+    Ortadaki turkuaz kare, sitedeki "iki borsa tek kod" fikrini isaretleyen renktir.
+  -->
+
+  <path fill="#1F3E8C" d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+  <path fill="#10707B" d="M32 21.5 42.5 32 32 42.5 21.5 32z"/>
+</svg>

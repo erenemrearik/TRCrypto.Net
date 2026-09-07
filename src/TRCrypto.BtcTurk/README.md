@@ -222,7 +222,9 @@ Bakiye ve emir uçları API anahtarı gerektirir. Anahtar alma ve bağlama rehbe
 | `/api/v1/order/{id}` | `Trading.GetOrderAsync` | `ISpotOrderRestClient` |
 | `POST /api/v1/order` | `Trading.PlaceOrderAsync` | `ISpotOrderRestClient` |
 | `DELETE /api/v1/order` | `Trading.CancelOrderAsync` | `ISpotOrderRestClient` |
-| WebSocket: ticker · trade · orderbook | `SocketClient.SpotApi.SubscribeTo…` | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` |
+| WebSocket: ticker | `SubscribeToTickerUpdatesAsync` | `ITickerSocketClient` |
+| WebSocket: işlemler | `SubscribeToTradeUpdatesAsync` | `ITradeSocketClient` |
+| WebSocket: emir defteri | `SubscribeToOrderBookUpdatesAsync` | `IOrderBookSocketClient` |
 | WebSocket: tüm pariteler tek abonelikte | `SubscribeToAllTickerUpdatesAsync` | `ITickersSocketClient` |
 | Kullanıcı socket akışları | ⏳ | ⏳ |
 

@@ -111,6 +111,8 @@ docs/vendor/                   Doğrulanmış uç envanteri
 docs/spec/                     Teknik spesifikasyon ve D-1..D-44 doğrulama ekleri
 docs/index.html                Üretilen dokümantasyon sitesi
 tools/site/                    Siteyi üreten betikler
+tools/audit/                   Doküman ve kod tutarlılık denetimi
+assets/                        Logo, wordmark ve sosyal önizleme kartı
 ```
 
 Her adaptör aynı iskeleti izler: `Clients/SpotApi/` altında REST ve socket istemcileri,
@@ -129,6 +131,7 @@ dotnet build -c Release          # 0 uyari, 5 hedef platform
 dotnet test  -c Release          # tum testler yesil
 node tools/site/build.mjs        # dokuman degistiyse site yeniden uretilir
 node tools/site/check.mjs        # markdown isleyicisi dogrulanir
+node tools/audit/docs-vs-code.mjs  # dokumanlar kodla tutarli mi
 ```
 
 Uyarılar hata sayılır (`TreatWarningsAsErrors`). Beş hedef platform vardır:
@@ -172,13 +175,18 @@ Binance TR'de tüm imzalı istekleri reddettirir. `ServerTimeIntegrationTests` b
 gerçek bir hesaba karşı doğrulandı.
 
 **Binance TR** public piyasa verisi, WebSocket, imzalama ve private REST yüzeyi
-tamamlandı. Private uçlar canlı bir hesapla henüz denenmedi; anahtar geldiğinde
-`AuthenticationProbeTests` şemayı doğrulayacaktır.
+tamamlandı. Private uçların gerçek bir hesaba karşı çalıştırılması sıradaki iştir;
+`AuthenticationProbeTests` imzanın kabul edilip edilmediğini bildirir.
 
 **Paribu** için uç envanteri çıkarıldı ve `docs/vendor/paribu-capabilities.md` dosyasına
 yazıldı; kod henüz yazılmadı. Borsanın resmi bir API'si vardır, public ticker ve emir
 defteri anahtarsız çalışır ve canlı doğrulanmıştır.
 
-**Bitexen** planlandı, başlanmadı.
+**CoinTR** için de uç envanteri çıkarıldı (`docs/vendor/cointr-capabilities.md`). Altı
+public uç anahtarsız çalışıyor ve canlı doğrulandı; imzalaması iki aşamalıdır ve henüz
+denenmemiştir.
+
+Platform sırası: BtcTurk, Binance TR, Paribu, CoinTR. Önceki planda yer alan Bitexen ve
+ICRYPEX şimdilik kapsam dışıdır.
 
 NuGet'e henüz yayınlanmadı; ilk sürüm `0.1.0-preview` olarak planlanıyor.

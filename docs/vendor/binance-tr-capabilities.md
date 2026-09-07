@@ -155,6 +155,7 @@ geldiğinde yapılacaktır.
 | GET | `/open/v1/orders` | ✅ Uygulandı |
 | GET | `/open/v1/orders/detail` | ✅ Uygulandı |
 | POST | `/open/v1/orders/cancel` | ✅ Uygulandı |
+| GET | `/open/v1/orders/trades` | ✅ Uygulandı |
 | POST | `/open/v1/orders/batch-cancel` | ⏳ Envanteri çıkarıldı |
 | POST | `/open/v1/user-listen-token` | ⏳ Envanteri çıkarıldı |
 
@@ -204,6 +205,14 @@ kütüphane her ikisini de okur.
 `GET /open/v1/orders/detail` ve `POST /open/v1/orders/cancel` → `orderId`, `orderListId`,
 `clientId`, `symbol`, `side`, `type`, `price`, `status`, `origQty`, `origQuoteQty`,
 `executedQty`, `executedPrice`, `executedQuoteQty`, `createTime`.
+
+`GET /open/v1/orders/trades` → `list[]` içinde `tradeId`, `orderId`, `symbol`, `price`,
+`qty`, `quoteQty`, `commission`, `commissionAsset`, `isBuyer`, `isMaker`, `isBestMatch`,
+`time`. Parametreler: `symbol` (zorunlu), `orderId`, `startTime`, `endTime`, `fromId`,
+`direct`, `limit` (varsayılan 500, en fazla 1000), `recvWindow`, `timestamp`.
+
+İşlem kaydında ayrı bir yön alanı yoktur; yön yalnızca `isBuyer` bayrağından çıkarılır.
+`time` alanı metin, emir kayıtlarındaki `createTime` ise sayı olarak gelir.
 
 `user-listen-token`, kullanıcı akışı için token üretir. Spesifikasyon (Bölüm 11.2) bu
 tokenın kendiliğinden yenilenmediğini, lifecycle yönetimi gerektiğini belirtir.

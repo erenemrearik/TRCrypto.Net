@@ -1,6 +1,6 @@
 # Proje Durumu
 
-> **Son güncelleme:** 27 Ağustos 2026
+> **Son güncelleme:** 7 Eylül 2026
 > Bu dosya, projeye ara verip döndüğünüzde ya da yeni biri katıldığında okunacak
 > tek sayfalık özettir. Ayrıntı için ilgili belgelere bakın.
 
@@ -8,9 +8,14 @@
 
 ## Tek cümleyle
 
-BtcTurk **tamamlandı** (REST + WebSocket + shared); yalnızca kullanıcıya özel socket
-akışları eksik ve bunlar hesapta emir hareketi gerektiriyor.
-**Binance TR: REST + WebSocket + shared yüzey** çalışıyor; kimlik doğrulama bekliyor.
+BtcTurk **tamamlandı.** REST, WebSocket, kimlik doğrulama ve shared yüzey çalışıyor;
+yalnızca kullanıcıya özel socket akışları eksik ve bunlar hesapta emir hareketi
+gerektiriyor.
+
+**Binance TR de tamamlandı.** Public piyasa verisi, WebSocket, imzalama ve private REST
+yüzeyi hazır. Kalan tek iş, private uçları gerçek bir hesaba karşı çalıştırmak.
+
+Sıradaki iki platform **Paribu** ve **CoinTR**; ikisinin de uç envanteri çıkarıldı.
 
 ---
 
@@ -154,7 +159,7 @@ BtcTurk'tan üç önemli fark:
 | **Binance TR: private uçların canlı doğrulaması** | Şema resmi dokümantasyondan alındı, imzalama yayımlanmış test vektörüyle doğrulandı. Gerçek bir hesaba karşı denenmesi anahtar geldiğinde yapılacak; `AuthenticationProbeTests` bunu ilk çalıştırmada bildirir |
 | **Binance TR: REST ticker** | Borsa anahtarsız REST ticker sunmuyor; **socket üzerinden çalışıyor** |
 | **Paribu adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Borsanın resmi API'si var; public ticker ve emir defteri canlı doğrulandı |
-| **Bitexen adaptörü** | Sırada |
+| **CoinTR adaptörü** | Uç envanteri çıkarıldı, kod yazılmadı. Altı public uç canlı doğrulandı; imzalama şeması iki aşamalı ve henüz denenmedi |
 | **`gitleaks` yerel taraması** | Araç makinede kurulu değil. Yapılandırma ve hook hazır; CI'da çalışacak |
 
 ---
@@ -215,19 +220,39 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 ## Sonraki adım
 
-**1. Sonraki borsa (M4)**
+**1. Binance TR private uçlarının canlı doğrulaması**
 
-Binance TR. Convention'lar BtcTurk üzerinde eksiksiz oturdu; aynı sıra izlenir:
-vendor freeze → public REST → auth → private REST → WebSocket → shared.
+Anahtar hazır. `AuthenticationProbeTests` imzanın kabul edilip edilmediğini ilk
+çalıştırmada bildirir; kabul edilirse hesap ve emir uçları gerçek yanıtlarla doğrulanır.
 
-**2. Kullanıcıya özel socket akışları**
+**2. Paribu adaptörü (M5)**
 
-Emir iptalinin kesinleştiği kanal 452 burada. Canlı bir hesap gerektirir.
+Uç envanteri hazır. Convention'lar iki borsada oturdu; aynı sıra izlenir:
+public REST, kimlik doğrulama, private REST, WebSocket, shared yüzey.
 
-**3. Ön sürüm**
+**3. CoinTR adaptörü (M6)**
 
-BtcTurk tamamlandığına göre NuGet v0.1.0-preview yayınlanabilir. Workflow hazır;
-`NUGET_API_KEY` ve environment onayı eksik.
+Uç envanteri hazır. İmzalama şeması diğer üçünden farklı olduğu için kod yazılmadan önce
+canlı doğrulanacak.
+
+**4. Toplu paket ve ön sürüm**
+
+İki borsa tamamlandığına göre `TRCrypto.Clients` ve NuGet `v0.1.0-preview` yayınlanabilir.
+Workflow hazır; `NUGET_API_KEY` ve environment onayı eksik.
+
+---
+
+## Platform listesi
+
+| Sıra | Platform | Durum |
+|---|---|---|
+| 1 | BtcTurk | ✅ Tamamlandı |
+| 2 | Binance TR | ✅ Tamamlandı, canlı hesap doğrulaması bekliyor |
+| 3 | Paribu | Uç envanteri çıkarıldı |
+| 4 | CoinTR | Uç envanteri çıkarıldı |
+
+Liste 7 Eylül 2026'da güncellendi. Önceki planda yer alan Bitexen ve ICRYPEX şimdilik
+kapsam dışıdır; ileride yeniden değerlendirilebilir.
 
 ---
 

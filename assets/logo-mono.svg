@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"
+     role="img" aria-labelledby="trcrypto-logo-mono-title">
+  <title id="trcrypto-logo-mono-title">TRCrypto.Net</title>
+
+  <!--
+    Tek renkli surum. Rengi `currentColor` uzerinden alir, boylece koyu ve acik
+    zeminde ayni dosya kullanilir.
+
+    Yildiz ve ortadaki kare tek bir yolda toplanip `evenodd` kuraliyla cizilir;
+    boylece merkez delik olarak acilir ve motif renk ayrimi olmadan da okunur.
+  -->
+
+  <path fill="currentColor" fill-rule="evenodd"
+        d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5zM32 21.5 21.5 32 32 42.5 42.5 32z"/>
+</svg>
