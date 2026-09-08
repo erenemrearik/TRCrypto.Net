@@ -10,6 +10,8 @@
     <Authors>TRCrypto Contributors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://erenemrearik.github.io/TRCrypto.Net/</PackageProjectUrl>
     <PackageTags>crypto;cryptocurrency;exchange;trading;turkey;turkiye;api;client</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/erenemrearik/TRCrypto.Net</RepositoryUrl>
@@ -25,5 +27,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!--
+    Paket simgesi uc paket icin de aynidir; marka tek yerde tutulur.
+    NuGet yalnizca raster kabul eder, bu yuzden SVG degil PNG kullanilir.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../assets/logo-512.png"
+          Pack="true" PackagePath="icon.png" Visible="false" />
   </ItemGroup>
 </Project>
