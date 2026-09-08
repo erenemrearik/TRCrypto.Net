@@ -144,6 +144,10 @@ jobs:
         with:
           files: ./artifacts/*.*nupkg
           generate_release_notes: true
+          # Etikette kisa cizgi varsa (v0.1.0-preview.1) surum on surumdur. NuGet bunu
+          # zaten boyle isaretler; GitHub tarafinda da ayni gorunmezse iki liste
+          # birbirini yalanlar.
+          prerelease: ${{ contains(github.ref_name, '-') }}
           body: |
             Degisiklikler icin [CHANGELOG.md](CHANGELOG.md) dosyasina bakin.
 
