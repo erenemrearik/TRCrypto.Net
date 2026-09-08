@@ -837,6 +837,10 @@ a:hover { color: var(--cobalt-ink); text-decoration-color: currentColor; }
 const NAV = /*__NAV__*/null;
 const DOCS = /*__DOCS__*/null;
 const GENERATED = /*__GENERATED__*/null;
+
+// Depodan turetilen sayilar: paketler, test sayilari, sapma sayisi, hedef platformlar,
+// yayinlanan surum. Giris sayfasi bunlari kullanir; hicbiri elle yazilmaz.
+const FACTS = /*__FACTS__*/null;
 const REPO = 'https://github.com/erenemrearik/TRCrypto.Net';
 
 /* ═══ Markdown ═══════════════════════════════════════════════════════════════
@@ -1139,11 +1143,50 @@ function renderList(block) {
 }
 
 /* ═══ Giris sayfasi ══════════════════════════════════════════════════════════
-   README rozetleri ve HTML tablosu site icin yeniden yazildi; buradaki sayilar
-   son dogrulama calistirmasindan gelir.
+   Sayfanin duzeni burada, sayilari degil. Paket listesi, test sayilari, sapma
+   sayisi, hedef platformlar ve yayinlanan surum FACTS icinden gelir ve depodan
+   turetilir.
+
+   Bunlar bir sure elle yazildi ve sessizce eskidiler: site "2 borsa, 212 test,
+   NuGet'e yayinlanmadi" derken depoda uc borsa, 277 test ve yayinlanmis bir
+   surum vardi. Asagida sayi sabiti aramayin, olmamalari gerekiyor.
    ═════════════════════════════════════════════════════════════════════════ */
 
+/** Yayin durumunu tek cumlede anlatir. */
+function releaseLine() {
+  const r = FACTS.release;
+  if (!r.published) return 'Henüz NuGet\'e yayınlanmadı.';
+
+  const kind = r.prerelease ? 'ön sürüm' : 'sürüm';
+  return `NuGet'te ${kind} olarak yayında: <code>${r.version}</code>${r.date ? ' · ' + r.date : ''}.`;
+}
+
+/** Paket tablosunun satirlari: once yayinlanan paketler, sonra yol haritasi. */
+function packageRows() {
+  const rows = FACTS.packages.map((p) => {
+    const name = p.page
+      ? `<a href="#/${p.page}"><code>${p.id}</code></a>`
+      : `<code>${p.id}</code>`;
+    const pill = p.status
+      ? `<span class="pill ${p.status.tone}">${p.status.label}</span>`
+      : '';
+    return `<tr><td>${name}</td><td>${p.scope}</td><td>${pill}</td></tr>`;
+  });
+
+  const planned = (FACTS.roadmap ?? []).map((p) => {
+    const name = p.page ? `<a href="#/${p.page}"><code>${p.id}</code></a>` : `<code>${p.id}</code>`;
+    return `<tr><td>${name}</td><td>${p.scope}</td>` +
+      `<td><span class="pill ${p.status.tone}">${p.status.label}</span></td></tr>`;
+  });
+
+  return rows.concat(planned).join('\n      ');
+}
+
 function homePage() {
+  const install = FACTS.packages
+    .map((p) => `dotnet add package ${p.id}${FACTS.release.prerelease ? ' --prerelease' : ''}`)
+    .join('\n');
+
   return `
 <div class="doc-head hero">
   <div class="doc-eyebrow">Türkiye kripto borsaları için .NET SDK</div>
@@ -1157,14 +1200,14 @@ function homePage() {
 </div>
 
 <dl class="metrics">
-  <div class="metric"><dt>Platform</dt><dd>2<span>/ 4 planlı</span></dd></div>
-  <div class="metric"><dt>Birim test</dt><dd>212</dd></div>
-  <div class="metric"><dt>Canlı test</dt><dd>13</dd></div>
-  <div class="metric"><dt>Hedef platform</dt><dd>5</dd></div>
-  <div class="metric"><dt>Doğrulama bulgusu</dt><dd>44</dd></div>
+  <div class="metric"><dt>Yayınlanan paket</dt><dd>${FACTS.packages.length}<span>/ ${FACTS.packages.length + (FACTS.roadmap?.length ?? 0)} planlı</span></dd></div>
+  <div class="metric"><dt>Birim test</dt><dd>${FACTS.unitTests}</dd></div>
+  <div class="metric"><dt>Canlı test</dt><dd>${FACTS.liveTests}</dd></div>
+  <div class="metric"><dt>Hedef platform</dt><dd>${FACTS.frameworks.length}</dd></div>
+  <div class="metric"><dt>Doğrulama bulgusu</dt><dd>${FACTS.deviations}</dd></div>
 </dl>
 
-<h2 id="tez">Aynı kod, iki borsa</h2>
+<h2 id="tez">Aynı kod, üç borsa</h2>
 <p>
   Çağıran taraf hangi borsayla konuştuğunu bilmez. Her borsa kendi sembol biçimini
   üretir, kendi zarfını açar, kendi imzalama şemasını kullanır. Aşağıdaki kodda
@@ -1179,7 +1222,8 @@ function homePage() {
 IOrderBookRestClient[] borsalar =
 [
     new BtcTurkRestClient().SpotApi.SharedClient,
-    new BinanceTRRestClient().SpotApi.SharedClient
+    new BinanceTRRestClient().SpotApi.SharedClient,
+    new CoinTRRestClient().SpotApi.SharedClient
 ];
 
 foreach (var borsa in borsalar)
@@ -1192,12 +1236,17 @@ foreach (var borsa in borsalar)
     <div class="venue">
       <div class="venue-name">BtcTurk</div>
       <div class="venue-native">native sembol · BTCTRY</div>
-      <div class="venue-price">3.786.255<small>TRY</small></div>
+      <div class="venue-price">3.794.897<small>TRY</small></div>
     </div>
     <div class="venue">
       <div class="venue-name">Binance TR</div>
       <div class="venue-native">native sembol · BTC_TRY</div>
-      <div class="venue-price">3.788.222<small>TRY</small></div>
+      <div class="venue-price">3.795.055<small>TRY</small></div>
+    </div>
+    <div class="venue">
+      <div class="venue-name">CoinTR</div>
+      <div class="venue-native">native sembol · BTCTRY</div>
+      <div class="venue-price">3.794.073<small>TRY</small></div>
     </div>
   </div>
 </div>
@@ -1210,18 +1259,7 @@ foreach (var borsa in borsalar)
   <table>
     <thead><tr><th>Paket</th><th>Kapsam</th><th>Durum</th></tr></thead>
     <tbody>
-      <tr>
-        <td><code>TRCrypto.BtcTurk</code></td>
-        <td>Piyasa verisi · mum · hesap · emirler · WebSocket · SharedApis</td>
-        <td><span class="pill ok">tamamlandı</span></td>
-      </tr>
-      <tr>
-        <td><code>TRCrypto.BinanceTR</code></td>
-        <td>Piyasa verisi · hesap · emirler · WebSocket · SharedApis</td>
-        <td><span class="pill ok">tamamlandı</span></td>
-      </tr>
-      <tr><td><code>TRCrypto.Paribu</code></td><td>Uç envanteri çıkarıldı</td><td><span class="pill wait">sırada</span></td></tr>
-      <tr><td><code>TRCrypto.CoinTR</code></td><td>Uç envanteri çıkarıldı</td><td><span class="pill wait">sırada</span></td></tr>
+      ${packageRows()}
     </tbody>
   </table>
 </div>
@@ -1233,7 +1271,7 @@ foreach (var borsa in borsalar)
     Paribu, CoinTR veya JKorf ile resmi bir bağlantısı yoktur. Borsaların API'lerinde
     yapacağı değişikliklerden veya hizmet kesintilerinden sorumlu değildir.
   </p>
-  <p>Henüz NuGet'e yayınlanmadı; ilk sürüm <code>0.1.0-preview</code> olarak planlanıyor.</p>
+  <p>${releaseLine()}</p>
 </div>
 
 <h2 id="nereden">Nereden başlamalı</h2>
@@ -1248,7 +1286,15 @@ foreach (var borsa in borsalar)
   </a>
   <a class="card" href="#/binance-tr">
     <div class="card-title">TRCrypto.BinanceTR</div>
-    <div class="card-desc">Public piyasa verisi ve borsanın bilinmesi gereken sınırları.</div>
+    <div class="card-desc">Piyasa verisi, hesap ve emir uçları, borsanın bilinmesi gereken sınırları.</div>
+  </a>
+  <a class="card" href="#/cointr">
+    <div class="card-title">TRCrypto.CoinTR</div>
+    <div class="card-desc">Üç parçalı kimlik bilgisi, kesir gelen değişim oranı ve akış kanalları.</div>
+  </a>
+  <a class="card" href="#/pano">
+    <div class="card-title">Piyasa panosu</div>
+    <div class="card-desc">Üç borsayı yan yana akıtan, kütüphaneyi gerçekten çalıştıran örnek.</div>
   </a>
   <a class="card" href="#/anahtar-guvenlik">
     <div class="card-title">API anahtarı bağlama</div>
@@ -1256,7 +1302,7 @@ foreach (var borsa in borsalar)
   </a>
   <a class="card" href="#/spesifikasyon">
     <div class="card-title">Teknik spesifikasyon</div>
-    <div class="card-desc">Mimari kararlar ve canlı doğrulamayla bulunan 39 sapma.</div>
+    <div class="card-desc">Mimari kararlar ve canlı doğrulamayla bulunan ${FACTS.deviations} sapma.</div>
   </a>
   <a class="card" href="#/katki">
     <div class="card-title">Katkı rehberi</div>
@@ -1265,13 +1311,19 @@ foreach (var borsa in borsalar)
 </div>
 
 <h2 id="kurulum">Kurulum</h2>
+<p>Her borsa bağımsız bir pakettir; yalnızca ihtiyacınız olanı kurun.</p>
 <div class="code">
-  <div class="code-bar"><span class="code-lang">bash</span><span class="grow"></span><button class="copy" type="button" data-code="dotnet add package TRCrypto.BtcTurk">kopyala</button></div>
-  <pre><code>${highlight('# NuGet yayini bekliyor; simdilik depoyu klonlayin\ngit clone ' + REPO + '.git\ncd TRCrypto.Net\ndotnet build -c Release', 'bash')}</code></pre>
+  <div class="code-bar"><span class="code-lang">bash</span><span class="grow"></span><button class="copy" type="button" data-code="${install.replace(/"/g, '&quot;')}">kopyala</button></div>
+  <pre><code>${highlight(install, 'bash')}</code></pre>
 </div>
+${FACTS.release.prerelease ? `<p>
+  <code>--prerelease</code> şu an gerekli: yayındaki tek sürüm
+  <code>${FACTS.release.version}</code>. Ön sürüm olmasının nedeni iki yüzeyin canlı bir
+  hesapta henüz doğrulanmamış olmasıdır. Doğrulanmayan hiçbir şey paylaşılan arayüzde
+  bildirilmiyor, dolayısıyla <code>Discover()</code> yalnızca kanıtlanmış olanı raporlar.
+</p>` : ''}
 <p>
-  Hedef platformlar: <code>net8.0</code> · <code>net9.0</code> · <code>net10.0</code> ·
-  <code>netstandard2.0</code> · <code>netstandard2.1</code>
+  Hedef platformlar: ${FACTS.frameworks.map((f) => `<code>${f}</code>`).join(' · ')}
 </p>
 `;
 }

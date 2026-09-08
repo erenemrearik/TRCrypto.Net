@@ -118,6 +118,7 @@ docs/credentials/              Borsa başına API anahtarı rehberi
 docs/vendor/                   Doğrulanmış uç envanteri
 docs/spec/                     Teknik spesifikasyon ve D-1..D-52 doğrulama ekleri
 docs/index.html                Üretilen dokümantasyon sitesi
+tools/lib/facts.mjs            Depodan türetilen sayılar; site ve denetim buradan okur
 tools/site/                    Siteyi üreten betikler
 tools/audit/                   Doküman ve kod tutarlılık denetimi
 assets/                        Logo, wordmark ve sosyal önizleme kartı
@@ -146,6 +147,27 @@ Uyarılar hata sayılır (`TreatWarningsAsErrors`). Beş hedef platform vardır:
 `net8.0`, `net9.0`, `net10.0`, `netstandard2.0`, `netstandard2.1`.
 
 Doküman değiştirip siteyi yeniden üretmezseniz CI derlemeyi durdurur.
+
+### Sitedeki sayılar elle yazılmaz
+
+Paket listesi, test sayıları, sapma sayısı, hedef platformlar ve yayınlanan sürüm
+`tools/lib/facts.mjs` tarafından depodan türetilir. Site de denetim aracı da aynı modülü
+okur, dolayısıyla ikisi ayrışamaz.
+
+Bu kural bir hatanın sonucudur: giriş sayfası `template.html` içinde elle yazılıydı ve
+kod ilerledikçe sessizce eskidi. Depoda üç borsa, 277 test ve yayınlanmış bir sürüm
+varken site "2 borsa, 212 test, NuGet'e yayınlanmadı" diyordu. Kimse fark etmedi, çünkü
+hiçbir kontrol o sayfaya bakmıyordu.
+
+İki sonucu vardır:
+
+1. **Test eklemek siteyi de değiştirir.** Test sayısı giriş sayfasında görünür, bu
+   yüzden test ekledikten sonra `node tools/site/build.mjs` çalıştırmak gerekir. CI
+   aksi halde durur. Rahatsız edici değil, istenen davranış budur: sayı tek yerden
+   gelirse yanlış olamaz.
+2. **Yeni bir `.md` dosyası siteye eklenmek zorundadır.** Denetim aracı depodaki tüm
+   markdown dosyalarını tarar; sitede olmayan her dosya için `tools/audit` içindeki
+   dışarıda bırakma listesine gerekçe yazılmalıdır.
 
 ---
 

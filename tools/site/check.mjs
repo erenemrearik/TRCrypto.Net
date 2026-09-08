@@ -26,9 +26,12 @@ const pure = script.slice(0, appMarker);
 
 const context = { console, module: {} };
 vm.createContext(context);
-vm.runInContext(pure + '\nthis.__api = { render, inline, slug, DOCS, NAV, highlight };', context);
+vm.runInContext(
+  pure + '\nthis.__api = { render, inline, slug, DOCS, NAV, FACTS, homePage, highlight };',
+  context
+);
 
-const { render, DOCS, NAV } = context.__api;
+const { render, DOCS, NAV, FACTS, homePage } = context.__api;
 
 const problems = [];
 let totalHeadings = 0;
@@ -70,6 +73,59 @@ for (const group of NAV) {
     // Baglantilar: depo icindeki .md yollari hash rotasina cevrilmis olmali.
     const mdLink = out.html.match(/href="(?!https?:)[^"]*\.md[^"]*"/);
     if (mdLink) problems.push(`${page.id}: cevrilmemis dokuman baglantisi: ${mdLink[0]}`);
+  }
+}
+
+/* ── Giris sayfasi ────────────────────────────────────────────────────────────
+   Giris sayfasi markdown'dan degil sablondan gelir, dolayisiyla yukaridaki
+   dongunun disindadir. Bir sure kimse ona bakmadi ve icerigi sessizce eskidi:
+   depoda uc borsa varken sayfa iki borsa, 277 test varken 212 test ve
+   yayinlanmis bir surum varken "NuGet'e yayinlanmadi" diyordu.
+
+   Sayilar artik FACTS'ten geliyor. Asagidaki kontroller bunu dogrular, yani
+   birinin sayilari tekrar sabit metne cevirmesi durumunda derleme durur.
+   ───────────────────────────────────────────────────────────────────────── */
+{
+  let home;
+  try {
+    home = homePage();
+  } catch (error) {
+    problems.push(`giris: sayfa uretilemedi: ${error.message}`);
+    home = '';
+  }
+
+  if (home) {
+    for (const tag of ['div', 'table', 'pre', 'code', 'tr', 'td', 'th', 'dl', 'dt', 'dd']) {
+      const open = (home.match(new RegExp('<' + tag + '(?=[\\s>])', 'g')) ?? []).length;
+      const close = (home.match(new RegExp('</' + tag + '>', 'g')) ?? []).length;
+      if (open !== close) problems.push(`giris: <${tag}> dengesiz: ${open} acilis, ${close} kapanis`);
+    }
+
+    // Her paket giris sayfasinda gorunmeli. Yeni bir adaptor eklendiginde bunu
+    // hatirlamak gerekmesin diye kontrol listeden degil diskten turetilir.
+    for (const pkg of FACTS.packages) {
+      if (!home.includes(pkg.id)) problems.push(`giris: ${pkg.id} paketi sayfada yok`);
+    }
+
+    // Sayilar sayfada gercekten yaziyor mu?
+    for (const [ad, deger] of [
+      ['birim test', FACTS.unitTests],
+      ['sapma', FACTS.deviations],
+    ]) {
+      if (!home.includes(String(deger))) {
+        problems.push(`giris: ${ad} sayisi (${deger}) sayfada gorunmuyor`);
+      }
+    }
+
+    // Yayin durumu ile sayfanin dili ayrismamali.
+    if (FACTS.release.published) {
+      if (/yay[ıi]nlanmad/i.test(home)) {
+        problems.push('giris: surum yayinda ama sayfa hala yayinlanmadigini soyluyor');
+      }
+      if (!home.includes(FACTS.release.version)) {
+        problems.push(`giris: yayinlanan surum (${FACTS.release.version}) sayfada gorunmuyor`);
+      }
+    }
   }
 }
 

@@ -13,8 +13,12 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { collectFacts } from '../lib/facts.mjs';
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const read = (p) => readFileSync(resolve(root, p), 'utf8');
+
+const facts = collectFacts(root);
 
 const findings = [];
 const note = (area, message) => findings.push({ area, message });
@@ -106,25 +110,11 @@ for (const adapter of adapters) {
 
 // ── 5. Test sayilari dokumanlarda dogru mu? ──
 
-const testCount = (project) => {
-  const files = sourceFiles(`tests/${project}`);
-  let facts = 0;
-  for (const file of files) {
-    const text = read(file);
-    facts += (text.match(/\[Fact\]|\[SkippableFact\]/g) ?? []).length;
-    // Theory'lerde her InlineData ayri bir test calistirmasidir.
-    for (const block of text.split('[Theory]').slice(1)) {
-      const head = block.split(/public\s/)[0];
-      facts += (head.match(/\[InlineData/g) ?? []).length;
-    }
-  }
-  return facts;
-};
-
-const unitTotal =
-  testCount('TRCrypto.BtcTurk.UnitTests') +
-  testCount('TRCrypto.BinanceTR.UnitTests') +
-  testCount('TRCrypto.CoinTR.UnitTests');
+// Sayim `tools/lib/facts.mjs` icinde; site de ayni modulu kullanir. Iki yerde ayri
+// sayilsaydi iki taraf farkli sonuc uretebilir ve hangisinin dogru oldugu belirsiz
+// kalirdi. Sayim ayrica test projelerini diskten bulur, bu yuzden yeni bir proje
+// eklendiginde burada isim guncellemek gerekmez.
+const unitTotal = facts.unitTests;
 
 // Test sayisi yalnizca durum belgesinde yazili. README'de rozet olarak tutulmuyordu:
 // elle guncellenen bir sayi her test eklendiginde bayatliyor ve derleme rozeti zaten
@@ -150,18 +140,51 @@ for (const file of navFiles) {
   }
 }
 
-const docFiles = readdirSync(resolve(root, 'docs/vendor'))
-  .filter((f) => f.endsWith('.md'))
-  .map((f) => 'docs/vendor/' + f)
-  .concat(
-    readdirSync(resolve(root, 'docs/credentials'))
-      .filter((f) => f.endsWith('.md'))
-      .map((f) => 'docs/credentials/' + f)
-  );
+/**
+ * Siteye bilincli olarak alinmayan markdown dosyalari ve nedenleri.
+ *
+ * Liste gerekce ister. Once yalnizca iki klasor taraniyordu, dolayisiyla ornek
+ * uygulamanin ve marka varliklarinin belgeleri kimsenin fark etmedigi bir bosluga
+ * dusuyordu: depoda vardilar, sitede yoklardi. Artik butun .md dosyalari taranir ve
+ * disarida kalan her dosya burada adiyla yazilmak zorundadir.
+ */
+const siteExclusions = {
+  'README.md': 'Icerigi sitenin giris sayfasinda yeniden yazildi',
+  'CLAUDE.md': 'Depoda calisan ajanlar icin talimat; kullanici belgesi degil',
+  '.github/pull_request_template.md': 'GitHub formu; okunacak bir belge degil',
+};
 
-for (const file of docFiles) {
-  if (!navFiles.includes(file)) {
-    note('Site', `${file} dokumani sitede gorunmuyor`);
+/** Depodaki tum markdown dosyalari. */
+function markdownFiles() {
+  const out = [];
+  // `.claude` altindaki dosyalar CLAUDE.md ile ayni kategoridedir: depoda calisan
+  // ajanlarin talimatlari, kullanicinin okuyacagi belgeler degil. Klasor olarak
+  // atlanir ki yeni bir skill eklendiginde burasi guncellenmek zorunda kalmasin.
+  const skip = new Set(['node_modules', 'bin', 'obj', '.git', '.claude', 'artifacts']);
+
+  const walk = (current) => {
+    for (const entry of readdirSync(resolve(root, current || '.'), { withFileTypes: true })) {
+      if (skip.has(entry.name)) continue;
+      const next = current ? join(current, entry.name) : entry.name;
+      if (entry.isDirectory()) walk(next);
+      else if (entry.name.endsWith('.md')) out.push(next.replace(/\\/g, '/'));
+    }
+  };
+
+  walk('');
+  return out;
+}
+
+for (const file of markdownFiles()) {
+  if (navFiles.includes(file)) continue;
+  if (file in siteExclusions) continue;
+
+  note('Site', `${file} dokumani sitede gorunmuyor ve disarida birakma gerekcesi yazilmamis`);
+}
+
+for (const file of Object.keys(siteExclusions)) {
+  if (!existsSync(resolve(root, file))) {
+    note('Site', `disarida birakilan ${file} dosyasi artik yok; listeden cikarilmali`);
   }
 }
 
