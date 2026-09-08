@@ -207,4 +207,6 @@ defteri anahtarsız çalışır ve canlı doğrulanmıştır.
 Platform sırası: BtcTurk, Binance TR, CoinTR, Paribu. Önceki planda yer alan Bitexen ve
 ICRYPEX şimdilik kapsam dışıdır.
 
-NuGet'e henüz yayınlanmadı; ilk sürüm `0.1.0-preview` olarak planlanıyor.
+Üç paket de NuGet'te ön sürüm olarak yayında: `0.1.0-preview.1` (8 Eylül 2026).
+Yayın Trusted Publishing ile yapılır; depoda API anahtarı saklanmaz ve `nuget`
+environment'ı onay ister. Ayrıntı: `.github/workflows/release.yml`.

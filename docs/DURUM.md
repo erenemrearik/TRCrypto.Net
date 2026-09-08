@@ -27,6 +27,9 @@ denenene kadar yayımlanmayacak.
 Piyasa panosu artık üç borsayı yan yana gösteriyor ve üçü de tek bir
 `ITickerSocketClient` ile dinleniyor.
 
+**Üç paket de NuGet'te**, `0.1.0-preview.1` sürümüyle. Kurulum ve yayın hattının nasıl
+çalıştığı aşağıda.
+
 Sıradaki platform **Paribu**; uç envanteri çıkarıldı, kod yazılmadı.
 
 ---
@@ -265,6 +268,35 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 ---
 
+## NuGet yayını ✅
+
+İlk sürüm **`0.1.0-preview.1`**, 8 Eylül 2026'da yayınlandı. Üç paket de nuget.org'da:
+
+```bash
+dotnet add package TRCrypto.BtcTurk   --prerelease
+dotnet add package TRCrypto.BinanceTR --prerelease
+dotnet add package TRCrypto.CoinTR    --prerelease
+```
+
+Yayın **Trusted Publishing (OIDC)** ile yapılır. Depoda kalıcı bir API anahtarı
+saklanmaz: GitHub kısa ömürlü bir kimlik belgesi üretir, NuGet bunu kayıtlı politikayla
+doğrular ve bir saat geçerli, tek kullanımlık bir anahtar döndürür. Politikanın
+eşleşmesi gereken dört alan `release.yml` başında yazılıdır.
+
+Sürüm etiketi push edildiğinde akış derler, birim testlerini koşar ve paketleri üretir;
+sonra `nuget` environment'ında **onay bekler**. Onay verilmeden nuget.org'a hiçbir şey
+gitmez. Bu kapı bilinçli konuldu: NuGet'te yayınlanan bir sürüm silinemez, yalnızca
+listeden kaldırılabilir.
+
+Yayın sonrası doğrulama depoya bakmayan ayrı bir projeyle yapıldı: üç paket
+nuget.org'dan kurulup aynı `SharedSymbol` ile üç borsadan emir defteri okundu.
+
+Ön sürüm olmasının nedeni, iki yüzeyin canlı bir hesapta doğrulanmamış olmasıdır:
+Binance TR private uçları ve CoinTR imzalaması. İkisi de paylaşılan yüzeyde
+bildirilmiyor, dolayısıyla `Discover()` yalnızca kanıtlanmış olanı raporlar.
+
+---
+
 ## Sonraki adım
 
 **1. Binance TR private uçlarının canlı doğrulaması**
@@ -283,10 +315,10 @@ public REST, kimlik doğrulama, private REST, WebSocket, shared yüzey.
 Herkese açık yüzey tamamlandı. Bakiye, emir ve işlem geçmişi uçları imzalama gerçek bir
 hesapta kabul edildiğinde açılacak.
 
-**4. Toplu paket ve ön sürüm**
+**4. Toplu paket**
 
-Üç borsa hazır olduğuna göre `TRCrypto.Clients` ve NuGet `v0.1.0-preview` yayınlanabilir.
-Workflow hazır; `NUGET_API_KEY` ve environment onayı eksik.
+`TRCrypto.Clients`, üç adaptörü tek bağımlılıkla getiren paket olarak planlanıyor.
+Ön sürüm yayınlandı; ayrıntı aşağıda.
 
 ---
 

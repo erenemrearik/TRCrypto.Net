@@ -12,8 +12,12 @@ Binance TR REST ve WebSocket API'leri için .NET client kütüphanesi.
 ## Kurulum
 
 ```bash
-dotnet add package TRCrypto.BinanceTR
+dotnet add package TRCrypto.BinanceTR --prerelease
 ```
+
+> [!NOTE]
+> Şu an yalnızca ön sürüm yayında (`0.1.0-preview.1`), bu yüzden `--prerelease`
+> gereklidir.
 
 Hedef platformlar: `net8.0` · `net9.0` · `net10.0` · `netstandard2.0` · `netstandard2.1`
 

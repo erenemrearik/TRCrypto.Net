@@ -7,7 +7,7 @@
 **A .NET client ecosystem for Turkish crypto asset platforms**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=build&style=flat-square&logo=github&logoColor=white)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![NuGet](https://img.shields.io/badge/nuget-unpublished-9E9E9E?style=flat-square&logo=nuget&logoColor=white)](#status)
+[![NuGet](https://img.shields.io/nuget/vpre/TRCrypto.BtcTurk?style=flat-square&logo=nuget&logoColor=white&label=nuget)](https://www.nuget.org/profiles/arikerenemre)
 [![.NET](https://img.shields.io/badge/.net-8%20%7C%209%20%7C%2010%20%7C%20standard%202.0%20%7C%202.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#target-frameworks)
 [![License](https://img.shields.io/badge/license-MIT-1F3E8C?style=flat-square)](LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-site-10707B?style=flat-square)](https://erenemrearik.github.io/TRCrypto.Net/)
@@ -94,6 +94,22 @@ against a real account.
 
 Deposit and withdrawal endpoints are deliberately out of scope (ADR-007).
 Detail: [docs/DURUM.md](docs/DURUM.md)
+
+---
+
+## Installation
+
+The packages are on NuGet as a prerelease. Install the exchange you need; each one is
+independent.
+
+```bash
+dotnet add package TRCrypto.BtcTurk   --prerelease
+dotnet add package TRCrypto.BinanceTR --prerelease
+dotnet add package TRCrypto.CoinTR    --prerelease
+```
+
+`--prerelease` is required for now: the version is `0.1.0-preview.1`. It is a prerelease
+because two surfaces have not been verified against a live account yet; see below.
 
 ---
 

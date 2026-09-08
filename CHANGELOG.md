@@ -3,9 +3,20 @@
 Bu dosyanın biçimi [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temel alır ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
-## [Yayınlanmadı]
+## [0.1.0-preview.1] - 8 Eylül 2026
 
-Proje henüz NuGet'e yayınlanmadı. İlk sürüm `0.1.0-preview` olarak planlanıyor.
+İlk yayın. Üç borsa adaptörü NuGet'te:
+
+```bash
+dotnet add package TRCrypto.BtcTurk   --prerelease
+dotnet add package TRCrypto.BinanceTR --prerelease
+dotnet add package TRCrypto.CoinTR    --prerelease
+```
+
+Ön sürüm olmasının nedeni, iki yüzeyin canlı bir hesapta henüz doğrulanmamış olmasıdır:
+Binance TR'nin private uçları ve CoinTR'nin imzalama şeması. İkisi de paylaşılan yüzeyde
+bildirilmiyor, dolayısıyla `Discover()` yalnızca kanıtlanmış olanı raporlar. Herkese açık
+piyasa verisi ve WebSocket akışları üç borsada da canlı doğrulandı.
 
 Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 

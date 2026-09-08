@@ -7,7 +7,7 @@
 **Türkiye'deki kripto varlık platformları için .NET client ekosistemi**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/erenemrearik/TRCrypto.Net/ci.yml?branch=main&label=derleme&style=flat-square&logo=github&logoColor=white)](https://github.com/erenemrearik/TRCrypto.Net/actions/workflows/ci.yml)
-[![NuGet](https://img.shields.io/badge/nuget-yay%C4%B1nlanmad%C4%B1-9E9E9E?style=flat-square&logo=nuget&logoColor=white)](#durum)
+[![NuGet](https://img.shields.io/nuget/vpre/TRCrypto.BtcTurk?style=flat-square&logo=nuget&logoColor=white&label=nuget)](https://www.nuget.org/profiles/arikerenemre)
 [![.NET](https://img.shields.io/badge/.net-8%20%7C%209%20%7C%2010%20%7C%20standard%202.0%20%7C%202.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#hedef-platformlar)
 [![Lisans](https://img.shields.io/badge/lisans-MIT-1F3E8C?style=flat-square)](LICENSE)
 [![Dokümantasyon](https://img.shields.io/badge/dok%C3%BCmantasyon-site-10707B?style=flat-square)](https://erenemrearik.github.io/TRCrypto.Net/)
@@ -87,6 +87,22 @@ private uçları, imzalama gerçek bir hesapta doğrulanana kadar yayımlanmayac
 
 Çekim ve yatırma uçları bilinçli olarak kapsam dışıdır (ADR-007).
 Ayrıntı: [docs/DURUM.md](docs/DURUM.md)
+
+---
+
+## Kurulum
+
+Paketler NuGet'te ön sürüm olarak yayında. İhtiyacınız olan borsayı kurun; her biri
+bağımsızdır.
+
+```bash
+dotnet add package TRCrypto.BtcTurk   --prerelease
+dotnet add package TRCrypto.BinanceTR --prerelease
+dotnet add package TRCrypto.CoinTR    --prerelease
+```
+
+`--prerelease` şu an gerekli: sürüm `0.1.0-preview.1`. Ön sürüm olmasının nedeni iki
+yüzeyin canlı bir hesapta henüz doğrulanmamış olmasıdır; ayrıntı aşağıda.
 
 ---
 
