@@ -44,8 +44,13 @@ jobs:
       - name: Derle
         run: dotnet build -c Release --no-restore -p:Version=${{ steps.version.outputs.value }}
 
-      - name: Testleri calistir
-        run: dotnet test -c Release --no-build
+      # Yalnizca birim testleri. Canli testler borsalarin erisilebilirligine baglidir;
+      # yayini oraya bagladiginizda bir borsanin gecici kesintisi surumu durdurur.
+      # Canli uclar haftalik zamanlanmis iste ayrica olculur.
+      - name: Birim testleri
+        run: >
+          dotnet test -c Release --no-build --verbosity normal
+          --filter FullyQualifiedName!~IntegrationTests
 
       - name: Paketle
         run: dotnet pack -c Release --no-build -o ./artifacts -p:Version=${{ steps.version.outputs.value }}
