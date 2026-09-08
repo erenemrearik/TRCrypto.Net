@@ -191,7 +191,7 @@ Bu borsanın diğerlerinden dört farkı var:
 | `docs/credentials/binance-tr.md` | Binance TR'de anahtar alma; imzalama şemasının BtcTurk'ten farkları |
 | `docs/credentials/cointr.md` | CoinTR'de anahtar alma; üç parçalı kimlik bilgisi ve dört borsanın imza karşılaştırması |
 | `docs/vendor/` | Üç borsanın resmi kaynaklı uç envanteri, istek limitleri, kline ve işlem geçmişi |
-| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-46) |
+| `docs/spec/` | Orijinal spesifikasyon + doğrulama ekleri (D-1…D-52) |
 
 ---
 

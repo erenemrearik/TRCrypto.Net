@@ -1357,3 +1357,102 @@ büyük küçük harfe duyarlı değildir. Parametre sırası serbesttir.
 bırakıldı. Canlı kabul, aynı çiftten gelen bir anahtar ve secret ile tekrar denenecek.
 `AuthenticationProbeTests` içindeki `Anahtar_borsa_tarafindan_taniniyor` testi anahtar
 tarafını ayrı ölçer ve şu an **geçiyor.**
+
+---
+
+## E.12 CoinTR Bulguları
+
+Ölçüm 7 ve 8 Eylül 2026'da `api.cointr.pro` ve `wss://ws.cointr.pro` üzerinde yapıldı.
+Envanter kod yazılmadan önce donduruldu; aşağıdakiler o dondurma sırasında ve uygulama
+yazılırken ortaya çıktı.
+
+### D-47. Resmi dokümantasyondaki imzalama şeması çalışmıyor
+
+Dokümantasyon iki aşamalı ve zaman dilimine bağlı bir imza tarif ediyor. O tarif
+uygulandığında istek reddediliyor. Çalışan şema tek aşamalıdır:
+
+```
+imza = Base64(HMAC-SHA256(secret, zaman_damgası + METOT + yol + sorgu + gövde))
+```
+
+Üç ayrıntı önemlidir:
+
+1. **Metot büyük harfe çevrilir.** `get` ile `GET` farklı imza üretir.
+2. **Yol imzaya dahildir**, `/api/v2` öneki ile birlikte. Dört borsa arasında yolu
+   imzaya katan tek borsa budur; yol atlandığında imza hata vermeden geçersiz olur.
+3. **Sorgu dizesi baştaki soru işaretiyle eklenir**, sorgu yoksa hiçbir şey eklenmez.
+
+Secret ham metin olarak HMAC anahtarı yapılır; BtcTurk'teki gibi Base64 çözülmez.
+
+Bu şema resmi dokümantasyondan değil, çalışan bir üretim entegrasyonundan alındı ve
+`AuthenticationTests` içinde deterministik vektörlerle sabitlendi. Yolun imzaya
+katıldığı, yol dahil ve hariç iki imzanın eşit olmadığı gösterilerek ayrıca test edilir.
+Canlı kabul, gerçek bir hesap bağlandığında ölçülecektir; o zamana kadar private uçlar
+yayımlanmaz.
+
+### D-48. Abonelik onayı hem olay hem kanal adı taşır
+
+Sunucu abonelik onayını şu biçimde gönderir:
+
+```json
+{"event":"subscribe","arg":{"instType":"SPOT","channel":"ticker","instId":"BTCTRY"}}
+```
+
+Veri mesajları da aynı `arg` nesnesini taşır. Yönlendirme kimliği önce `arg.channel`
+alanından okunursa **onay mesajı veri aboneliğine gider**; onayı bekleyen sorgu hiçbir
+zaman yanıt almaz ve abonelik zaman aşımına düşer.
+
+Doğru sıra: önce `event` alanına bakılır, yoksa `arg.channel` alanına düşülür. İki
+değerlendirici arasındaki bu sıra `SocketRoutingTests` ile sabitlenmiştir; sıra ters
+çevrildiğinde test onay mesajı için `ticker` döndüğünü göstererek kırmızıya döner.
+
+Bir ayrıntı daha: kanal adı kök nesnede değil, `arg` nesnesinin içindedir. Alan araması
+düz yapılırsa bulunamaz; arama derinliği açıkça belirtilmelidir.
+
+### D-49. Bütün sayısal değerler metin olarak gelir
+
+Fiyat, miktar, hacim, zaman damgası, **ondalık basamak sayısı** ve **komisyon oranı**
+dahil her sayısal alan tırnak içinde gönderilir:
+
+```json
+{"lastPr": "3846834", "pricePrecision": "2", "makerFeeRate": "0.001"}
+```
+
+Varsayılan çözümleyici bunların hiçbirini okuyamaz ve **her yanıt** ayrıştırma hatasıyla
+düşer. Serileştirme ayarlarında metinden sayı okuma açık olmalıdır. Hata gürültülüdür,
+sessiz değildir, ama tek bir ayara bağlı olduğu için kolayca gözden kaçar: fixture'lardan
+biri bile sayı biçiminde yazılırsa test yeşil kalır ve gerçek yanıt üretimde düşer.
+
+Bu yüzden fixture'lar canlı yanıttan olduğu gibi alınmıştır, elle sadeleştirilmemiştir.
+
+### D-50. Değişim oranı kesirdir, yüzde değil
+
+`change24h` ve `changeUtc24h` alanları oranı **kesir** olarak gönderir: `-0.00912` yüzde
+0,912 düşüş demektir. Hem REST ticker ucu hem WebSocket ticker akışı aynı biçimi
+kullanır.
+
+BtcTurk ve Paribu aynı bilgiyi yüzde olarak verir. Değeri doğrudan aktarmak onu **yüz kat
+küçük** gösterir ve bu sessiz bir hatadır: sonuç yine geçerli bir sayıdır, yalnızca
+yanlıştır. Kütüphane ham oranı `ChangeRatio` alanında bırakır ve `ChangePercentage`
+üzerinden dönüştürür; iki alan da testle sabitlenmiştir.
+
+### D-51. Emir defteri kademe sayısı kanal adının parçasıdır
+
+WebSocket tarafında kademe sayısı bir parametre değil, kanal adının kendisidir: `books1`,
+`books5`, `books15`. Borsa yalnızca bu üç değeri tanır.
+
+Listede olmayan bir değerle kanal adı üretilirse abonelik **onay almaz ve hiçbir veri
+gelmez.** Hata da dönmez. Bu, projedeki tanıdık sessiz başarısızlık desenidir; kütüphane
+desteklenmeyen kademe sayısını ağa çıkmadan reddeder.
+
+REST tarafında durum farklıdır: `limit` parametresi gerçekten uygulanır ve 5 istendiğinde
+5 kademe döner. Paribu'nun aksine bu parametre yok sayılmaz.
+
+### D-52. Sunucu düz metin `pong` çerçevesi gönderir
+
+Canlılık yanıtı JSON değildir; gövdesi tam olarak `pong` olan bir metin çerçevesidir.
+JSON çözümleyicisine verilirse her çerçevede ayrıştırma hatası üretir.
+
+Mesaj işleyicisi bu çerçeveyi yönlendirmeden **önce** eler. Eleme, gövdenin tamamının
+karşılaştırılmasıyla yapılır; "ile başlıyor" kontrolü `{"pong":...}` biçiminde gelebilecek
+gerçek bir JSON mesajını da yanlışlıkla elerdi.

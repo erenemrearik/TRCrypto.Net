@@ -23,8 +23,8 @@ Yalnızca resmi dokümantasyondan ya da canlı denemeden doğrulanmış uçlar y
 Doğrulanamayan bir uç, tahmin edilerek yazılmak yerine `docs/vendor/` altında
 "dondurulmamış" olarak işaretlenir.
 
-Borsaların dokümantasyonu eksik ve zaman zaman yanlıştır. Şimdiye kadar 46 sapma tespit
-edildi ve `docs/spec/` ekinde D-1 ile D-46 arasında numaralanarak belgelendi. Bir davranışı
+Borsaların dokümantasyonu eksik ve zaman zaman yanlıştır. Şimdiye kadar 52 sapma tespit
+edildi ve `docs/spec/` ekinde D-1 ile D-52 arasında numaralanarak belgelendi. Bir davranışı
 doğrulamadan koda yazmak, bu listenin uzamasına değil, sessiz hatalara yol açar.
 
 ### 2. Sessiz başarısızlıklar en tehlikelisidir
@@ -38,6 +38,12 @@ Bu borsalarda en sık karşılaşılan sorun, hata dönmeyen ama yanlış çalı
   döndürür.
 - Yönlendirme eşlemesi gövde tipine göre kayıtlıdır; yeni bir tip için kayıt unutulursa
   abonelik başarılı görünür ama mesaj ulaşmaz.
+- CoinTR'de abonelik onayı hem `event` hem `arg.channel` taşır; kanal önce okunursa onay
+  veri aboneliğine gider ve isteği bekleyen sorgu hiç yanıt almaz.
+- CoinTR emir defteri kanalında kademe sayısı kanal adının parçasıdır; desteklenmeyen bir
+  değerde ne onay ne veri gelir.
+- CoinTR değişim oranını kesir olarak gönderir; doğrudan aktarmak değeri yüz kat küçük
+  gösterir ve sonuç yine geçerli bir sayı olduğu için fark edilmez.
 
 Böyle bir davranış bulunduğunda testle sabitlenir ve testin gerçekten yakaladığı,
 düzeltme geri alınarak kanıtlanır.
@@ -110,7 +116,7 @@ examples/TRCrypto.Examples.Dashboard/  Uc borsali canli piyasa panosu
 docs/DURUM.md                  Nerede kaldık, ne kaldı
 docs/credentials/              Borsa başına API anahtarı rehberi
 docs/vendor/                   Doğrulanmış uç envanteri
-docs/spec/                     Teknik spesifikasyon ve D-1..D-46 doğrulama ekleri
+docs/spec/                     Teknik spesifikasyon ve D-1..D-52 doğrulama ekleri
 docs/index.html                Üretilen dokümantasyon sitesi
 tools/site/                    Siteyi üreten betikler
 tools/audit/                   Doküman ve kod tutarlılık denetimi

@@ -82,7 +82,7 @@ Güncel durum ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 ### Notlar
 
 Geliştirme sırasında üç borsanın API'sinde de, resmi dokümantasyonda yer almayan
-davranışlar tespit edildi; tümü `docs/spec/` ekinde (D-1…D-46) belgelendi. Öne çıkanlar:
+davranışlar tespit edildi; tümü `docs/spec/` ekinde (D-1…D-52) belgelendi. Öne çıkanlar:
 
 - **BtcTurk:** `code` alanı uçlar arasında farklı tiplerde (sayı / metin) dönüyor
 - **Binance TR:** `market/trades` ve `market/klines` uçları başarı koduyla **boş liste**
