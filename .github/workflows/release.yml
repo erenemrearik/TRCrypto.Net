@@ -2,9 +2,18 @@ name: Release
 
 # Surum etiketi push edildiginde calisir:  git tag v0.1.0 && git push origin v0.1.0
 #
-# NuGet yayini bir GitHub Environment onayina baglidir. Etkinlestirmek icin:
-#   Settings > Environments > "nuget" olustur > Required reviewers ekle
-#   Settings > Secrets > NUGET_API_KEY ekle
+# NuGet yayini Trusted Publishing (OIDC) ile yapilir; depoda API anahtari saklanmaz.
+# Etkinlestirmek icin iki yer yapilandirilir:
+#
+#   GitHub  > Settings > Environments > "nuget" olustur > Required reviewers ekle
+#   NuGet   > Trusted Publishing > politika:
+#               Repository Owner  erenemrearik
+#               Repository        TRCrypto.Net
+#               Workflow File     release.yml
+#               Environment       nuget
+#               Glob Pattern      TRCrypto.*
+#
+# Ortam adi iki tarafta da "nuget" olmalidir; ayrisirsa NuGet anahtari vermez.
 # Onay verilmedigi surece paketler yalnizca is ciktisi olarak uretilir, yayinlanmaz.
 
 on:
@@ -77,6 +86,12 @@ jobs:
     # Onay gerektirir; yapilandirilmadiysa is burada bekler.
     environment: nuget
 
+    permissions:
+      contents: read
+      # NuGet'in guvendigi kimlik belgesini GitHub'in uretebilmesi icin gerekli.
+      # Bu izin olmadan asagidaki oturum acma adimi sessizce degil, acikca basarisiz olur.
+      id-token: write
+
     steps:
       - name: Paketleri indir
         uses: actions/download-artifact@v4
@@ -89,16 +104,22 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      # Depoda uzun omurlu bir anahtar tutulmaz. GitHub kisa omurlu bir kimlik belgesi
+      # uretir, NuGet bunu kendi kayitli politikasiyla dogrular ve yalnizca bir saat
+      # gecerli, tek kullanimlik bir anahtar dondurur.
+      #
+      # Politikanin eslesmesi gereken alanlar: depo sahibi, depo adi, bu dosyanin adi
+      # (release.yml) ve yukaridaki ortam adi (nuget). Biri tutmazsa anahtar verilmez.
+      - name: NuGet oturumu (OIDC)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: arikerenemre
+
       - name: Yayinla
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          if [ -z "$NUGET_API_KEY" ]; then
-            echo "NUGET_API_KEY tanimli degil; yayin atlandi."
-            exit 1
-          fi
           dotnet nuget push "./artifacts/*.nupkg" \
-            --api-key "$NUGET_API_KEY" \
+            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
 
