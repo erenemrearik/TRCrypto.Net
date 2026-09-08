@@ -31,12 +31,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0   # SourceLink commit bilgisine ihtiyac duyar
 
       - name: .NET kurulumu
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             8.0.x
@@ -74,7 +74,7 @@ jobs:
           done
 
       - name: Paketleri yukle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nuget-paketleri
           path: ./artifacts/*.*nupkg
@@ -94,13 +94,13 @@ jobs:
 
     steps:
       - name: Paketleri indir
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: nuget-paketleri
           path: ./artifacts
 
       - name: .NET kurulumu
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.0.x"
 
@@ -131,16 +131,16 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Paketleri indir
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: nuget-paketleri
           path: ./artifacts
 
       - name: Surum notu olustur
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: ./artifacts/*.*nupkg
           generate_release_notes: true
