@@ -64,12 +64,13 @@
       <text x="52" y="29" fill="#155238">Binance TR</text>
     </g>
     <g transform="translate(562 530)">
+      <rect width="186" height="44" rx="22" fill="#D6EDDF"/>
+      <use href="#tick" x="24" y="16"/>
+      <text x="52" y="29" fill="#155238">CoinTR</text>
+    </g>
+    <g transform="translate(768 530)">
       <rect width="166" height="44" rx="22" fill="#EDEFF5"/>
       <text x="28" y="29" fill="#5B657F">Paribu</text>
-    </g>
-    <g transform="translate(748 530)">
-      <rect width="166" height="44" rx="22" fill="#EDEFF5"/>
-      <text x="28" y="29" fill="#5B657F">CoinTR</text>
     </g>
   </g>
 

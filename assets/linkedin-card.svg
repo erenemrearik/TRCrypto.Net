@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200"
+     role="img" aria-labelledby="trcrypto-linkedin-title">
+  <title id="trcrypto-linkedin-title">TRCrypto.Net: aynı çağrı, üç Türk kripto borsası</title>
+
+  <!--
+    LinkedIn akisi icin kare paylasim karti. 1200x1200; akista mobilde en genis alani
+    kaplayan oran budur.
+
+    Kart tek bir fikri anlatir: yukaridaki kod uc borsanin hicbirinin adini bilmez,
+    asagidaki uc sonuc ise farkli sembol bicimlerinden gelir. Fiyatlar uydurma degil,
+    8 Eylul 2026'da uc borsaya birden yapilan gercek cagrinin ciktisidir.
+
+    Palet dokumantasyon sitesiyle ayni: Iznik cinisinden kobalt ve turkuaz.
+    Turkuaz yalnizca borsadan bagimsiz yuzeyi isaretler.
+  -->
+
+  <defs>
+    <pattern id="tile" width="200" height="200" patternUnits="userSpaceOnUse">
+      <path fill="#1F3E8C" fill-opacity="0.045" transform="translate(68 68)"
+            d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="1200" fill="#FCFCFA"/>
+  <rect width="1200" height="1200" fill="url(#tile)"/>
+  <rect width="1200" height="8" fill="#1F3E8C"/>
+
+  <!-- ── Ust satir: isaret, isim, lisans ─────────────────────────────────── -->
+
+  <g transform="translate(84 58)">
+    <path fill="#1F3E8C" transform="scale(0.72)"
+          d="M32 6.5 39.5 14H50v10.5L57.5 32 50 39.5V50H39.5L32 57.5 24.5 50H14V39.5L6.5 32 14 24.5V14h10.5z"/>
+    <path fill="#10707B" transform="scale(0.72)" d="M32 21.5 42.5 32 32 42.5 21.5 32z"/>
+  </g>
+
+  <text x="146" y="90" font-family="Archivo, 'Segoe UI', sans-serif"
+        font-size="31" font-weight="700" letter-spacing="-0.9">
+    <tspan fill="#1F3E8C">TR</tspan><tspan fill="#141A29">Crypto.Net</tspan>
+  </text>
+
+  <text x="1116" y="88" text-anchor="end"
+        font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="19" font-weight="500" fill="#6B7590" letter-spacing="0.4">
+    NuGet · açık kaynak · MIT
+  </text>
+
+  <!-- ── Tez ──────────────────────────────────────────────────────────────── -->
+
+  <text x="84" y="222" font-family="Archivo, 'Segoe UI', sans-serif"
+        font-size="70" font-weight="700" fill="#141A29" letter-spacing="-2.2">
+    Aynı çağrı, üç borsa
+  </text>
+
+  <text x="86" y="272" font-family="Archivo, 'Segoe UI', sans-serif"
+        font-size="25" font-weight="500" fill="#3F4860">
+    Yazdığın kod hangi borsayla konuştuğunu bilmiyor.
+  </text>
+
+  <!-- ── Kod ──────────────────────────────────────────────────────────────── -->
+
+  <rect x="84" y="322" width="1032" height="336" rx="14" fill="#FFFFFF" stroke="#DEE2EC" stroke-width="1.5"/>
+  <rect x="84" y="322" width="1032" height="46" rx="14" fill="#F3F5F9"/>
+  <rect x="84" y="352" width="1032" height="16" fill="#F3F5F9"/>
+  <line x1="84" y1="368" x2="1116" y2="368" stroke="#DEE2EC" stroke-width="1.5"/>
+
+  <text x="112" y="353" font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="16" font-weight="500" fill="#6B7590" letter-spacing="1.4">
+    csharp
+  </text>
+
+  <g font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+     font-size="21" font-weight="500" fill="#141A29">
+    <text x="112" y="416">
+      <tspan fill="#1F3E8C">IOrderBookRestClient</tspan><tspan>[] borsalar = [ btcTurk, binanceTR, coinTR ];</tspan>
+    </text>
+    <text x="112" y="484">
+      <tspan fill="#1F3E8C">var</tspan><tspan> istek = </tspan><tspan fill="#1F3E8C">new</tspan><tspan> GetOrderBookRequest(</tspan>
+    </text>
+    <!-- Girinti bosluk karakteriyle degil konumla verilir: SVG bastaki bosluklari yutar. -->
+    <text x="162" y="518">
+      <tspan fill="#1F3E8C">new</tspan><tspan> SharedSymbol(TradingMode.Spot, </tspan><tspan fill="#10707B">"BTC"</tspan><tspan>, </tspan><tspan fill="#10707B">"TRY"</tspan><tspan>), 5);</tspan>
+    </text>
+    <text x="112" y="586">
+      <tspan fill="#1F3E8C">foreach</tspan><tspan> (</tspan><tspan fill="#1F3E8C">var</tspan><tspan> borsa </tspan><tspan fill="#1F3E8C">in</tspan><tspan> borsalar)</tspan>
+    </text>
+    <text x="162" y="620">
+      <tspan fill="#1F3E8C">await</tspan><tspan> borsa.GetOrderBookAsync(istek);</tspan>
+    </text>
+  </g>
+
+  <!-- ── Canli cikti ──────────────────────────────────────────────────────── -->
+
+  <text x="84" y="716" font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="17" font-weight="500" fill="#10707B" letter-spacing="2.4">
+    CANLI ÇIKTI · 8 EYLÜL 2026
+  </text>
+
+  <g font-family="Archivo, 'Segoe UI', sans-serif">
+    <g transform="translate(84 744)">
+      <rect width="328" height="196" rx="14" fill="#FFFFFF" stroke="#DEE2EC" stroke-width="1.5"/>
+      <text x="30" y="52" font-size="27" font-weight="700" fill="#1F3E8C">BtcTurk</text>
+      <text x="30" y="86" font-family="'IBM Plex Mono', ui-monospace, monospace"
+            font-size="17" font-weight="500" fill="#6B7590">BTCTRY</text>
+      <text x="30" y="146" font-size="42" font-weight="700" fill="#141A29">3.794.897</text>
+      <text x="30" y="176" font-family="'IBM Plex Mono', ui-monospace, monospace"
+            font-size="16" font-weight="500" fill="#6B7590">en iyi alış · TRY</text>
+    </g>
+
+    <g transform="translate(436 744)">
+      <rect width="328" height="196" rx="14" fill="#FFFFFF" stroke="#DEE2EC" stroke-width="1.5"/>
+      <text x="30" y="52" font-size="27" font-weight="700" fill="#1F3E8C">Binance TR</text>
+      <text x="30" y="86" font-family="'IBM Plex Mono', ui-monospace, monospace"
+            font-size="17" font-weight="500" fill="#6B7590">BTC_TRY</text>
+      <text x="30" y="146" font-size="42" font-weight="700" fill="#141A29">3.795.055</text>
+      <text x="30" y="176" font-family="'IBM Plex Mono', ui-monospace, monospace"
+            font-size="16" font-weight="500" fill="#6B7590">en iyi alış · TRY</text>
+    </g>
+
+    <g transform="translate(788 744)">
+      <rect width="328" height="196" rx="14" fill="#FFFFFF" stroke="#DEE2EC" stroke-width="1.5"/>
+      <text x="30" y="52" font-size="27" font-weight="700" fill="#1F3E8C">CoinTR</text>
+      <text x="30" y="86" font-family="'IBM Plex Mono', ui-monospace, monospace"
+            font-size="17" font-weight="500" fill="#6B7590">BTCTRY</text>
+      <text x="30" y="146" font-size="42" font-weight="700" fill="#141A29">3.794.073</text>
+      <text x="30" y="176" font-family="'IBM Plex Mono', ui-monospace, monospace"
+            font-size="16" font-weight="500" fill="#6B7590">en iyi alış · TRY</text>
+    </g>
+  </g>
+
+  <!-- ── Alt satir ────────────────────────────────────────────────────────── -->
+
+  <line x1="84" y1="1004" x2="1116" y2="1004" stroke="#DEE2EC" stroke-width="1.5"/>
+
+  <text x="84" y="1054" font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="21" font-weight="500" fill="#3F4860">
+    3 borsa · 3 NuGet paketi · 52 belgelenmiş sapma · 5 hedef platform
+  </text>
+
+  <text x="84" y="1122" font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="21" font-weight="500" fill="#1F3E8C">
+    github.com/erenemrearik/TRCrypto.Net
+  </text>
+
+  <text x="1116" y="1122" text-anchor="end"
+        font-family="'IBM Plex Mono', ui-monospace, Consolas, monospace"
+        font-size="18" font-weight="500" fill="#6B7590">
+    CryptoExchange.Net üzerine kurulu
+  </text>
+</svg>

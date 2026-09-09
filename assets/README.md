@@ -18,6 +18,7 @@ Ortadaki turkuaz kare, sitede "iki borsa tek kod" fikrini işaretleyen renktir.
 | `logo-512.png` | Raster gereken yerler; sosyal medya profili, paket simgesi |
 | `wordmark.svg` | İşaret ve ismin yatay kilidi |
 | `social-card.svg` · `social-card.png` | GitHub sosyal önizleme, 1280x640 |
+| `linkedin-card.svg` · `linkedin-card.png` | LinkedIn paylaşımı, 1200x1200 |
 
 `docs/favicon.svg` aynı işaretin kopyasıdır ve dokümantasyon sitesi tarafından kullanılır.
 
@@ -45,10 +46,21 @@ Mono yüzlerinin bir dizinde bulunması gerekir, aksi halde metin sistem yüzün
 
 ```bash
 npx @resvg/resvg-js-cli assets/social-card.svg assets/social-card.png \
-  --font-dir <yuzlerin-oldugu-dizin> --fit-width 1280
+  --font-dir <yuzlerin-oldugu-dizin> --no-system-font
+
+npx @resvg/resvg-js-cli assets/linkedin-card.svg assets/linkedin-card.png \
+  --font-dir <yuzlerin-oldugu-dizin> --no-system-font
 
 npx @resvg/resvg-js-cli assets/logo.svg assets/logo-512.png --fit-width 512
 ```
+
+`--no-system-font` bilinçlidir: sistemde Archivo yoksa metin sessizce başka bir yüze
+düşer ve kart farklı bir makinede farklı görünür. Bayrak, yüz bulunamadığında sessiz
+kalmak yerine sorunu görünür kılar.
+
+Kartlardaki metin `<text>` öğesidir, yola çevrilmemiştir; bu yüzden düzeltmesi kolaydır
+ama başlangıçtaki boşluklar yutulur. Kod satırlarında girinti boşlukla değil `x` konumuyla
+verilir.
 
 ## Sosyal önizlemeyi bağlama
 
