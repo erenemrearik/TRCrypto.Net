@@ -25,9 +25,16 @@
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
-  </ItemGroup>
+  <!--
+    SourceLink icin ayri bir paket kullanilmaz. .NET 8'den beri SDK'nin kendisi
+    Microsoft.SourceLink.GitHub'i tasiyor; paketi ayrica eklemek yalnizca ikinci bir
+    surum zinciri yaratiyordu. Nitekim o zincir bir guvenlik danisma kaydiyla derlemeyi
+    durdurdu: paketin bagimliligi Microsoft.Build.Tasks.Git 8.0.0 icin NU1902 uretildi ve
+    uyarilar hata sayildigi icin restore basarisiz oldu.
+
+    Yukaridaki PublishRepositoryUrl, EmbedUntrackedSources ve ContinuousIntegrationBuild
+    ozellikleri SDK'nin SourceLink'ini yapilandirir; paket olmadan da calisirlar.
+  -->
 
   <!--
     Paket simgesi uc paket icin de aynidir; marka tek yerde tutulur.

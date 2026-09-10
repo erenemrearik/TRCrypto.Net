@@ -10,10 +10,6 @@
     <PackageVersion Include="CryptoExchange.Net" Version="12.5.0" />
   </ItemGroup>
 
-  <ItemGroup Label="Build / analiz">
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-  </ItemGroup>
-
   <ItemGroup Label="Test">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />

@@ -146,6 +146,21 @@ node tools/audit/docs-vs-code.mjs  # dokumanlar kodla tutarli mi
 Uyarılar hata sayılır (`TreatWarningsAsErrors`). Beş hedef platform vardır:
 `net8.0`, `net9.0`, `net10.0`, `netstandard2.0`, `netstandard2.1`.
 
+### Derleme, kod değişmeden de kırılabilir
+
+`TreatWarningsAsErrors` NuGet güvenlik denetimini de kapsar. Bir bağımlılık için yeni bir
+güvenlik danışma kaydı yayınlandığında restore `NU1902` üretir ve derleme durur. Depoda
+hiçbir şey değişmemiş olsa bile.
+
+Bu bir kez yaşandı: `Microsoft.SourceLink.GitHub` 8.0.0'ın bağımlılığı olan
+`Microsoft.Build.Tasks.Git` 8.0.0 için kayıt açıldı ve gece boyunca yeşil olan derleme
+sabah kırmızıya döndü. Çözüm sürümü yükseltmek değil, paketi tamamen kaldırmak oldu:
+.NET 8'den beri SourceLink SDK'nın içinde geliyor ve ayrı paket yalnızca ikinci bir sürüm
+zinciri yaratıyordu.
+
+Böyle bir hatada sıra şudur: önce bağımlılığa gerçekten ihtiyaç var mı diye bakılır,
+sonra yükseltme denenir. Denetimi susturmak son çaredir ve gerekçesi yazılır.
+
 Doküman değiştirip siteyi yeniden üretmezseniz CI derlemeyi durdurur.
 
 ### Sitedeki sayılar elle yazılmaz
