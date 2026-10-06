@@ -18,6 +18,33 @@ public class SharedApiTests
         => new(options => options.RateLimiterEnabled = false);
 
     [Fact]
+    public void SharedClient_ve_SharedApi_uyelerine_dogrudan_erisilebilir()
+    {
+        // Bu test derleme zamaninda calisir: derlendigi surece kirilma yoktur.
+        //
+        // 0.1.0'da kullanicilar SharedClient uzerinden dogrudan cagri yapabiliyordu
+        // (client.SpotApi.SharedClient.GetOrderBookAsync). V2 arayuzleri ilk once V1
+        // toplu arayuzune eklendi; V1 ve V2 ayni adli uyeler tasidigi icin cagri
+        // belirsizlesti ve bu kod derlenmez oldu. Yayindan hemen once fark edildi; V1
+        // ve V2 artik ayri arayuzlerdir. Biri tekrar birlestirirse bu test derlenmez.
+        var client = CreateClient();
+
+        Func<GetOrderBookRequest, CancellationToken, Task<HttpResult<SharedOrderBook>>> v1
+            = client.SpotApi.SharedClient.GetOrderBookAsync;
+        Func<GetOrderBookRequest, CancellationToken, Task<HttpResult<SharedOrderBook>>> v2
+            = client.SpotApi.SharedApi.GetOrderBookAsync;
+
+        Assert.NotNull(v1);
+        Assert.NotNull(v2);
+
+        // Iki gorunum ayni yapilandirmayi paylasir; ayri nesneler dogrulama kurallarini
+        // ikiye bolerdi.
+        Assert.Same(
+            client.SpotApi.SharedClient.GetOrderBookOptions,
+            client.SpotApi.SharedApi.GetOrderBookOptions);
+    }
+
+    [Fact]
     public async Task V2_arayuzu_uzerinden_gecersiz_istek_aga_cikmadan_reddedilir()
     {
         // CryptoExchange.Net 13 istek dogrulamasini yalnizca V2 yetenek arayuzu uzerinden
@@ -25,7 +52,7 @@ public class SharedApiTests
         // duserdi ve gecersiz istek borsaya giderdi. Bu test V2 yolunun da dogrulamadan
         // gectigini ve istegin aga hic cikmadigini sabitler: ag hatasi degil, arguman
         // hatasi beklenir.
-        IGetOrderBookRest shared = CreateClient().SpotApi.SharedClient;
+        IGetOrderBookRest shared = CreateClient().SpotApi.SharedApi;
 
         var result = await shared.GetOrderBookAsync(
             new GetOrderBookRequest(new SharedSymbol(TradingMode.Spot, "BTC", "TRY"), 2000),
@@ -47,7 +74,7 @@ public class SharedApiTests
         // Ters yonun kaniti: gecerli bir istek dogrulamadan hatasiz gecmeli. Secenekler
         // kaydedilmeden once tum paylasilan cagrilar "TradingMode.Spot is not supported"
         // ile reddediliyordu. Dogrulama dogrudan cagrilir; aga cikilmaz.
-        IGetOrderBookRest shared = CreateClient().SpotApi.SharedClient;
+        IGetOrderBookRest shared = CreateClient().SpotApi.SharedApi;
 
         var error = shared.GetOrderBookOptions.ValidateRequest(
             new GetOrderBookRequest(new SharedSymbol(TradingMode.Spot, "BTC", "TRY"), 10), shared);

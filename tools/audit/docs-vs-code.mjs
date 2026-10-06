@@ -188,6 +188,28 @@ for (const file of Object.keys(siteExclusions)) {
   }
 }
 
+// ── 6b. Kurulum belgelerindeki surum yayinlanan surumle ayni mi? ──
+//
+// README'ler kullaniciya "--prerelease gerekli, surum X" der ve paket README'leri
+// NuGet'e paketin icinde gider. Surum her yayinda elle guncellenir; unutulursa yeni
+// paketin icindeki README eski surumu gosterir. Yayinlanan surum degisiklik gunlugunden
+// okunur, bu yuzden kontrol yayin adiminin kendisiyle ayni kaynaga bakar.
+if (facts.release.published) {
+  const installDocs = [
+    'README.md',
+    'README.en.md',
+    ...facts.packages.map((p) => p.readme),
+  ];
+
+  for (const file of installDocs) {
+    for (const [found] of read(file).matchAll(/\b\d+\.\d+\.\d+-preview\.\d+\b/g)) {
+      if (found !== facts.release.version) {
+        note('Surum', `${file} ${found} diyor, yayinlanan surum ${facts.release.version}`);
+      }
+    }
+  }
+}
+
 // ── 7. Hedef platform listesi tutarli mi? ──
 
 const targetFrameworks = read('src/Directory.Build.props').match(/<TargetFrameworks>([^<]+)</)?.[1]

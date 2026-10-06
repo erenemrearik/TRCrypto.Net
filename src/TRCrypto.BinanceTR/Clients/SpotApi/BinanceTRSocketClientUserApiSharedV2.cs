@@ -1,5 +1,6 @@
 using CryptoExchange.Net.Objects.Sockets;
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.BinanceTR.Interfaces.Clients.SpotApi;
 
 namespace TRCrypto.BinanceTR.Clients.SpotApi;
 
@@ -18,7 +19,7 @@ namespace TRCrypto.BinanceTR.Clients.SpotApi;
 /// uygulanmadan borsaya ozgu sinirlar (kademe sayisi, aralik gibi) denetlenemezdi.
 /// </para>
 /// </remarks>
-internal partial class BinanceTRSocketClientUserApi
+internal partial class BinanceTRSocketClientUserApi : IBinanceTRSocketClientUserSharedApi
 {
     #region ISubscribeBalancesSocket
 

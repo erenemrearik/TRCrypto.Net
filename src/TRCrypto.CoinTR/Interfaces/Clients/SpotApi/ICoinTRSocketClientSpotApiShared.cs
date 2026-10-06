@@ -14,9 +14,6 @@ public interface ICoinTRSocketClientSpotApiShared :
     ISharedClient,
     ITickerSocketClient,
     ITradeSocketClient,
-    IOrderBookSocketClient,
-    ISubscribeTickerSocket,
-    ISubscribeTradesSocket,
-    ISubscribeOrderBookSocket
+    IOrderBookSocketClient
 {
 }

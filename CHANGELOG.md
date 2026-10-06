@@ -3,17 +3,33 @@
 Bu dosyanın biçimi [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temel alır ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
-## [Yayınlanmadı]
+## [0.2.0-preview.1] - 6 Ekim 2026
+
+Temel kütüphane CryptoExchange.Net 13.1.0'a geçti. Minör sürüm numarası bu yüzden arttı:
+CryptoExchange.Net 12 kullanan bir uygulama bu sürümle aynı projede kurulamaz.
+
+`SharedClient` ve onun arayüzleri `0.1.0-preview.1` ile birebir aynıdır; mevcut kullanıcı
+kodu değişmeden derlenir. Yeni olan, aynı nesnenin ince taneli görünümünü veren
+`SharedApi` özelliğidir. Bu özellik genel istemci arayüzlerine (`IBtcTurkRestClientSpotApi`
+gibi) eklendiği için o arayüzleri elle uygulayan sahte (fake) sınıflar güncellenmelidir.
+
+```bash
+dotnet add package TRCrypto.BtcTurk   --prerelease
+dotnet add package TRCrypto.BinanceTR --prerelease
+dotnet add package TRCrypto.CoinTR    --prerelease
+```
 
 ### Değişti
 
 - **CryptoExchange.Net 13.1.0.** Temel kütüphane 12.5.0'dan 13.1.0'a yükseltildi. Bu
   kütüphane için bir ana sürüm geçişidir; CryptoExchange.Net 12 kullanan bir uygulamayla
   aynı projede birlikte kurulamaz.
-- **Paylaşılan API V2.** Üç adaptörün paylaşılan istemcileri artık 13 ile gelen ince
-  taneli arayüzleri de uyguluyor (`IGetOrderBookRest`, `IGetTicker`,
-  `ISubscribeTickerSocket` gibi). Mevcut V1 arayüzleri değişmeden duruyor; `SharedClient`
-  üzerinden ikisi de kullanılabilir.
+- **Paylaşılan API V2.** Üç adaptör artık 13 ile gelen ince taneli arayüzleri de sunuyor
+  (`IGetOrderBookRest`, `IGetTicker`, `ISubscribeTickerSocket` gibi). Bunlara yeni
+  `SharedApi` özelliğinden erişilir: `client.SpotApi.SharedApi`. `SharedClient` aynı
+  nesnenin V1 görünümüdür ve değişmedi. İkisi ayrı arayüzlerdir, çünkü V1 ve V2 aynı adlı
+  üyeler taşır; tek arayüzde birleştirilselerdi `SharedClient` üzerinden doğrudan yapılan
+  çağrılar belirsizleşir ve derlenmezdi.
 - **Yetenek listesi.** Her paylaşılan istemci desteklediği işlemleri `Capabilities`
   üzerinden bildiriyor ve `Transport` ile REST mi WebSocket mi olduğunu söylüyor.
 - **Emir defteri sıra numarası.** Borsa veriyorsa `SharedOrderBook.SequenceNumber`

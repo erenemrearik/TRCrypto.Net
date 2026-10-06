@@ -77,6 +77,7 @@ const nav = [
       { id: 'katki', title: 'Katkı rehberi', file: 'CONTRIBUTING.md' },
       { id: 'guvenlik', title: 'Güvenlik bildirimi', file: 'SECURITY.md' },
       { id: 'degisiklikler', title: 'Değişiklik günlüğü', file: 'CHANGELOG.md' },
+      { id: 'yayin', title: 'Yayın rehberi', file: 'docs/YAYIN.md' },
       { id: 'davranis', title: 'Davranış kuralları', file: 'CODE_OF_CONDUCT.md' },
       { id: 'marka', title: 'Marka varlıkları', file: 'assets/README.md' },
       { id: 'english', title: 'English overview', file: 'README.en.md' },

@@ -14,4 +14,11 @@ public interface ICoinTRRestClientSpotApi : IRestApiClient<CoinTRCredentials>, I
 
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     ICoinTRRestClientSpotApiShared SharedClient { get; }
+
+    /// <summary>Borsadan bagimsiz yuzeyin ince taneli (V2) gorunumu.</summary>
+    /// <remarks>
+    /// <see cref="SharedClient"/> ile ayni nesnedir. Yeni kod icin tercih edilir: her islem
+    /// ayri bir arayuzdur ve yalnizca ihtiyac duyulan yetenege baglanilabilir.
+    /// </remarks>
+    ICoinTRRestClientSpotSharedApi SharedApi { get; }
 }

@@ -14,10 +14,6 @@ public interface IBtcTurkSocketClientSpotApiShared :
     ITickerSocketClient,
     ITickersSocketClient,
     ITradeSocketClient,
-    IOrderBookSocketClient,
-    ISubscribeTickerSocket,
-    ISubscribeAllTickersSocket,
-    ISubscribeTradesSocket,
-    ISubscribeOrderBookSocket
+    IOrderBookSocketClient
 {
 }

@@ -16,7 +16,7 @@ dotnet add package TRCrypto.CoinTR --prerelease
 ```
 
 > [!NOTE]
-> Şu an yalnızca ön sürüm yayında (`0.1.0-preview.1`), bu yüzden `--prerelease`
+> Şu an yalnızca ön sürüm yayında (`0.2.0-preview.1`), bu yüzden `--prerelease`
 > gereklidir.
 
 Hedef platformlar: `net8.0` · `net9.0` · `net10.0` · `netstandard2.0` · `netstandard2.1`
@@ -116,7 +116,7 @@ Anahtar alma ve izinler:
 | WS işlemler | `SubscribeToTradeUpdatesAsync` | ✅ |
 | SharedApis (REST) | `ISpotSymbolRestClient` · `ISpotTickerRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` · `IKlineRestClient` | ✅ |
 | SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` | ✅ |
-| SharedApis V2 | Yukarıdakilerin CryptoExchange.Net 13 ile gelen ince taneli karşılıkları (`IGetTickerRest`, `IGetOrderBookRest`, `ISubscribeTickerSocket` gibi) | ✅ |
+| SharedApis V2 (`SharedApi`) | Yukarıdakilerin CryptoExchange.Net 13 ile gelen ince taneli karşılıkları (`IGetTickerRest`, `IGetOrderBookRest`, `ISubscribeTickerSocket` gibi) | ✅ |
 | Bakiye, emir ve işlem geçmişi | yok | ⏳ İmza canlı doğrulanmadan yayımlanmayacak |
 | Vadeli işlemler | yok | Kapsam dışı |
 | Yatırma ve çekme | yok | Kapsam dışı (ADR-007) |

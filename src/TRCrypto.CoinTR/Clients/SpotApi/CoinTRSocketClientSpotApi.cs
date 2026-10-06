@@ -52,6 +52,9 @@ internal partial class CoinTRSocketClientSpotApi
     public ICoinTRSocketClientSpotApiShared SharedClient => this;
 
     /// <inheritdoc />
+    public ICoinTRSocketClientSpotSharedApi SharedApi => this;
+
+    /// <inheritdoc />
     protected override IMessageSerializer CreateSerializer()
         => new SystemTextJsonMessageSerializer(CoinTRJsonOptions.Default);
 

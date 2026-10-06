@@ -225,7 +225,7 @@ Son çalıştırma (6 Ekim 2026, CryptoExchange.Net 13.1.0):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  290/290 birim · 13 canli API · 2 atlandi
+dotnet test  -c Release   →  293/293 birim · 13 canli API · 2 atlandi
                              birim testler her PR'da, canli testler haftalik iste
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  BtcTurk, Binance TR ve CoinTR; native == shared
@@ -293,6 +293,8 @@ sonra `nuget` environment'ında **onay bekler**. Onay verilmeden nuget.org'a hi�
 gitmez. Bu kapı bilinçli konuldu: NuGet'te yayınlanan bir sürüm silinemez, yalnızca
 listeden kaldırılabilir.
 
+Yeni bir sürümü adım adım çıkarmak için: [YAYIN.md](YAYIN.md)
+
 Yayın sonrası doğrulama depoya bakmayan ayrı bir projeyle yapıldı: üç paket
 nuget.org'dan kurulup aynı `SharedSymbol` ile üç borsadan emir defteri okundu.
 
@@ -312,7 +314,10 @@ yönlendirmede abonelik sorgusunun erken başarılı sayılması hatasını düz
 paylaşılan API'yi ince taneli yeteneklere bölen bir ana sürüm; JKorf ekosisteminin geri
 kalanı bu yöne geçiyor.
 
-**Neler değişti.** Yedi paylaşılan istemci 13'ün V2 arayüzlerini de uyguluyor. Her V2
+**Neler değişti.** Yedi paylaşılan istemci 13'ün V2 arayüzlerini de uyguluyor. V2'ye
+yeni `SharedApi` özelliğinden erişilir; `SharedClient` aynı nesnenin V1 görünümüdür ve
+yayınlanmış sürümle birebir aynı kaldı. İkisi ayrı arayüzlerdir, çünkü aynı adlı üyeler
+taşırlar ve birleştirilmeleri kullanıcı kodunu kırardı. Her V2
 üyesi mevcut V1 uygulamasına delege eder; davranış tek yerde kalır. Seçenek özellikleri
 V1 ile aynı nesneyi döndürür, böylece doğrulama kuralları ve yetenek listesi tek bir
 yapılandırmayı paylaşır.

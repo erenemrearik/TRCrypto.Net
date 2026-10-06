@@ -134,6 +134,25 @@ Her adaptör aynı iskeleti izler: `Clients/SpotApi/` altında REST ve socket is
 `Enums/`, `Interfaces/`, ve kök dizinde `*Exchange`, `*Environment`, `*Errors`,
 `*AuthenticationProvider`, `*ServiceCollectionExtensions`.
 
+### Paylaşılan yüzeyin iki görünümü ayrı arayüzlerdir
+
+Her istemci paylaşılan yüzeyi iki özellikten verir ve ikisi aynı nesneyi döndürür:
+
+| Özellik | Arayüz | İçerik |
+|---|---|---|
+| `SharedClient` | `I...ApiShared` | V1: `IOrderBookRestClient`, `ITickerSocketClient` gibi toplu arayüzler |
+| `SharedApi` | `I...SharedApi` | V2: `IGetOrderBookRest`, `ISubscribeTickerSocket` gibi ince taneli arayüzler |
+
+**Bu iki arayüz birleştirilmez.** V1 ve V2 aynı adlı üyeler taşır
+(`GetOrderBookOptions`, `GetOrderBookAsync`). Tek bir arayüzde birleşirlerse
+`SharedClient.GetOrderBookAsync(...)` gibi doğrudan çağrılar belirsizleşir ve kullanıcı
+kodu derlenmez. Bu bir kez oldu ve yayından hemen önce yakalandı;
+`SharedClient_ve_SharedApi_uyelerine_dogrudan_erisilebilir` testi derlendiği sürece
+kırılma geri gelmemiştir.
+
+Dosya düzeni de bu ayrımı izler: `*Shared.cs` V1 uygulamasını, `*SharedV2.cs` ona delege
+eden V2 katmanını taşır.
+
 ---
 
 ## Doğrulama
@@ -265,6 +284,7 @@ ICRYPEX şimdilik kapsam dışıdır.
 
 Temel kütüphane CryptoExchange.Net 13.1.0. Paylaşılan istemciler V1 arayüzlerini korur
 ve 13'ün ince taneli V2 arayüzlerini de uygular; V2 üyeleri V1 uygulamasına delege eder.
+V1'e `SharedClient`, V2'ye `SharedApi` üzerinden erişilir.
 Göçün bulguları `docs/spec/` ekinde E.13'te.
 
 Üç paket de NuGet'te ön sürüm olarak yayında: `0.1.0-preview.1` (8 Eylül 2026). 13.1.0

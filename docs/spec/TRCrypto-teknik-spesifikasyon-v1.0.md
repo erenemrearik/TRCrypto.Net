@@ -1531,3 +1531,31 @@ Doğrulamanın neden önemli olduğunu deneme gösterdi: CoinTR'den doğrulama g
 kaldırıldığında 2000 kademelik istek borsaya gitti ve **başarılı döndü**. Borsa geçersiz
 isteği hata vermeden kabul ediyor; doğrulama kaybolsaydı bu sessiz bir başarısızlık
 olurdu.
+
+### Yayından önce yakalanan kırılma
+
+İlk tasarımda V2 arayüzleri mevcut V1 toplu arayüzüne (`IBtcTurkRestClientSpotApiShared`
+gibi) eklendi. Derleme, testler ve canlı doğrulama geçti; değişiklik günlüğüne "mevcut
+kod derlenmeye devam eder" yazıldı.
+
+Bu cümle yayından önce denendi ve yanlış çıktı. V1 ve V2 aynı adlı üyeler taşır:
+`IOrderBookRestClient.GetOrderBookAsync` ile `IGetOrderBookRest.GetOrderBookAsync` aynı
+imzadadır. İkisi tek arayüzde birleşince kullanıcının yazdığı şu kod derlenmez oldu:
+
+```csharp
+var book = await client.SpotApi.SharedClient.GetOrderBookAsync(request);
+// CS0121: The call is ambiguous between ... IOrderBookRestClient.GetOrderBookAsync
+//         and ... IGetOrderBookRest.GetOrderBookAsync
+```
+
+Bizim kendi kodumuz ve örneklerimiz bu hatayı göstermedi, çünkü hepsi istemciyi önce
+belirli bir arayüze atıyordu (`IOrderBookRestClient books = client.SpotApi.SharedClient`).
+Kullanıcı kodunun aynı alışkanlığa sahip olduğunu varsaymak için bir neden yoktu.
+
+JKorf'un kütüphaneleri bunu iki ayrı genel arayüzle çözüyor ve TRCrypto da aynısını
+yaptı: V1 için `SharedClient`, V2 için `SharedApi`. İkisi aynı nesneyi döndürür. Sonuç
+doğrulandı: V1 genel arayüzleri yayınlanmış `0.1.0-preview.1` ile `git diff` karşısında
+birebir aynıdır.
+
+Ders: "uyumlu" bir iddiadır ve iddialar denenir. Kendi kodumuzun derlenmesi, kullanıcı
+kodunun derlendiğini kanıtlamaz.

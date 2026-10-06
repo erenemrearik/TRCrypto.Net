@@ -16,12 +16,6 @@ public interface ICoinTRRestClientSpotApiShared :
     ISpotTickerRestClient,
     IOrderBookRestClient,
     IRecentTradeRestClient,
-    IKlineRestClient,
-    IGetSpotSymbolsRest,
-    IGetTickerRest,
-    IGetAllTickersRest,
-    IGetOrderBookRest,
-    IGetRecentTradesRest,
-    IGetKlinesRest
+    IKlineRestClient
 {
 }

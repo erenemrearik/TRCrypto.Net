@@ -52,6 +52,9 @@ internal partial class BinanceTRRestClientSpotApi
     public IBinanceTRRestClientSpotApiShared SharedClient => this;
 
     /// <inheritdoc />
+    public IBinanceTRRestClientSpotSharedApi SharedApi => this;
+
+    /// <inheritdoc />
     public override string FormatSymbol(
         string baseAsset, string quoteAsset, TradingMode tradingMode, DateTime? deliverTime = null)
         => BinanceTRExchange.FormatSymbol(baseAsset, quoteAsset, tradingMode, deliverTime);

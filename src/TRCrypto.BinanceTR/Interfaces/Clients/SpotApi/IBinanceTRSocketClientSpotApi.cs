@@ -16,6 +16,13 @@ public interface IBinanceTRSocketClientSpotApi : ISocketApiClient<BinanceTRCrede
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     IBinanceTRSocketClientSpotApiShared SharedClient { get; }
 
+    /// <summary>Borsadan bagimsiz yuzeyin ince taneli (V2) gorunumu.</summary>
+    /// <remarks>
+    /// <see cref="SharedClient"/> ile ayni nesnedir. Yeni kod icin tercih edilir: her islem
+    /// ayri bir arayuzdur ve yalnizca ihtiyac duyulan yetenege baglanilabilir.
+    /// </remarks>
+    IBinanceTRSocketClientSpotSharedApi SharedApi { get; }
+
     /// <summary>Bir paritenin 24 saatlik ozet bilgisini dinler.</summary>
     /// <param name="symbol">Sembol; alt cizgili ya da alt cizgisiz verilebilir.</param>
     /// <param name="onMessage">Her guncellemede cagrilir.</param>

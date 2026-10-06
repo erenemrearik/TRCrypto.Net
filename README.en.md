@@ -108,7 +108,7 @@ dotnet add package TRCrypto.BinanceTR --prerelease
 dotnet add package TRCrypto.CoinTR    --prerelease
 ```
 
-`--prerelease` is required for now: the version is `0.1.0-preview.1`. It is a prerelease
+`--prerelease` is required for now: the version is `0.2.0-preview.1`. It is a prerelease
 because two surfaces have not been verified against a live account yet; see below.
 
 ---

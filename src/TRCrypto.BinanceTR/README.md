@@ -16,7 +16,7 @@ dotnet add package TRCrypto.BinanceTR --prerelease
 ```
 
 > [!NOTE]
-> Şu an yalnızca ön sürüm yayında (`0.1.0-preview.1`), bu yüzden `--prerelease`
+> Şu an yalnızca ön sürüm yayında (`0.2.0-preview.1`), bu yüzden `--prerelease`
 > gereklidir.
 
 Hedef platformlar: `net8.0` · `net9.0` · `net10.0` · `netstandard2.0` · `netstandard2.1`
@@ -136,7 +136,7 @@ Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 | SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |
 | SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` · `IKlineSocketClient` | ✅ |
 | SharedApis (kullanıcı akışı) | `IBalanceSocketClient` · `ISpotOrderSocketClient` | ✅ |
-| SharedApis V2 | Yukarıdakilerin CryptoExchange.Net 13 ile gelen ince taneli karşılıkları (`IGetOrderBookRest`, `ISubscribeTickerSocket`, `ISubscribeSpotOrdersSocket` gibi) | ✅ |
+| SharedApis V2 (`SharedApi`) | Yukarıdakilerin CryptoExchange.Net 13 ile gelen ince taneli karşılıkları (`IGetOrderBookRest`, `ISubscribeTickerSocket`, `ISubscribeSpotOrdersSocket` gibi) | ✅ |
 | Yatırma ve çekme | yok | Kapsam dışı (ADR-007) |
 
 ## Bağımlılık enjeksiyonu

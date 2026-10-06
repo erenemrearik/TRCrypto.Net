@@ -1,5 +1,6 @@
 using CryptoExchange.Net.Objects.Sockets;
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.BtcTurk.Interfaces.Clients.SpotApi;
 
 namespace TRCrypto.BtcTurk.Clients.SpotApi;
 
@@ -18,7 +19,7 @@ namespace TRCrypto.BtcTurk.Clients.SpotApi;
 /// uygulanmadan borsaya ozgu sinirlar (kademe sayisi, aralik gibi) denetlenemezdi.
 /// </para>
 /// </remarks>
-internal partial class BtcTurkSocketClientSpotApi
+internal partial class BtcTurkSocketClientSpotApi : IBtcTurkSocketClientSpotSharedApi
 {
     #region ISubscribeTickerSocket
 

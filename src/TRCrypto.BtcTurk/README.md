@@ -16,7 +16,7 @@ dotnet add package TRCrypto.BtcTurk --prerelease
 ```
 
 > [!NOTE]
-> Şu an yalnızca ön sürüm yayında (`0.1.0-preview.1`), bu yüzden `--prerelease`
+> Şu an yalnızca ön sürüm yayında (`0.2.0-preview.1`), bu yüzden `--prerelease`
 > gereklidir.
 
 Hedef platformlar: `net8.0` · `net9.0` · `net10.0` · `netstandard2.0` · `netstandard2.1`
@@ -151,13 +151,17 @@ var info = client.SpotApi.SharedClient.Discover();
 
 ### İnce taneli arayüzler (V2)
 
-CryptoExchange.Net 13 her işlemi ayrı bir arayüze böldü. Aynı `SharedClient` bunları da
-uygular; yalnızca ihtiyacınız olan yeteneğe bağlı kod yazabilirsiniz:
+CryptoExchange.Net 13 her işlemi ayrı bir arayüze böldü. Bunlara `SharedApi` üzerinden
+erişilir; yalnızca ihtiyacınız olan yeteneğe bağlı kod yazabilirsiniz:
 
 ```csharp
-IGetOrderBookRest books = client.SpotApi.SharedClient;
+IGetOrderBookRest books = client.SpotApi.SharedApi;
 var book = await books.GetOrderBookAsync(new GetOrderBookRequest(symbol, 10), ct);
 ```
+
+`SharedApi` ve `SharedClient` aynı nesnenin iki görünümüdür. Ayrı tutulmalarının nedeni,
+V1 ve V2'nin aynı adlı üyeler taşımasıdır: tek arayüzde birleşselerdi
+`SharedClient.GetOrderBookAsync(...)` gibi doğrudan çağrılar belirsizleşip derlenmezdi.
 
 Hangi işlemlerin desteklendiği `Capabilities` üzerinden okunur. Liste yalnızca gerçekten
 uygulanan işlemleri içerir; testler ikisinin ayrışmadığını denetler.

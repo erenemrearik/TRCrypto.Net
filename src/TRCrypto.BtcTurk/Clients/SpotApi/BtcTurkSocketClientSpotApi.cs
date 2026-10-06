@@ -42,6 +42,9 @@ internal partial class BtcTurkSocketClientSpotApi
     public IBtcTurkSocketClientSpotApiShared SharedClient => this;
 
     /// <inheritdoc />
+    public IBtcTurkSocketClientSpotSharedApi SharedApi => this;
+
+    /// <inheritdoc />
     protected override IMessageSerializer CreateSerializer()
         => new SystemTextJsonMessageSerializer(BtcTurkJsonOptions.Default);
 

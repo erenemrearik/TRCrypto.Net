@@ -21,7 +21,7 @@
     <Product>TRCrypto.Net</Product>
     <Company>TRCrypto Contributors</Company>
     <Copyright>Copyright (c) 2026 TRCrypto Contributors</Copyright>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.2.0</VersionPrefix>
   </PropertyGroup>
 
 </Project>

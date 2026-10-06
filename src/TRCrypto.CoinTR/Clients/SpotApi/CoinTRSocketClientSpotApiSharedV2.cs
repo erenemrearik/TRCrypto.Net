@@ -1,5 +1,6 @@
 using CryptoExchange.Net.Objects.Sockets;
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.CoinTR.Interfaces.Clients.SpotApi;
 
 namespace TRCrypto.CoinTR.Clients.SpotApi;
 
@@ -18,7 +19,7 @@ namespace TRCrypto.CoinTR.Clients.SpotApi;
 /// uygulanmadan borsaya ozgu sinirlar (kademe sayisi, aralik gibi) denetlenemezdi.
 /// </para>
 /// </remarks>
-internal partial class CoinTRSocketClientSpotApi
+internal partial class CoinTRSocketClientSpotApi : ICoinTRSocketClientSpotSharedApi
 {
     #region ISubscribeTickerSocket
 

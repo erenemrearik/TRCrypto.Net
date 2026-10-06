@@ -1,4 +1,5 @@
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.BtcTurk.Interfaces.Clients.SpotApi;
 
 namespace TRCrypto.BtcTurk.Clients.SpotApi;
 
@@ -17,7 +18,7 @@ namespace TRCrypto.BtcTurk.Clients.SpotApi;
 /// uygulanmadan borsaya ozgu sinirlar (kademe sayisi, aralik gibi) denetlenemezdi.
 /// </para>
 /// </remarks>
-internal partial class BtcTurkRestClientSpotApi
+internal partial class BtcTurkRestClientSpotApi : IBtcTurkRestClientSpotSharedApi
 {
     #region IGetSpotSymbolsRest
 

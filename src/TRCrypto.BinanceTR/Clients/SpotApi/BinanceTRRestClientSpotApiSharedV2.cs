@@ -1,4 +1,5 @@
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.BinanceTR.Interfaces.Clients.SpotApi;
 
 namespace TRCrypto.BinanceTR.Clients.SpotApi;
 
@@ -17,7 +18,7 @@ namespace TRCrypto.BinanceTR.Clients.SpotApi;
 /// uygulanmadan borsaya ozgu sinirlar (kademe sayisi, aralik gibi) denetlenemezdi.
 /// </para>
 /// </remarks>
-internal partial class BinanceTRRestClientSpotApi
+internal partial class BinanceTRRestClientSpotApi : IBinanceTRRestClientSpotSharedApi
 {
     #region IGetSpotSymbolsRest
 

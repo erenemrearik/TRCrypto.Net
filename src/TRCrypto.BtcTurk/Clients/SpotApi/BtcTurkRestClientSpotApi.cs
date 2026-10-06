@@ -36,6 +36,9 @@ internal partial class BtcTurkRestClientSpotApi
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     public IBtcTurkRestClientSpotApiShared SharedClient => this;
 
+    /// <inheritdoc />
+    public IBtcTurkRestClientSpotSharedApi SharedApi => this;
+
     internal BtcTurkRestClientSpotApi(ILoggerFactory? loggerFactory, HttpClient? httpClient, BtcTurkRestOptions options)
         : base(loggerFactory, BtcTurkExchange.ExchangeName, httpClient, options.Environment.RestBaseAddress, options, options.SpotOptions)
     {

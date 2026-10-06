@@ -72,6 +72,9 @@ internal partial class BinanceTRSocketClientUserApi : IBinanceTRSocketClientUser
     /// <inheritdoc />
     public IBinanceTRSocketClientUserApiShared SharedClient => this;
 
+    /// <inheritdoc />
+    public IBinanceTRSocketClientUserSharedApi SharedApi => this;
+
     #region Balance
 
     SubscribeBalanceOptions IBalanceSocketClient.SubscribeBalanceOptions { get; }

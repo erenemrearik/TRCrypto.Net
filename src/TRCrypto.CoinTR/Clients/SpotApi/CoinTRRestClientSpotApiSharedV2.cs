@@ -1,4 +1,5 @@
 using CryptoExchange.Net.SharedApis;
+using TRCrypto.CoinTR.Interfaces.Clients.SpotApi;
 
 namespace TRCrypto.CoinTR.Clients.SpotApi;
 
@@ -17,7 +18,7 @@ namespace TRCrypto.CoinTR.Clients.SpotApi;
 /// uygulanmadan borsaya ozgu sinirlar (kademe sayisi, aralik gibi) denetlenemezdi.
 /// </para>
 /// </remarks>
-internal partial class CoinTRRestClientSpotApi
+internal partial class CoinTRRestClientSpotApi : ICoinTRRestClientSpotSharedApi
 {
     #region IGetSpotSymbolsRest
 

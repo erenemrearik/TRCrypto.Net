@@ -44,6 +44,9 @@ internal partial class CoinTRRestClientSpotApi
     public ICoinTRRestClientSpotApiShared SharedClient => this;
 
     /// <inheritdoc />
+    public ICoinTRRestClientSpotSharedApi SharedApi => this;
+
+    /// <inheritdoc />
     public override string FormatSymbol(
         string baseAsset, string quoteAsset, TradingMode tradingMode, DateTime? deliverTime = null)
         => CoinTRExchange.FormatSymbol(baseAsset, quoteAsset, tradingMode, deliverTime);

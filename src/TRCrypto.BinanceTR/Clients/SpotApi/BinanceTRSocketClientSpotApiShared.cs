@@ -60,6 +60,9 @@ internal partial class BinanceTRSocketClientSpotApi : IBinanceTRSocketClientSpot
     /// <inheritdoc />
     public IBinanceTRSocketClientSpotApiShared SharedClient => this;
 
+    /// <inheritdoc />
+    public IBinanceTRSocketClientSpotSharedApi SharedApi => this;
+
     #region Ticker
 
     SubscribeTickerOptions ITickerSocketClient.SubscribeTickerOptions { get; }

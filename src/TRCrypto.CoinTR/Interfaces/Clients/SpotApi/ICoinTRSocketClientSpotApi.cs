@@ -12,6 +12,13 @@ public interface ICoinTRSocketClientSpotApi : ISocketApiClient<CoinTRCredentials
     /// <summary>Borsadan bagimsiz (shared) yuzey.</summary>
     ICoinTRSocketClientSpotApiShared SharedClient { get; }
 
+    /// <summary>Borsadan bagimsiz yuzeyin ince taneli (V2) gorunumu.</summary>
+    /// <remarks>
+    /// <see cref="SharedClient"/> ile ayni nesnedir. Yeni kod icin tercih edilir: her islem
+    /// ayri bir arayuzdur ve yalnizca ihtiyac duyulan yetenege baglanilabilir.
+    /// </remarks>
+    ICoinTRSocketClientSpotSharedApi SharedApi { get; }
+
     /// <summary>
     /// Bir paritenin ozet fiyat bilgisindeki degisiklikleri dinler.
     /// </summary>

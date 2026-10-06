@@ -101,7 +101,7 @@ dotnet add package TRCrypto.BinanceTR --prerelease
 dotnet add package TRCrypto.CoinTR    --prerelease
 ```
 
-`--prerelease` şu an gerekli: sürüm `0.1.0-preview.1`. Ön sürüm olmasının nedeni iki
+`--prerelease` şu an gerekli: sürüm `0.2.0-preview.1`. Ön sürüm olmasının nedeni iki
 yüzeyin canlı bir hesapta henüz doğrulanmamış olmasıdır; ayrıntı aşağıda.
 
 ---
