@@ -287,8 +287,8 @@ ve 13'ün ince taneli V2 arayüzlerini de uygular; V2 üyeleri V1 uygulamasına 
 V1'e `SharedClient`, V2'ye `SharedApi` üzerinden erişilir.
 Göçün bulguları `docs/spec/` ekinde E.13'te.
 
-Üç paket de NuGet'te ön sürüm olarak yayında: `0.1.0-preview.1` (8 Eylül 2026). 13.1.0
-geçişi henüz yayınlanmadı; temel kütüphanenin ana sürümü değiştiği için sıradaki yayın
-`0.2.0-preview.1` olmalı.
+Üç paket de NuGet'te ön sürüm olarak yayında: `0.2.0-preview.1` (6 Ekim 2026).
+Önceki sürüm `0.1.0-preview.1` (8 Eylül 2026). Yeni bir sürüm çıkarmanın adımları
+`docs/YAYIN.md` içinde.
 Yayın Trusted Publishing ile yapılır; depoda API anahtarı saklanmaz ve `nuget`
 environment'ı onay ister. Ayrıntı: `.github/workflows/release.yml`.

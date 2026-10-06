@@ -27,13 +27,13 @@ denenene kadar yayımlanmayacak.
 Piyasa panosu artık üç borsayı yan yana gösteriyor ve üçü de tek bir
 `ITickerSocketClient` ile dinleniyor.
 
-**Üç paket de NuGet'te**, `0.1.0-preview.1` sürümüyle. Kurulum ve yayın hattının nasıl
+**Üç paket de NuGet'te**, `0.2.0-preview.1` sürümüyle. Kurulum ve yayın hattının nasıl
 çalıştığı aşağıda.
 
 **CryptoExchange.Net 13.1.0'a geçildi.** Paylaşılan istemciler 13 ile gelen ince taneli
 (V2) arayüzleri de uyguluyor; V1 arayüzleri değişmeden duruyor. Göç sırasında birim
 testlerinin göremediği bir hata canlı çalıştırmada yakalandı ve sabitlendi; ayrıntı
-aşağıda ve `docs/spec/` ekinde E.13. Değişiklik henüz NuGet'e yayınlanmadı.
+aşağıda ve `docs/spec/` ekinde E.13. Geçiş `0.2.0-preview.1` ile yayınlandı.
 
 Sıradaki platform **Paribu**; uç envanteri çıkarıldı, kod yazılmadı.
 
@@ -147,9 +147,9 @@ etkin; canlı hesap doğrulaması anahtar geldiğinde yapılacak.
 tarafında `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` ·
 `IKlineSocketClient`.
 
-Aynı kod artık iki borsayla çalışıyor ve bu canlı olarak doğrulandı. Tek bir `SharedSymbol` ile
-her iki borsadan paralel fiyat okunuyor, her biri kendi sembol biçimini (`BTCTRY` /
-`BTC_TRY`) kullanırken çağıran kod hiçbirini görmüyor.
+Bu aşamada aynı kod ilk kez iki borsayla çalıştı ve canlı olarak doğrulandı. Tek bir
+`SharedSymbol` ile iki borsadan paralel fiyat okundu, her biri kendi sembol biçimini
+(`BTCTRY` / `BTC_TRY`) kullanırken çağıran kod hiçbirini görmedi. CoinTR ile sayı üçe çıktı.
 
 BtcTurk'tan üç önemli fark:
 
@@ -238,9 +238,9 @@ canlı API                 →  BtcTurk, Binance TR ve CoinTR; native == shared
 dotnet run --project examples/TRCrypto.Examples.Console
 ```
 
-Son bölüm (`[11] Iki borsa, tek kod`) projenin varlık nedenini çalıştırarak gösterir:
-tek bir `SharedSymbol` ile her iki borsadan REST ve WebSocket üzerinden fiyat okunur,
-çağıran kod hiçbir borsanın sembol biçimini veya zarfını görmez.
+Son bölüm (`[11] Uc borsa, tek kod`) projenin varlık nedenini çalıştırarak gösterir:
+tek bir `SharedSymbol` ile üç borsadan REST ve WebSocket üzerinden fiyat okunur, çağıran
+kod hiçbir borsanın sembol biçimini veya zarfını görmez.
 
 ---
 
@@ -275,7 +275,12 @@ yanıtında dokümante edilmemiş `side` alanı.
 
 ## NuGet yayını ✅
 
-İlk sürüm **`0.1.0-preview.1`**, 8 Eylül 2026'da yayınlandı. Üç paket de nuget.org'da:
+| Sürüm | Tarih | Ne getirdi |
+|---|---|---|
+| `0.2.0-preview.1` | 6 Ekim 2026 | CryptoExchange.Net 13.1.0, `SharedApi` (V2) |
+| `0.1.0-preview.1` | 8 Eylül 2026 | İlk yayın: BtcTurk, Binance TR, CoinTR |
+
+Üç paket de nuget.org'da:
 
 ```bash
 dotnet add package TRCrypto.BtcTurk   --prerelease
@@ -334,12 +339,6 @@ Ayrıntı ve bulgular: `docs/spec/` ekinde E.13.
 ---
 
 ## Sonraki adım
-
-**0. Yeni sürümün yayını**
-
-CryptoExchange.Net 13 geçişi yayınlanmadı. Temel kütüphane ana sürümü değiştiği için
-yayın `0.2.0-preview.1` olmalı: 12 kullanan bir uygulama bu sürümle birlikte
-kurulamaz.
 
 **1. Binance TR private uçlarının canlı doğrulaması**
 

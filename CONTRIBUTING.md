@@ -44,12 +44,23 @@ ve `docs/index.html` olarak depoda tutulur. Bir doküman değiştirip siteyi yen
 üretmezseniz ikisi ayrışır. CI bunu yakalar ve derlemeyi durdurur.
 
 ```bash
-node tools/site/build.mjs   # siteyi yeniden uret
-node tools/site/check.mjs   # markdown isleyicisini dogrula
+node tools/site/build.mjs           # siteyi yeniden uret
+node tools/site/check.mjs           # markdown isleyicisini dogrula
+node tools/audit/docs-vs-code.mjs   # dokumanlar kodla tutarli mi
 ```
 
-Bağımlılık yoktur; yalnızca Node 18+ gerekir. Yeni bir doküman eklediyseniz
-`tools/site/build.mjs` içindeki gezinti listesine de ekleyin.
+Bağımlılık yoktur; yalnızca Node 18+ gerekir.
+
+Üç şey sizi şaşırtabilir, ikisi de bilinçli:
+
+- **Test eklemek siteyi de değiştirir.** Test sayısı sitenin giriş sayfasında görünür ve
+  elle yazılmaz, depodan türetilir. Test ekledikten sonra siteyi yeniden üretin.
+- **Yeni bir `.md` dosyası siteye eklenmek zorundadır.** Denetim aracı depodaki tüm
+  markdown dosyalarını tarar. Dosyayı `tools/site/build.mjs` içindeki gezinti listesine
+  ekleyin ya da siteye girmemesi gerekiyorsa `tools/audit/docs-vs-code.mjs` içindeki
+  dışarıda bırakma listesine gerekçesiyle yazın.
+- **README'lerdeki sürüm değişiklik günlüğüyle aynı olmalıdır.** Paket README'leri
+  NuGet'e paketin içinde gider; eski sürümü gösteren bir README denetimi durdurur.
 
 Projenin şu anki durumu ve sonraki adımlar: [docs/DURUM.md](docs/DURUM.md)
 
@@ -124,6 +135,31 @@ if (limit is <= 0 or > MaxTradeLimit)
     throw new ArgumentOutOfRangeException(nameof(limit), limit, "...");
 ```
 
+### Paylaşılan yüzeye yetenek eklerken
+
+Bir ucu borsadan bağımsız yüzeye de açacaksanız, CryptoExchange.Net 13 ile üç yere
+dokunmanız gerekir. Biri unutulursa derleme ya da testler durur, ama nedeni her zaman
+açık değildir; bu yüzden burada yazılı.
+
+| Nereye | Ne | Unutulursa |
+|---|---|---|
+| `*Shared.cs` | V1 arayüzünü (`IOrderBookRestClient` gibi) uygulayan asıl kod | Yetenek yok |
+| `*SharedV2.cs` | V2 arayüzünün (`IGetOrderBookRest` gibi) V1'e delege eden karşılığı | `ValidateRequest` derlenmez |
+| `RegisterCapabilities()` | Seçenek nesnesini yetenek listesine eklemek | `CapabilityAssert` kırılır |
+
+Üç kural her durumda geçerlidir:
+
+- **V2 kendi seçenek nesnesini oluşturmaz,** V1'inkini döndürür:
+  `GetOrderBookOptions IGetOrderBook.GetOrderBookOptions => ((IOrderBookRestClient)this).GetOrderBookOptions;`
+  Ayrı bir nesne doğrulama kurallarını ikiye böler. Test aynı nesne olduğunu denetler.
+- **Seçenekler kurucuda kaydedilir.** 13'te kaydedilmeyen bir seçenek hiçbir işlem
+  türünü desteklemiyor görünür ve her çağrı `TradingMode.Spot is not supported` ile
+  reddedilir. Derleme ve yapısal testler bunu göstermez.
+- **V1 ve V2 ayrı genel arayüzlerde kalır** (`SharedClient` ve `SharedApi`). Aynı adlı
+  üyeler taşıdıkları için birleştirilmeleri kullanıcı kodunu derlenmez hale getirir.
+
+Gerekçesi ve nasıl bulunduğu `docs/spec/` ekinde E.13'te.
+
 ---
 
 ## Hata yönetimi
@@ -153,9 +189,16 @@ Emir verme/iptal gerçek para hareketi yaratır.
 PR'ınızdan önce:
 
 ```bash
-dotnet build -c Release   # 0 warning
-dotnet test  -c Release   # hepsi yesil
+dotnet build -c Release                              # 0 warning
+dotnet test  -c Release                              # hepsi yesil
+node tools/audit/docs-vs-code.mjs                    # dokumanlar kodla tutarli
+dotnet run --project examples/TRCrypto.Examples.Console -c Release   # canli dogrulama
 ```
+
+Sonuncusu canlı borsalara bağlanır ve en çok atlanan adımdır. Birim testleri yapıyı
+denetler; bir isteğin gerçekten doğrulamadan geçip borsaya ulaştığını yalnızca canlı
+çalıştırma gösterir. CryptoExchange.Net 13 göçünde derleme ve testlerin tamamı geçtiği
+halde her paylaşılan çağrının reddedildiğini yalnızca bu adım yakaladı.
 
 - Bir PR bir konuya odaklansın; ilgisiz düzeltmeleri ayırın
 - Commit mesajı **ne** değil **neden** anlatsın
@@ -164,6 +207,14 @@ dotnet test  -c Release   # hepsi yesil
 
 Yeni bir borsa adaptörü gibi büyük bir katkı planlıyorsanız, önce bir issue açıp
 konuşalım. Böylece boşa emek harcanmaz.
+
+---
+
+## Yayın
+
+Yeni bir sürümü NuGet'e çıkarmak bakımcının işidir; adımlar ve sorun giderme
+[docs/YAYIN.md](docs/YAYIN.md) içinde. Kısaca: değişiklik günlüğüne sürüm başlığı, CI
+yeşil, bir etiket ve GitHub'da onay.
 
 ---
 

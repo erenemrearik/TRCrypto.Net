@@ -150,6 +150,14 @@ var symbol = new SharedSymbol(TradingMode.Spot, "BTC", "TRY");
 var ticker = await tickers.GetSpotTickerAsync(new GetTickerRequest(symbol));
 ```
 
+CryptoExchange.Net 13 her işlemi ayrı bir arayüze böldü. Bu ince taneli arayüzler
+`SharedApi` üzerinden gelir; `SharedClient` ile aynı nesnedir ama yeni kod için önerilir:
+
+```csharp
+IGetOrderBookRest books = client.SpotApi.SharedApi;
+var book = await books.GetOrderBookAsync(new GetOrderBookRequest(symbol, 10), ct);
+```
+
 > [!TIP]
 > İstemciler yeniden kullanılabilir ve iş parçacığı güvenlidir. Her istek için yenisini
 > oluşturmayın.

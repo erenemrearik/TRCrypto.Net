@@ -9,7 +9,7 @@ Sekiz kollu yıldız (rub el hizb), aynı boyutta iki karenin biri 45 derece dö
 üste konmasıyla oluşur. İznik çinisinin temel motifidir ve kütüphanenin yaptığı işi de
 anlatır: tek bir merkez, sekiz yöne açılan aynı yapı.
 
-Ortadaki turkuaz kare, sitede "iki borsa tek kod" fikrini işaretleyen renktir.
+Ortadaki turkuaz kare, sitede "tek kod, her borsa" fikrini işaretleyen renktir.
 
 | Dosya | Ne zaman kullanılır |
 |---|---|

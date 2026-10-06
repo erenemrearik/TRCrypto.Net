@@ -157,6 +157,15 @@ var symbol = new SharedSymbol(TradingMode.Spot, "BTC", "TRY");
 var ticker = await tickers.GetSpotTickerAsync(new GetTickerRequest(symbol));
 ```
 
+CryptoExchange.Net 13 split every operation into its own interface. These fine-grained
+interfaces come through `SharedApi`; it is the same object as `SharedClient` but is the
+recommended entry point for new code:
+
+```csharp
+IGetOrderBookRest books = client.SpotApi.SharedApi;
+var book = await books.GetOrderBookAsync(new GetOrderBookRequest(symbol, 10), ct);
+```
+
 > [!TIP]
 > Clients are reusable and thread safe. Do not create a new one per request.
 
