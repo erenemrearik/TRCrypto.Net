@@ -34,6 +34,8 @@ internal partial class BtcTurkSocketClientSpotApi
             options.SpotOptions)
     {
         RateLimiter = BtcTurkExchange.RateLimiter.Socket;
+
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

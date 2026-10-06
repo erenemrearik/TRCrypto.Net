@@ -44,6 +44,8 @@ internal partial class BinanceTRRestClientSpotApi
         ExchangeData = new BinanceTRRestClientSpotApiExchangeData(this);
         Account = new BinanceTRRestClientSpotApiAccount(this);
         Trading = new BinanceTRRestClientSpotApiTrading(this);
+
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

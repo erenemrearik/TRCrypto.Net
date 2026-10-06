@@ -136,6 +136,7 @@ Anahtar alma, izinler ve imzalama şemasının BtcTurk'ten farkları:
 | SharedApis (REST) | `ISpotSymbolRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` | ✅ |
 | SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` · `IKlineSocketClient` | ✅ |
 | SharedApis (kullanıcı akışı) | `IBalanceSocketClient` · `ISpotOrderSocketClient` | ✅ |
+| SharedApis V2 | Yukarıdakilerin CryptoExchange.Net 13 ile gelen ince taneli karşılıkları (`IGetOrderBookRest`, `ISubscribeTickerSocket`, `ISubscribeSpotOrdersSocket` gibi) | ✅ |
 | Yatırma ve çekme | yok | Kapsam dışı (ADR-007) |
 
 ## Bağımlılık enjeksiyonu

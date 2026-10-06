@@ -45,6 +45,7 @@ internal partial class CoinTRSocketClientSpotApi
             options,
             options.SpotOptions)
     {
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

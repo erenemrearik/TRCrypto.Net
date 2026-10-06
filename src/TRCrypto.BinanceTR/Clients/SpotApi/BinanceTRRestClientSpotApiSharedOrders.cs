@@ -21,7 +21,7 @@ internal partial class BinanceTRRestClientSpotApi
         GetBalancesRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetBalancesOptions.ValidateRequest(request, this);
+        var validationError = ((IBalanceRestClient)this).GetBalancesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedBalance[]>(Exchange, validationError);
 
@@ -98,7 +98,7 @@ internal partial class BinanceTRRestClientSpotApi
         GetOrderRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotOrderOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetSpotOrderOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotOrder>(Exchange, validationError);
 
@@ -122,7 +122,7 @@ internal partial class BinanceTRRestClientSpotApi
         GetOpenOrdersRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetOpenSpotOrdersOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetOpenSpotOrdersOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotOrder[]>(Exchange, validationError);
 
@@ -159,7 +159,7 @@ internal partial class BinanceTRRestClientSpotApi
         PageRequest? pageRequest,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetClosedSpotOrdersOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetClosedSpotOrdersOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotOrder[]>(Exchange, validationError);
 
@@ -186,7 +186,7 @@ internal partial class BinanceTRRestClientSpotApi
         CancelOrderRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.CancelSpotOrderOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).CancelSpotOrderOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedId>(Exchange, validationError);
 
@@ -208,7 +208,7 @@ internal partial class BinanceTRRestClientSpotApi
         GetOrderTradesRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotOrderTradesOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetSpotOrderTradesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedUserTrade[]>(Exchange, validationError);
 
@@ -232,7 +232,7 @@ internal partial class BinanceTRRestClientSpotApi
             .ToArray());
     }
 
-    GetSpotUserTradesOptions ISpotOrderRestClient.GetSpotUserTradesOptions { get; }
+    GetSpotUserTradeHistoryOptions ISpotOrderRestClient.GetSpotUserTradesOptions { get; }
         = new(
             BinanceTRExchange.ExchangeName,
             supportsAscending: true,
@@ -245,7 +245,7 @@ internal partial class BinanceTRRestClientSpotApi
         PageRequest? pageRequest,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotUserTradesOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetSpotUserTradesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedUserTrade[]>(Exchange, validationError);
 

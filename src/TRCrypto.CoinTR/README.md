@@ -116,6 +116,7 @@ Anahtar alma ve izinler:
 | WS işlemler | `SubscribeToTradeUpdatesAsync` | ✅ |
 | SharedApis (REST) | `ISpotSymbolRestClient` · `ISpotTickerRestClient` · `IOrderBookRestClient` · `IRecentTradeRestClient` · `IKlineRestClient` | ✅ |
 | SharedApis (socket) | `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient` | ✅ |
+| SharedApis V2 | Yukarıdakilerin CryptoExchange.Net 13 ile gelen ince taneli karşılıkları (`IGetTickerRest`, `IGetOrderBookRest`, `ISubscribeTickerSocket` gibi) | ✅ |
 | Bakiye, emir ve işlem geçmişi | yok | ⏳ İmza canlı doğrulanmadan yayımlanmayacak |
 | Vadeli işlemler | yok | Kapsam dışı |
 | Yatırma ve çekme | yok | Kapsam dışı (ADR-007) |

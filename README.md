@@ -14,7 +14,7 @@
 
 **Türkçe** · [English](README.en.md)
 
-[JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 12.5.0 üzerine kuruludur.
+[JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 13.1.0 üzerine kuruludur.
 
 </div>
 

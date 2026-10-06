@@ -12,6 +12,8 @@ namespace TRCrypto.BinanceTR.Interfaces.Clients.SpotApi;
 public interface IBinanceTRSocketClientUserApiShared :
     ISharedClient,
     IBalanceSocketClient,
-    ISpotOrderSocketClient
+    ISpotOrderSocketClient,
+    ISubscribeBalancesSocket,
+    ISubscribeSpotOrdersSocket
 {
 }

@@ -42,6 +42,8 @@ internal partial class BtcTurkRestClientSpotApi
         ExchangeData = new BtcTurkRestClientSpotApiExchangeData(this);
         Account = new BtcTurkRestClientSpotApiAccount(this);
         Trading = new BtcTurkRestClientSpotApiTrading(this);
+
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

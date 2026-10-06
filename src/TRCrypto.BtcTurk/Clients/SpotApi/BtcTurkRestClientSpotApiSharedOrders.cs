@@ -34,7 +34,7 @@ internal partial class BtcTurkRestClientSpotApi
         PageRequest? pageRequest,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetKlinesOptions.ValidateRequest(request, this);
+        var validationError = ((IKlineRestClient)this).GetKlinesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedKline[]>(Exchange, validationError);
 
@@ -94,7 +94,7 @@ internal partial class BtcTurkRestClientSpotApi
         PlaceSpotOrderRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.PlaceSpotOrderOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).PlaceSpotOrderOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedId>(Exchange, validationError);
 
@@ -120,7 +120,7 @@ internal partial class BtcTurkRestClientSpotApi
         GetOrderRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotOrderOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetSpotOrderOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotOrder>(Exchange, validationError);
 
@@ -144,7 +144,7 @@ internal partial class BtcTurkRestClientSpotApi
         GetOpenOrdersRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetOpenSpotOrdersOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetOpenSpotOrdersOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotOrder[]>(Exchange, validationError);
 
@@ -175,7 +175,7 @@ internal partial class BtcTurkRestClientSpotApi
         PageRequest? nextPageToken,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetClosedSpotOrdersOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetClosedSpotOrdersOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotOrder[]>(Exchange, validationError);
 
@@ -207,7 +207,7 @@ internal partial class BtcTurkRestClientSpotApi
         CancelOrderRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.CancelSpotOrderOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).CancelSpotOrderOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedId>(Exchange, validationError);
 
@@ -231,7 +231,7 @@ internal partial class BtcTurkRestClientSpotApi
         GetOrderTradesRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotOrderTradesOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetSpotOrderTradesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedUserTrade[]>(Exchange, validationError);
 
@@ -248,7 +248,7 @@ internal partial class BtcTurkRestClientSpotApi
         return HttpResult.Ok(result, result.Data.Select(x => ParseUserTrade(x, request.Symbol)).ToArray());
     }
 
-    GetSpotUserTradesOptions ISpotOrderRestClient.GetSpotUserTradesOptions { get; }
+    GetSpotUserTradeHistoryOptions ISpotOrderRestClient.GetSpotUserTradesOptions { get; }
         = new(
             BtcTurkExchange.ExchangeName,
             supportsAscending: false,
@@ -262,7 +262,7 @@ internal partial class BtcTurkRestClientSpotApi
         PageRequest? nextPageToken,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotUserTradesOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotOrderRestClient)this).GetSpotUserTradesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedUserTrade[]>(Exchange, validationError);
 

@@ -40,6 +40,7 @@ internal partial class BinanceTRSocketClientUserApi
             options,
             options.UserOptions)
     {
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

@@ -33,6 +33,7 @@ internal partial class BinanceTRSocketClientSpotApi
             options,
             options.SpotOptions)
     {
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

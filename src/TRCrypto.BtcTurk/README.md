@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/lisans-MIT-blue?style=flat-square)](https://github.com/erenemrearik/TRCrypto.Net/blob/main/LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8%20|%209%20|%2010%20|%20standard2.0%20|%20standard2.1-512BD4?style=flat-square&logo=dotnet&logoColor=white)](#kurulum)
-[![CryptoExchange.Net](https://img.shields.io/badge/CryptoExchange.Net-12.5.0-orange?style=flat-square)](https://github.com/JKorf/CryptoExchange.Net)
+[![CryptoExchange.Net](https://img.shields.io/badge/CryptoExchange.Net-13.1.0-orange?style=flat-square)](https://github.com/JKorf/CryptoExchange.Net)
 
 BtcTurk REST ve WebSocket API'leri için .NET client kütüphanesi.
 [CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) üzerine kuruludur.
@@ -140,13 +140,27 @@ var result = await tickers.GetSpotTickerAsync(new GetTickerRequest(symbol));
 **REST:** `ISpotSymbolRestClient` · `ISpotTickerRestClient` · `IOrderBookRestClient` ·
 `IRecentTradeRestClient` · `IKlineRestClient` · `IBalanceRestClient` · `ISpotOrderRestClient`
 
-**WebSocket:** `ITickerSocketClient` · `ITradeSocketClient` · `IOrderBookSocketClient`
+**WebSocket:** `ITickerSocketClient` · `ITickersSocketClient` · `ITradeSocketClient` ·
+`IOrderBookSocketClient`
 
 Çalışma anında yetenek keşfi:
 
 ```csharp
 var info = client.SpotApi.SharedClient.Discover();
 ```
+
+### İnce taneli arayüzler (V2)
+
+CryptoExchange.Net 13 her işlemi ayrı bir arayüze böldü. Aynı `SharedClient` bunları da
+uygular; yalnızca ihtiyacınız olan yeteneğe bağlı kod yazabilirsiniz:
+
+```csharp
+IGetOrderBookRest books = client.SpotApi.SharedClient;
+var book = await books.GetOrderBookAsync(new GetOrderBookRequest(symbol, 10), ct);
+```
+
+Hangi işlemlerin desteklendiği `Capabilities` üzerinden okunur. Liste yalnızca gerçekten
+uygulanan işlemleri içerir; testler ikisinin ayrışmadığını denetler.
 
 ## Sembol formatı
 

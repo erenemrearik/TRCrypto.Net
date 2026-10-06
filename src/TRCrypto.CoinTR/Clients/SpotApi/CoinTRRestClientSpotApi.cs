@@ -36,6 +36,8 @@ internal partial class CoinTRRestClientSpotApi
             options.SpotOptions)
     {
         ExchangeData = new CoinTRRestClientSpotApiExchangeData(this);
+
+        RegisterCapabilities();
     }
 
     /// <inheritdoc />

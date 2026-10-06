@@ -1456,3 +1456,78 @@ JSON çözümleyicisine verilirse her çerçevede ayrıştırma hatası üretir.
 Mesaj işleyicisi bu çerçeveyi yönlendirmeden **önce** eler. Eleme, gövdenin tamamının
 karşılaştırılmasıyla yapılır; "ile başlıyor" kontrolü `{"pong":...}` biçiminde gelebilecek
 gerçek bir JSON mesajını da yanlışlıkla elerdi.
+
+---
+
+## E.13 CryptoExchange.Net 13 Göçü
+
+Bu spesifikasyon CryptoExchange.Net 12.5.0 üzerine yazıldı. Ekim 2026'da 13.1.0'a
+geçildi. Aşağıdakiler borsaların değil, temel kütüphanenin davranışıdır; bu yüzden D
+numarası almazlar ve borsa sapması sayısına eklenmezler. Ama aynı türden bulgulardır:
+sürüm notlarının söylediği ile kodun yaptığı ayrışıyor.
+
+### Sürüm notu uygulayıcılar için eksik
+
+13.0.0 sürüm notu "V1 aggregate Shared API interfaces retained for backwards
+compatibility" diyor. Bu, paylaşılan arayüzleri **kullanan** kod için doğru. Arayüzleri
+**uygulayan** bir adaptör için doğru değil:
+
+1. `ISharedApi` iki zorunlu üye kazandı: `Transport` ve `Capabilities`.
+2. İstek doğrulaması (`ValidateRequest`) artık V1 arayüzünü değil, V2 yetenek arayüzünü
+   (`IGetOrderBook`, `ISubscribeTickerSocket` gibi) parametre olarak istiyor. V1
+   arayüzleri V2'den türemiyor. Dolayısıyla V2 uygulanmadan doğrulama derlenmiyor.
+3. Üç seçenek tipinin adı değişti: `GetSpotTickerOptions` yerine `GetTickerOptions`,
+   `GetSpotTickersOptions` yerine `GetAllTickersOptions`, `GetSpotUserTradesOptions`
+   yerine `GetSpotUserTradeHistoryOptions`. Sürüm notunda yalnızca ilki geçiyor.
+4. `SharedOrderBook` kurucusu bir `sequenceNumber` parametresi aldı.
+5. Emir düzeyindeki ücret alanı (`SharedSpotOrder.Fee`) kullanımdan kaldırıldı; ücret
+   artık son dolumun üzerinde, `SharedSpotOrderUpdate.LastTrade` içinde taşınıyor.
+
+İlk deneme derlemesinde yalnızca birinci dalga görünüyordu: 12 dosya, 32 hata. Derleyici
+ilk hatada durduğu için ikinci ve üçüncü dalga, birincisi düzeltilene kadar gizli kaldı.
+Bir sürümün maliyeti ilk derleme çıktısından tahmin edilmemelidir.
+
+### Seçenekler kaydedilmezse her çağrı reddedilir
+
+En önemli bulgu birim testlerinde görünmedi; canlı çalıştırmada ortaya çıktı.
+
+13'te her seçenek nesnesi hangi işlem türlerini desteklediğini kendisi tutuyor ve
+doğrulama bu listeye bakıyor. Liste varsayılan olarak **boş**. Dolduran metot
+(`InitializeSupportedTradingModes`) kütüphanenin içine kapalı; ona yalnızca
+`SharedApiBase.SetCapabilities` erişebiliyor.
+
+Göçün ilk hali derlendi ve 284 birim testinin tamamı geçti. Canlı örnek ise şunu verdi:
+
+```
+'TradingMode': TradingMode.Spot is not supported, supported types:
+```
+
+Desteklenen türler listesi boştu, bu yüzden her paylaşılan çağrı reddediliyordu ve
+socket akışlarından veri gelmiyordu. Birim testleri yalnızca yapıyı denetliyordu;
+geçerli bir isteği doğrulamadan geçirip sonucuna bakan test yoktu.
+
+Bizim paylaşılan istemcilerimiz zaten bir API istemcisinden türediği için
+`SharedApiBase`'den türeyemez. Çözüm, aynı API istemcisi için eksiksiz yapılandırılmış
+küçük bir `SharedApiBase` ile seçenekleri kurucuda kaydetmek oldu
+(`CapabilityRegistration`). Kütüphanenin korumalı sözleşmesi olduğu gibi kullanılır;
+internal hiçbir şeye dokunulmaz.
+
+JKorf'un kendi borsa kütüphaneleri aynı sorunu paylaşılan kodu ayrı bir sınıfa taşıyarak
+çözüyor. O yol daha uzun ve şu an gerekli değil; ileride hizalama işi olarak duruyor.
+
+### Bu bulgular nasıl sabitlendi
+
+| Test | Neyi yakalar |
+|---|---|
+| `CapabilityAssert` | Yetenek listesi uygulanan arayüzlerle ne eksik ne fazla örtüşüyor; V1 ve V2 aynı seçenek nesnesini döndürüyor; her seçenek kayıtlı |
+| `V2_arayuzu_uzerinden_gecersiz_istek_aga_cikmadan_reddedilir` | Geçersiz istek ağa çıkmadan reddediliyor, ve **doğru nedenle** |
+| `Gecerli_istek_V2_dogrulamasindan_gecer` | Geçerli istek doğrulamadan geçiyor |
+
+İkinci testin ilk hali yalnızca hatanın türüne bakıyordu ve seçenekler kayıtsızken de
+geçti: istek reddediliyordu, ama kademe sınırı yüzünden değil, hiçbir işlem türü
+desteklenmiyor göründüğü için. Artık hata mesajının nedeni de doğrulanıyor.
+
+Doğrulamanın neden önemli olduğunu deneme gösterdi: CoinTR'den doğrulama geçici olarak
+kaldırıldığında 2000 kademelik istek borsaya gitti ve **başarılı döndü**. Borsa geçersiz
+isteği hata vermeden kabul ediyor; doğrulama kaybolsaydı bu sessiz bir başarısızlık
+olurdu.

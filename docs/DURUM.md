@@ -30,6 +30,11 @@ Piyasa panosu artık üç borsayı yan yana gösteriyor ve üçü de tek bir
 **Üç paket de NuGet'te**, `0.1.0-preview.1` sürümüyle. Kurulum ve yayın hattının nasıl
 çalıştığı aşağıda.
 
+**CryptoExchange.Net 13.1.0'a geçildi.** Paylaşılan istemciler 13 ile gelen ince taneli
+(V2) arayüzleri de uyguluyor; V1 arayüzleri değişmeden duruyor. Göç sırasında birim
+testlerinin göremediği bir hata canlı çalıştırmada yakalandı ve sabitlendi; ayrıntı
+aşağıda ve `docs/spec/` ekinde E.13. Değişiklik henüz NuGet'e yayınlanmadı.
+
 Sıradaki platform **Paribu**; uç envanteri çıkarıldı, kod yazılmadı.
 
 ---
@@ -216,11 +221,11 @@ Bu borsanın diğerlerinden dört farkı var:
 
 ## Doğrulama durumu
 
-Son çalıştırma (8 Eylül 2026):
+Son çalıştırma (6 Ekim 2026, CryptoExchange.Net 13.1.0):
 
 ```
 dotnet build -c Release   →  0 error, 5 TFM
-dotnet test  -c Release   →  277/277 birim · 13 canli API · 2 atlandi
+dotnet test  -c Release   →  290/290 birim · 13 canli API · 2 atlandi
                              birim testler her PR'da, canli testler haftalik iste
 dotnet pack  -c Release   →  .nupkg + .snupkg
 canlı API                 →  BtcTurk, Binance TR ve CoinTR; native == shared
@@ -297,7 +302,39 @@ bildirilmiyor, dolayısıyla `Discover()` yalnızca kanıtlanmış olanı raporl
 
 ---
 
+## CryptoExchange.Net 13 göçü ✅
+
+Temel kütüphane 12.5.0'dan önce 12.5.1 yamasına, sonra 13.1.0'a yükseltildi. Göç bir
+uyumluluk dalında yapıldı ve canlı doğrulamadan geçmeden ana dala alınmadı.
+
+**Neden gerekliydi.** 12.5.1 yaması, üç adaptörün de kullandığı konu filtreli
+yönlendirmede abonelik sorgusunun erken başarılı sayılması hatasını düzeltiyordu. 13 ise
+paylaşılan API'yi ince taneli yeteneklere bölen bir ana sürüm; JKorf ekosisteminin geri
+kalanı bu yöne geçiyor.
+
+**Neler değişti.** Yedi paylaşılan istemci 13'ün V2 arayüzlerini de uyguluyor. Her V2
+üyesi mevcut V1 uygulamasına delege eder; davranış tek yerde kalır. Seçenek özellikleri
+V1 ile aynı nesneyi döndürür, böylece doğrulama kuralları ve yetenek listesi tek bir
+yapılandırmayı paylaşır.
+
+**Canlıda yakalanan hata.** Göçün ilk hali derlendi ve birim testlerinin tamamı geçti.
+Canlı örnek ise her paylaşılan çağrının `TradingMode.Spot is not supported` ile
+reddedildiğini gösterdi. 13'te seçenek nesneleri desteklenen işlem türlerini yalnızca
+`SharedApiBase.SetCapabilities` ile öğreniyor; bizim istemcilerimiz bu tabandan
+türeyemediği için listeler boş kalıyordu. Seçenekler artık kurucuda
+`CapabilityRegistration` ile kaydediliyor ve bunu üç ayrı test denetliyor.
+
+Ayrıntı ve bulgular: `docs/spec/` ekinde E.13.
+
+---
+
 ## Sonraki adım
+
+**0. Yeni sürümün yayını**
+
+CryptoExchange.Net 13 geçişi yayınlanmadı. Temel kütüphane ana sürümü değiştiği için
+yayın `0.2.0-preview.1` olmalı: 12 kullanan bir uygulama bu sürümle birlikte
+kurulamaz.
 
 **1. Binance TR private uçlarının canlı doğrulaması**
 
@@ -319,6 +356,15 @@ hesapta kabul edildiğinde açılacak.
 
 `TRCrypto.Clients`, üç adaptörü tek bağımlılıkla getiren paket olarak planlanıyor.
 Ön sürüm yayınlandı; ayrıntı aşağıda.
+
+**5. Paylaşılan katmanı JKorf yapısına hizalamak (isteğe bağlı)**
+
+JKorf'un borsa kütüphaneleri 13'te paylaşılan kodu, `SharedApiBase`'den türeyen ayrı bir
+sınıfa taşıdı. Bizde paylaşılan kod API istemcisinin içinde kaldı ve seçenekler
+`CapabilityRegistration` ile kaydediliyor. Bu doğru çalışıyor ve testlerle denetleniyor,
+ama ekosistemin geri kalanından yapısal olarak ayrışıyor. Taşıma yaklaşık 3.100 satırlık
+paylaşılan kodu etkiler; acil değil, ileride bir sürüm 13'ün bu yolu zorunlu kılarsa
+gündeme gelir.
 
 ---
 

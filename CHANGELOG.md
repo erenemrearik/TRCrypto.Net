@@ -3,6 +3,35 @@
 Bu dosyanın biçimi [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/) temel alır ve
 proje [Semantic Versioning](https://semver.org/lang/tr/) kullanır.
 
+## [Yayınlanmadı]
+
+### Değişti
+
+- **CryptoExchange.Net 13.1.0.** Temel kütüphane 12.5.0'dan 13.1.0'a yükseltildi. Bu
+  kütüphane için bir ana sürüm geçişidir; CryptoExchange.Net 12 kullanan bir uygulamayla
+  aynı projede birlikte kurulamaz.
+- **Paylaşılan API V2.** Üç adaptörün paylaşılan istemcileri artık 13 ile gelen ince
+  taneli arayüzleri de uyguluyor (`IGetOrderBookRest`, `IGetTicker`,
+  `ISubscribeTickerSocket` gibi). Mevcut V1 arayüzleri değişmeden duruyor; `SharedClient`
+  üzerinden ikisi de kullanılabilir.
+- **Yetenek listesi.** Her paylaşılan istemci desteklediği işlemleri `Capabilities`
+  üzerinden bildiriyor ve `Transport` ile REST mi WebSocket mi olduğunu söylüyor.
+- **Emir defteri sıra numarası.** Borsa veriyorsa `SharedOrderBook.SequenceNumber`
+  dolduruluyor: Binance TR'de REST ve kademeli akış, BtcTurk'te emir defteri akışı.
+- **Binance TR emir akışı ücreti.** Ücret ve ücret varlığı emir düzeyinden son dolumun
+  üzerine (`SharedSpotOrderUpdate.LastTrade`) taşındı. Borsa ücreti her dolum için ayrı
+  bildirir; emir düzeyinde tutmak birden fazla dolumda yalnızca sonuncusunu gösterirdi.
+
+### Düzeltildi
+
+- **Binance TR emir akışında yanlış ortalama fiyat.** `AveragePrice` alanına akışın `L`
+  değeri yazılıyordu; bu ortalama değil son dolumun fiyatıdır. Alan artık doldurulmuyor,
+  son dolumun fiyatı `LastTrade.Price` içinde.
+- **CryptoExchange.Net 12.5.1 düzeltmeleri.** Konu filtreli yönlendirmelerde abonelik
+  sorgusunun erken başarılı sayılması ve kimlik doğrulamalı isteklerde önbellek sorunu.
+
+Göçün ayrıntısı ve bulunan bulgular: `docs/spec/` ekinde E.13.
+
 ## [0.1.0-preview.1] - 8 Eylül 2026
 
 İlk yayın. Üç borsa adaptörü NuGet'te:

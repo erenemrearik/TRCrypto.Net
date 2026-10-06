@@ -1,7 +1,7 @@
 # TRCrypto.Net
 
 Türkiye'deki lisanslı kripto platformları için .NET client ekosistemi.
-[JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 12.5.0 üzerine kuruludur.
+[JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 13.1.0 üzerine kuruludur.
 
 Her borsa bağımsız bir NuGet paketidir ve iki yüzey sunar: borsanın tüm özelliklerine
 erişen **native** yüzey ve `CryptoExchange.Net.SharedApis` ile borsadan bağımsız kod
@@ -44,6 +44,11 @@ Bu borsalarda en sık karşılaşılan sorun, hata dönmeyen ama yanlış çalı
   değerde ne onay ne veri gelir.
 - CoinTR değişim oranını kesir olarak gönderir; doğrudan aktarmak değeri yüz kat küçük
   gösterir ve sonuç yine geçerli bir sayı olduğu için fark edilmez.
+- CryptoExchange.Net 13'te paylaşılan seçenek nesneleri `SharedApiBase.SetCapabilities`
+  ile kaydedilmezse desteklenen işlem türü listesi boş kalır; her paylaşılan çağrı
+  reddedilir ve socket'ten veri gelmez. Derleme temizdi, birim testlerinin tamamı
+  geçiyordu; hatayı canlı çalıştırma yakaladı. `CapabilityRegistration` bunu kurucuda
+  yapar ve `CapabilityAssert` denetler.
 
 Böyle bir davranış bulunduğunda testle sabitlenir ve testin gerçekten yakaladığı,
 düzeltme geri alınarak kanıtlanır.
@@ -161,6 +166,20 @@ zinciri yaratıyordu.
 Böyle bir hatada sıra şudur: önce bağımlılığa gerçekten ihtiyaç var mı diye bakılır,
 sonra yükseltme denenir. Denetimi susturmak son çaredir ve gerekçesi yazılır.
 
+### Kütüphane yükseltmesi canlı doğrulamadan bitmez
+
+CryptoExchange.Net yükseltmeleri bir uyumluluk dalında (`compat/cryptoexchange-X.Y.Z`)
+yapılır ve şu üçü geçmeden ana dala alınmaz: derleme, birim testleri ve
+`examples/TRCrypto.Examples.Console`'un üç borsaya karşı canlı çalışması.
+
+Üçüncüsü süs değildir. 13.1.0 göçünde derleme temizdi ve birim testlerinin tamamı
+geçiyordu, ama canlı örnek her paylaşılan çağrının reddedildiğini gösterdi. Birim
+testleri yapıyı denetler; bir isteğin gerçekten doğrulamadan geçip borsaya ulaştığını
+yalnızca canlı çalıştırma gösterir.
+
+Maliyet de ilk derleme çıktısından tahmin edilmez. Derleyici ilk hata dalgasında durur;
+13.1.0'da ilk deneme "12 dosya, 32 hata" gösterdi, gerçek iş üç dalga sonra ortaya çıktı.
+
 Doküman değiştirip siteyi yeniden üretmezseniz CI derlemeyi durdurur.
 
 ### Sitedeki sayılar elle yazılmaz
@@ -244,6 +263,12 @@ defteri anahtarsız çalışır ve canlı doğrulanmıştır.
 Platform sırası: BtcTurk, Binance TR, CoinTR, Paribu. Önceki planda yer alan Bitexen ve
 ICRYPEX şimdilik kapsam dışıdır.
 
-Üç paket de NuGet'te ön sürüm olarak yayında: `0.1.0-preview.1` (8 Eylül 2026).
+Temel kütüphane CryptoExchange.Net 13.1.0. Paylaşılan istemciler V1 arayüzlerini korur
+ve 13'ün ince taneli V2 arayüzlerini de uygular; V2 üyeleri V1 uygulamasına delege eder.
+Göçün bulguları `docs/spec/` ekinde E.13'te.
+
+Üç paket de NuGet'te ön sürüm olarak yayında: `0.1.0-preview.1` (8 Eylül 2026). 13.1.0
+geçişi henüz yayınlanmadı; temel kütüphanenin ana sürümü değiştiği için sıradaki yayın
+`0.2.0-preview.1` olmalı.
 Yayın Trusted Publishing ile yapılır; depoda API anahtarı saklanmaz ve `nuget`
 environment'ı onay ister. Ayrıntı: `.github/workflows/release.yml`.

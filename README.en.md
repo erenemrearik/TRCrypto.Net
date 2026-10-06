@@ -14,7 +14,7 @@
 
 [Türkçe](README.md) · **English**
 
-Built on [JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 12.5.0.
+Built on [JKorf/CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) 13.1.0.
 
 </div>
 

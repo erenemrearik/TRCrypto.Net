@@ -31,6 +31,35 @@ internal partial class BinanceTRSocketClientUserApi : IBinanceTRSocketClientUser
     public TradingMode[] SupportedTradingModes { get; } = [TradingMode.Spot];
 
     /// <inheritdoc />
+    SharedTransport ISharedApi.Transport => SharedTransport.Socket;
+
+    /// <summary>Bu istemcinin bildirdigi yetenekler.</summary>
+    /// <remarks>
+    /// Liste, asagida uygulanan her paylasilan arayuzun secenek nesnesini tam olarak icerir.
+    /// Eksik bir giris <c>Discover()</c> ciktisindan o yetenegi dusurur; fazla bir giris
+    /// dogrulanmamis bir yetenegi ilan eder. Ikisini de <c>SharedApiTests</c> yakalar.
+    /// </remarks>
+    IReadOnlyCollection<CapabilityOptions> ISharedApi.Capabilities => _capabilities;
+
+    private CapabilityOptions[] _capabilities = [];
+
+    /// <summary>Yetenekleri olusturur ve CryptoExchange.Net'e kaydeder.</summary>
+    /// <remarks>
+    /// Kurucudan cagrilir. Dogrulama ilk istekten once hazir olmalidir; liste tembel
+    /// olusturulsaydi, hic okunmadan yapilan bir cagrida secenekler kaydedilmemis kalirdi.
+    /// </remarks>
+    private void RegisterCapabilities()
+    {
+        _capabilities =
+        [
+            ((IBalanceSocketClient)this).SubscribeBalanceOptions,
+            ((ISpotOrderSocketClient)this).SubscribeSpotOrderOptions,
+        ];
+
+        CapabilityRegistration.Register(this, this, _capabilities);
+    }
+
+    /// <inheritdoc />
     public void SetDefaultExchangeParameter(string key, object value)
         => ExchangeParameters.SetStaticParameter(Exchange, key, value);
 
@@ -84,9 +113,22 @@ internal partial class BinanceTRSocketClientUserApi : IBinanceTRSocketClientUser
                 "ve SetDefaultExchangeParameter(\"listenToken\", …) ile verilir."
         };
 
+    // V1 arayuzu V2'ye delege eder. V2 modeli (SharedSpotOrderUpdate) V1 modelinden turer
+    // ve ondan zengindir, bu yuzden birincil uygulama V2'dedir ve V1 ayni olayi daha dar
+    // modelle gorur.
     async Task<WebSocketResult<UpdateSubscription>> ISpotOrderSocketClient.SubscribeToSpotOrderUpdatesAsync(
         SubscribeSpotOrderRequest request,
         Action<DataEvent<SharedSpotOrder[]>> handler,
+        CancellationToken ct)
+        => await ((ISubscribeSpotOrdersSocket)this).SubscribeToSpotOrderUpdatesAsync(
+            request, x => handler(x.ToType<SharedSpotOrder[]>(x.Data)), ct).ConfigureAwait(false);
+
+    SubscribeSpotOrderOptions ISubscribeSpotOrdersSocket.SubscribeSpotOrderOptions
+        => ((ISpotOrderSocketClient)this).SubscribeSpotOrderOptions;
+
+    async Task<WebSocketResult<UpdateSubscription>> ISubscribeSpotOrdersSocket.SubscribeToSpotOrderUpdatesAsync(
+        SubscribeSpotOrderRequest request,
+        Action<DataEvent<SharedSpotOrderUpdate[]>> handler,
         CancellationToken ct)
     {
         var validationError = ((ISpotOrderSocketClient)this).SubscribeSpotOrderOptions
@@ -97,31 +139,64 @@ internal partial class BinanceTRSocketClientUserApi : IBinanceTRSocketClientUser
         if (!TryGetListenToken(request.ExchangeParameters, out var token, out var tokenError))
             return WebSocketResult.Fail<UpdateSubscription>(Exchange, tokenError!);
 
-        return await SubscribeToOrderUpdatesAsync(token!, update => handler(Convert(update,
-            new[] { ToSharedOrder(update.Data) })), ct).ConfigureAwait(false);
+        return await SubscribeToOrderUpdatesAsync(token!, update => handler(update.ToType(
+            new[] { ToSharedOrderUpdate(update.Data) })), ct).ConfigureAwait(false);
     }
 
     /// <summary>Native emir guncellemesini borsadan bagimsiz karsiligina cevirir.</summary>
-    private static SharedSpotOrder ToSharedOrder(Objects.Models.Socket.BinanceTRStreamOrderUpdate update)
-        => new(
-            // Akis base ve quote varligi ayri alanlarda vermiyor; yalnizca native ad var.
-            new SharedSymbol(TradingMode.Spot, update.Symbol, string.Empty),
+    /// <remarks>
+    /// <para>
+    /// Ucret emir duzeyinde degil, son dolumun (<see cref="SharedSpotOrderUpdate.LastTrade"/>)
+    /// uzerinde tasinir. Borsa ucreti her dolum icin ayri bildirir; emir duzeyinde tutmak
+    /// birden fazla dolumda yalnizca sonuncusunu gosterirdi. CryptoExchange.Net 13 emir
+    /// duzeyindeki ucret alanini bu nedenle kullanimdan kaldirdi.
+    /// </para>
+    /// <para>
+    /// <c>AveragePrice</c> doldurulmaz. Akisin <c>L</c> alani ortalama degil son dolumun
+    /// fiyatidir ve onceki surumde yanlislikla ortalama yerine yaziliyordu; o deger artik
+    /// <c>LastTrade.Price</c> icindedir.
+    /// </para>
+    /// </remarks>
+    private static SharedSpotOrderUpdate ToSharedOrderUpdate(Objects.Models.Socket.BinanceTRStreamOrderUpdate update)
+    {
+        // Akis base ve quote varligi ayri alanlarda vermiyor; yalnizca native ad var.
+        var symbol = new SharedSymbol(TradingMode.Spot, update.Symbol, string.Empty);
+        var side = update.Side == Enums.OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell;
+        var orderId = update.OrderId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        return new SharedSpotOrderUpdate(
+            symbol,
             update.Symbol,
-            update.OrderId.ToString(),
+            orderId,
             update.Type == Enums.OrderType.Market ? SharedOrderType.Market : SharedOrderType.Limit,
-            update.Side == Enums.OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
+            side,
             ToSharedStatus(update.Status),
             update.CreateTime)
         {
             ClientOrderId = update.ClientOrderId,
             OrderPrice = update.Price,
-            AveragePrice = update.LastPriceFilled == 0 ? null : update.LastPriceFilled,
             OrderQuantity = new SharedOrderQuantity(update.Quantity),
             QuantityFilled = new SharedOrderQuantity(update.QuantityFilled, update.QuoteQuantityFilled),
-            Fee = update.Fee,
-            FeeAsset = update.FeeAsset,
-            UpdateTime = update.EventTime
+            UpdateTime = update.EventTime,
+
+            // Dolum olmayan guncellemelerde (yeni emir, iptal) son islem yoktur.
+            LastTrade = update.LastQuantityFilled == 0 ? null : new SharedUserTrade(
+                symbol,
+                update.Symbol,
+                orderId,
+                update.TradeId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                side,
+                new SharedOrderQuantity(update.LastQuantityFilled, update.LastQuoteQuantityFilled),
+                update.LastPriceFilled,
+                update.TradeTime)
+            {
+                ClientOrderId = update.ClientOrderId,
+                Fee = update.Fee,
+                FeeAsset = update.FeeAsset,
+                Role = update.IsMaker ? SharedRole.Maker : SharedRole.Taker
+            }
         };
+    }
 
     #endregion
 

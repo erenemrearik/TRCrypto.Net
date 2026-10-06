@@ -17,6 +17,37 @@ internal partial class BtcTurkSocketClientSpotApi : IBtcTurkSocketClientSpotApiS
     public TradingMode[] SupportedTradingModes { get; } = [TradingMode.Spot];
 
     /// <inheritdoc />
+    SharedTransport ISharedApi.Transport => SharedTransport.Socket;
+
+    /// <summary>Bu istemcinin bildirdigi yetenekler.</summary>
+    /// <remarks>
+    /// Liste, asagida uygulanan her paylasilan arayuzun secenek nesnesini tam olarak icerir.
+    /// Eksik bir giris <c>Discover()</c> ciktisindan o yetenegi dusurur; fazla bir giris
+    /// dogrulanmamis bir yetenegi ilan eder. Ikisini de <c>SharedApiTests</c> yakalar.
+    /// </remarks>
+    IReadOnlyCollection<CapabilityOptions> ISharedApi.Capabilities => _capabilities;
+
+    private CapabilityOptions[] _capabilities = [];
+
+    /// <summary>Yetenekleri olusturur ve CryptoExchange.Net'e kaydeder.</summary>
+    /// <remarks>
+    /// Kurucudan cagrilir. Dogrulama ilk istekten once hazir olmalidir; liste tembel
+    /// olusturulsaydi, hic okunmadan yapilan bir cagrida secenekler kaydedilmemis kalirdi.
+    /// </remarks>
+    private void RegisterCapabilities()
+    {
+        _capabilities =
+        [
+            ((ITickerSocketClient)this).SubscribeTickerOptions,
+            ((ITickersSocketClient)this).SubscribeAllTickersOptions,
+            ((ITradeSocketClient)this).SubscribeTradeOptions,
+            ((IOrderBookSocketClient)this).SubscribeOrderBookOptions,
+        ];
+
+        CapabilityRegistration.Register(this, this, _capabilities);
+    }
+
+    /// <inheritdoc />
     public void SetDefaultExchangeParameter(string key, object value)
         => ExchangeParameters.SetStaticParameter(Exchange, key, value);
 
@@ -140,6 +171,7 @@ internal partial class BtcTurkSocketClientSpotApi : IBtcTurkSocketClientSpotApiS
         return await SubscribeToOrderBookUpdatesAsync(symbol, update => handler(Convert(update,
             new SharedOrderBook(
                 SharedQuantityType.BaseAsset,
+                update.Data.Sequence,
                 update.Data.Asks.Cast<ISymbolOrderBookEntry>().ToArray(),
                 update.Data.Bids.Cast<ISymbolOrderBookEntry>().ToArray()))), ct).ConfigureAwait(false);
     }

@@ -21,6 +21,20 @@ public interface IBtcTurkRestClientSpotApiShared :
     IKlineRestClient,
     ISpotTickerRestClient,
     IOrderBookRestClient,
-    IRecentTradeRestClient
+    IRecentTradeRestClient,
+    IGetSpotSymbolsRest,
+    IGetTickerRest,
+    IGetAllTickersRest,
+    IGetOrderBookRest,
+    IGetRecentTradesRest,
+    IGetKlinesRest,
+    IGetBalancesRest,
+    IPlaceSpotOrderRest,
+    IGetSpotOrderRest,
+    IGetOpenSpotOrdersRest,
+    IGetClosedSpotOrdersRest,
+    ICancelSpotOrderRest,
+    IGetSpotOrderTradesRest,
+    IGetSpotUserTradeHistoryRest
 {
 }

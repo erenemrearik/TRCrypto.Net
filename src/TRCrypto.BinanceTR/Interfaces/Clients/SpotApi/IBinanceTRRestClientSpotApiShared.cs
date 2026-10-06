@@ -21,6 +21,17 @@ public interface IBinanceTRRestClientSpotApiShared :
     IOrderBookRestClient,
     IBalanceRestClient,
     ISpotOrderRestClient,
-    IRecentTradeRestClient
+    IRecentTradeRestClient,
+    IGetSpotSymbolsRest,
+    IGetOrderBookRest,
+    IGetRecentTradesRest,
+    IGetBalancesRest,
+    IPlaceSpotOrderRest,
+    IGetSpotOrderRest,
+    IGetOpenSpotOrdersRest,
+    IGetClosedSpotOrdersRest,
+    ICancelSpotOrderRest,
+    IGetSpotOrderTradesRest,
+    IGetSpotUserTradeHistoryRest
 {
 }

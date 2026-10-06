@@ -1,3 +1,4 @@
+using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.SharedApis;
 using TRCrypto.BinanceTR.Clients;
 using Xunit;
@@ -16,6 +17,59 @@ public class SharedApiTests
         => new(options => options.RateLimiterEnabled = false);
 
     private static BinanceTRSocketClient CreateSocketClient() => new();
+
+    [Fact]
+    public async Task V2_arayuzu_uzerinden_gecersiz_istek_aga_cikmadan_reddedilir()
+    {
+        // CryptoExchange.Net 13 istek dogrulamasini yalnizca V2 yetenek arayuzu uzerinden
+        // yapiyor. V2 uygulanmasaydi kademe siniri gibi borsaya ozgu kontroller sessizce
+        // duserdi ve gecersiz istek borsaya giderdi. Bu test V2 yolunun da dogrulamadan
+        // gectigini ve istegin aga hic cikmadigini sabitler: ag hatasi degil, arguman
+        // hatasi beklenir.
+        IGetOrderBookRest shared = CreateRestClient().SpotApi.SharedClient;
+
+        var result = await shared.GetOrderBookAsync(
+            new GetOrderBookRequest(new SharedSymbol(TradingMode.Spot, "BTC", "TRY"), 2000),
+            CancellationToken.None);
+
+        Assert.False(result.Success);
+        Assert.IsType<ArgumentError>(result.Error);
+
+        // Hatanin turu yetmez, nedeni de dogru olmali. Bu test once yalnizca turu
+        // kontrol ediyordu ve secenekler kaydedilmemisken de gecti: istek yine
+        // reddediliyordu, ama kademe siniri yuzunden degil, hicbir islem turu
+        // desteklenmiyor gorundugu icin.
+        Assert.Contains("Max limit", result.Error!.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Gecerli_istek_V2_dogrulamasindan_gecer()
+    {
+        // Ters yonun kaniti: gecerli bir istek dogrulamadan hatasiz gecmeli. Secenekler
+        // kaydedilmeden once tum paylasilan cagrilar "TradingMode.Spot is not supported"
+        // ile reddediliyordu. Dogrulama dogrudan cagrilir; aga cikilmaz.
+        IGetOrderBookRest shared = CreateRestClient().SpotApi.SharedClient;
+
+        var error = shared.GetOrderBookOptions.ValidateRequest(
+            new GetOrderBookRequest(new SharedSymbol(TradingMode.Spot, "BTC", "TRY"), 10), shared);
+
+        Assert.Null(error);
+    }
+
+    [Fact]
+    public void REST_yetenek_listesi_uygulanan_arayuzlerle_birebir_ortusur()
+        => CapabilityAssert.MatchesImplementedInterfaces(
+            CreateRestClient().SpotApi.SharedClient, SharedTransport.Rest);
+
+    [Fact]
+    public void Socket_yetenek_listesi_uygulanan_arayuzlerle_birebir_ortusur()
+        => CapabilityAssert.MatchesImplementedInterfaces(
+            CreateSocketClient().SpotApi.SharedClient, SharedTransport.Socket);
+
+    [Fact]
+    public void Kullanici_akisi_yetenek_listesi_uygulanan_arayuzlerle_birebir_ortusur()
+        => CapabilityAssert.MatchesImplementedInterfaces(
+            CreateSocketClient().UserApi.SharedClient, SharedTransport.Socket);
 
     [Fact]
     public void REST_shared_arayuzleri_uygulanir()

@@ -19,6 +19,44 @@ internal partial class BinanceTRRestClientSpotApi : IBinanceTRRestClientSpotApiS
     public TradingMode[] SupportedTradingModes { get; } = [TradingMode.Spot];
 
     /// <inheritdoc />
+    SharedTransport ISharedApi.Transport => SharedTransport.Rest;
+
+    /// <summary>Bu istemcinin bildirdigi yetenekler.</summary>
+    /// <remarks>
+    /// Liste, asagida uygulanan her paylasilan arayuzun secenek nesnesini tam olarak icerir.
+    /// Eksik bir giris <c>Discover()</c> ciktisindan o yetenegi dusurur; fazla bir giris
+    /// dogrulanmamis bir yetenegi ilan eder. Ikisini de <c>SharedApiTests</c> yakalar.
+    /// </remarks>
+    IReadOnlyCollection<CapabilityOptions> ISharedApi.Capabilities => _capabilities;
+
+    private CapabilityOptions[] _capabilities = [];
+
+    /// <summary>Yetenekleri olusturur ve CryptoExchange.Net'e kaydeder.</summary>
+    /// <remarks>
+    /// Kurucudan cagrilir. Dogrulama ilk istekten once hazir olmalidir; liste tembel
+    /// olusturulsaydi, hic okunmadan yapilan bir cagrida secenekler kaydedilmemis kalirdi.
+    /// </remarks>
+    private void RegisterCapabilities()
+    {
+        _capabilities =
+        [
+            ((ISpotSymbolRestClient)this).GetSpotSymbolsOptions,
+            ((IOrderBookRestClient)this).GetOrderBookOptions,
+            ((IRecentTradeRestClient)this).GetRecentTradesOptions,
+            ((IBalanceRestClient)this).GetBalancesOptions,
+            ((ISpotOrderRestClient)this).PlaceSpotOrderOptions,
+            ((ISpotOrderRestClient)this).GetSpotOrderOptions,
+            ((ISpotOrderRestClient)this).GetOpenSpotOrdersOptions,
+            ((ISpotOrderRestClient)this).GetClosedSpotOrdersOptions,
+            ((ISpotOrderRestClient)this).CancelSpotOrderOptions,
+            ((ISpotOrderRestClient)this).GetSpotOrderTradesOptions,
+            ((ISpotOrderRestClient)this).GetSpotUserTradesOptions,
+        ];
+
+        CapabilityRegistration.Register(this, this, _capabilities);
+    }
+
+    /// <inheritdoc />
     public void SetDefaultExchangeParameter(string key, object value)
         => ExchangeParameters.SetStaticParameter(Exchange, key, value);
 
@@ -40,7 +78,7 @@ internal partial class BinanceTRRestClientSpotApi : IBinanceTRRestClientSpotApiS
         GetSymbolsRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetSpotSymbolsOptions.ValidateRequest(request, this);
+        var validationError = ((ISpotSymbolRestClient)this).GetSpotSymbolsOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedSpotSymbol[]>(Exchange, validationError);
 
@@ -130,7 +168,7 @@ internal partial class BinanceTRRestClientSpotApi : IBinanceTRRestClientSpotApiS
         GetOrderBookRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetOrderBookOptions.ValidateRequest(request, this);
+        var validationError = ((IOrderBookRestClient)this).GetOrderBookOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedOrderBook>(Exchange, validationError);
 
@@ -147,6 +185,7 @@ internal partial class BinanceTRRestClientSpotApi : IBinanceTRRestClientSpotApiS
 
         return HttpResult.Ok(result, new SharedOrderBook(
             SharedQuantityType.BaseAsset,
+            result.Data.LastUpdateId,
             result.Data.Asks.Cast<ISymbolOrderBookEntry>().ToArray(),
             result.Data.Bids.Cast<ISymbolOrderBookEntry>().ToArray()));
     }
@@ -175,7 +214,7 @@ internal partial class BinanceTRRestClientSpotApi : IBinanceTRRestClientSpotApiS
         GetRecentTradesRequest request,
         CancellationToken ct)
     {
-        var validationError = SharedClient.GetRecentTradesOptions.ValidateRequest(request, this);
+        var validationError = ((IRecentTradeRestClient)this).GetRecentTradesOptions.ValidateRequest(request, this);
         if (validationError != null)
             return HttpResult.Fail<SharedTrade[]>(Exchange, validationError);
 
